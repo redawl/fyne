@@ -1,6 +1,7 @@
 package mobile
 
 import (
+	"fmt"
 	"math"
 	"runtime"
 	"strconv"
@@ -255,7 +256,13 @@ func (d *driver) Run() {
 					// make sure that we paint on the next frame
 					c.Content().Refresh()
 				case paint.Event:
+					start := time.Now()
 					d.handlePaint(e, current)
+					end := time.Since(start).Milliseconds()
+					if end > 0 {
+						fmt.Printf("Paint took %d ms (%d calls)\n", end, gl.GlCallCount)
+					}
+					gl.GlCallCount = 0
 				case touch.Event:
 					switch e.Type {
 					case touch.TypeBegin:

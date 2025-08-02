@@ -44,12 +44,53 @@ type painter struct {
 	canvas                fyne.Canvas
 	ctx                   context
 	contextProvider       driver.WithContext
-	program               Program
-	lineProgram           Program
-	rectangleProgram      Program
-	roundRectangleProgram Program
+	program               ProgramState
+	lineProgram           ProgramState
+	rectangleProgram      ProgramState
+	roundRectangleProgram ProgramState
 	texScale              float32
 	pixScale              float32 // pre-calculate scale*texScale for each draw
+}
+
+type ProgramState struct {
+	ref      Program
+	uniforms map[string]*UniformState
+}
+
+func (p *painter) SetUniform1f(pState ProgramState, name string, v float32) {
+	u := pState.uniforms[name]
+	if u.prev[0] == v {
+		return
+	}
+	u.prev[0] = v
+	p.ctx.Uniform1f(u.ref, v)
+}
+
+func (p *painter) SetUniform2f(pState ProgramState, name string, v0, v1 float32) {
+	u := pState.uniforms[name]
+	if u.prev[0] == v0 && u.prev[1] == v1 {
+		return
+	}
+	u.prev[0] = v0
+	u.prev[1] = v1
+	p.ctx.Uniform2f(u.ref, v0, v1)
+}
+
+func (p *painter) SetUniform4f(pState ProgramState, name string, v0, v1, v2, v3 float32) {
+	u := pState.uniforms[name]
+	if u.prev[0] == v0 && u.prev[1] == v1 && u.prev[2] == v2 && u.prev[3] == v3 {
+		return
+	}
+	u.prev[0] = v0
+	u.prev[1] = v1
+	u.prev[2] = v2
+	u.prev[3] = v3
+	p.ctx.Uniform4f(u.ref, v0, v1, v2, v3)
+}
+
+type UniformState struct {
+	ref  Uniform
+	prev []float32
 }
 
 // Declare conformity to Painter interface

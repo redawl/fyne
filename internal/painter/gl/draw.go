@@ -38,53 +38,44 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 
 	// Vertex: BEG
 	bounds, points := p.vecSquareCoords(pos, circle, frame)
-	p.ctx.UseProgram(program)
+	p.ctx.UseProgram(program.ref)
 	vbo := p.createBuffer(points)
-	p.defineVertexArray(program, "vert", 2, 4, 0)
-	p.defineVertexArray(program, "normal", 2, 4, 2)
+	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
+	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
 	// Vertex: END
 
 	// Fragment: BEG
-	frameSizeUniform := p.ctx.GetUniformLocation(program, "frame_size")
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.ctx.Uniform2f(frameSizeUniform, frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, "frame_size", frameWidthScaled, frameHeightScaled)
 
-	rectCoordsUniform := p.ctx.GetUniformLocation(program, "rect_coords")
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.ctx.Uniform4f(rectCoordsUniform, x1Scaled, x2Scaled, y1Scaled, y2Scaled)
+	p.SetUniform4f(program, "rect_coords", x1Scaled, x2Scaled, y1Scaled, y2Scaled)
 
 	strokeWidthScaled := roundToPixel(circle.StrokeWidth*p.pixScale, 1.0)
-	strokeUniform := p.ctx.GetUniformLocation(program, "stroke_width_half")
-	p.ctx.Uniform1f(strokeUniform, strokeWidthScaled*0.5)
+	p.SetUniform1f(program, "stroke_width_half", strokeWidthScaled*0.5)
 
-	rectSizeUniform := p.ctx.GetUniformLocation(program, "rect_size_half")
 	rectSizeWidthScaled := x2Scaled - x1Scaled - strokeWidthScaled
 	rectSizeHeightScaled := y2Scaled - y1Scaled - strokeWidthScaled
-	p.ctx.Uniform2f(rectSizeUniform, rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
+	p.SetUniform2f(program, "rect_size_half", rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
 
-	radiusUniform := p.ctx.GetUniformLocation(program, "radius")
 	radiusScaled := roundToPixel(radius*p.pixScale, 1.0)
-	p.ctx.Uniform1f(radiusUniform, radiusScaled)
+	p.SetUniform1f(program, "radius", radiusScaled)
 
-	var r, g, b, a float32
-	fillColorUniform := p.ctx.GetUniformLocation(program, "fill_color")
-	r, g, b, a = getFragmentColor(circle.FillColor)
-	p.ctx.Uniform4f(fillColorUniform, r, g, b, a)
+	r, g, b, a := getFragmentColor(circle.FillColor)
+	p.SetUniform4f(program, "fill_color", r, g, b, a)
 
-	strokeColorUniform := p.ctx.GetUniformLocation(program, "stroke_color")
 	strokeColor := circle.StrokeColor
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.ctx.Uniform4f(strokeColorUniform, r, g, b, a)
+	p.SetUniform4f(program, "stroke_color", r, g, b, a)
 
-	edgeSoftnessUniform := p.ctx.GetUniformLocation(program, "edge_softness")
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.ctx.Uniform1f(edgeSoftnessUniform, edgeSoftnessScaled)
+	p.SetUniform1f(program, "edge_softness", edgeSoftnessScaled)
 	p.logError()
 	// Fragment: END
 
@@ -106,23 +97,20 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 		return
 	}
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
-	p.ctx.UseProgram(p.lineProgram)
+	p.ctx.UseProgram(p.lineProgram.ref)
 	vbo := p.createBuffer(points)
-	p.defineVertexArray(p.lineProgram, "vert", 2, 4, 0)
-	p.defineVertexArray(p.lineProgram, "normal", 2, 4, 2)
+	p.defineVertexArray(p.lineProgram.ref, "vert", 2, 4, 0)
+	p.defineVertexArray(p.lineProgram.ref, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
 
-	colorUniform := p.ctx.GetUniformLocation(p.lineProgram, "color")
 	r, g, b, a := getFragmentColor(line.StrokeColor)
-	p.ctx.Uniform4f(colorUniform, r, g, b, a)
+	p.SetUniform4f(p.lineProgram, "color", r, g, b, a)
 
-	lineWidthUniform := p.ctx.GetUniformLocation(p.lineProgram, "lineWidth")
-	p.ctx.Uniform1f(lineWidthUniform, halfWidth)
+	p.SetUniform1f(p.lineProgram, "lineWidth", halfWidth)
 
-	featherUniform := p.ctx.GetUniformLocation(p.lineProgram, "feather")
-	p.ctx.Uniform1f(featherUniform, feather)
+	p.SetUniform1f(p.lineProgram, "feather", feather)
 
 	p.ctx.DrawArrays(triangles, 0, 6)
 	p.logError()
@@ -170,7 +158,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	}
 
 	roundedCorners := radius != 0
-	var program Program
+	var program ProgramState
 	if roundedCorners {
 		program = p.roundRectangleProgram
 	} else {
@@ -179,58 +167,48 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 
 	// Vertex: BEG
 	bounds, points := p.vecRectCoords(pos, obj, frame, aspect)
-	p.ctx.UseProgram(program)
+	p.ctx.UseProgram(program.ref)
 	vbo := p.createBuffer(points)
-	p.defineVertexArray(program, "vert", 2, 4, 0)
-	p.defineVertexArray(program, "normal", 2, 4, 2)
+	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
+	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
 	// Vertex: END
 
 	// Fragment: BEG
-	frameSizeUniform := p.ctx.GetUniformLocation(program, "frame_size")
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.ctx.Uniform2f(frameSizeUniform, frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, "frame_size", frameWidthScaled, frameHeightScaled)
 
-	rectCoordsUniform := p.ctx.GetUniformLocation(program, "rect_coords")
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.ctx.Uniform4f(rectCoordsUniform, x1Scaled, x2Scaled, y1Scaled, y2Scaled)
+	p.SetUniform4f(program, "rect_coords", x1Scaled, x2Scaled, y1Scaled, y2Scaled)
 
 	strokeWidthScaled := roundToPixel(strokeWidth*p.pixScale, 1.0)
 	if roundedCorners {
-		strokeUniform := p.ctx.GetUniformLocation(program, "stroke_width_half")
-		p.ctx.Uniform1f(strokeUniform, strokeWidthScaled*0.5)
+		p.SetUniform1f(program, "stroke_width_half", strokeWidthScaled*0.5)
 
-		rectSizeUniform := p.ctx.GetUniformLocation(program, "rect_size_half")
 		rectSizeWidthScaled := x2Scaled - x1Scaled - strokeWidthScaled
 		rectSizeHeightScaled := y2Scaled - y1Scaled - strokeWidthScaled
-		p.ctx.Uniform2f(rectSizeUniform, rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
+		p.SetUniform2f(program, "rect_size_half", rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
 
-		radiusUniform := p.ctx.GetUniformLocation(program, "radius")
 		radiusScaled := roundToPixel(radius*p.pixScale, 1.0)
-		p.ctx.Uniform1f(radiusUniform, radiusScaled)
+		p.SetUniform1f(program, "radius", radiusScaled)
 
-		edgeSoftnessUniform := p.ctx.GetUniformLocation(program, "edge_softness")
 		edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-		p.ctx.Uniform1f(edgeSoftnessUniform, edgeSoftnessScaled)
+		p.SetUniform1f(program, "edge_softness", edgeSoftnessScaled)
 	} else {
-		strokeUniform := p.ctx.GetUniformLocation(program, "stroke_width")
-		p.ctx.Uniform1f(strokeUniform, strokeWidthScaled)
+		p.SetUniform1f(program, "stroke_width", strokeWidthScaled)
 	}
 
-	var r, g, b, a float32
-	fillColorUniform := p.ctx.GetUniformLocation(program, "fill_color")
-	r, g, b, a = getFragmentColor(fill)
-	p.ctx.Uniform4f(fillColorUniform, r, g, b, a)
+	r, g, b, a := getFragmentColor(fill)
+	p.SetUniform4f(program, "fill_color", r, g, b, a)
 
-	strokeColorUniform := p.ctx.GetUniformLocation(program, "stroke_color")
 	strokeColor := stroke
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.ctx.Uniform4f(strokeColorUniform, r, g, b, a)
+	p.SetUniform4f(program, "stroke_color", r, g, b, a)
 	p.logError()
 	// Fragment: END
 
@@ -279,13 +257,12 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 		}
 	}
 	points := p.rectCoords(size, pos, frame, fill, aspect, pad)
-	p.ctx.UseProgram(p.program)
+	p.ctx.UseProgram(p.program.ref)
 	vbo := p.createBuffer(points)
-	p.defineVertexArray(p.program, "vert", 3, 5, 0)
-	p.defineVertexArray(p.program, "vertTexCoord", 2, 5, 3)
+	p.defineVertexArray(p.program.ref, "vert", 3, 5, 0)
+	p.defineVertexArray(p.program.ref, "vertTexCoord", 2, 5, 3)
 
-	vertAttrib := p.ctx.GetUniformLocation(p.program, "alpha")
-	p.ctx.Uniform1f(vertAttrib, alpha)
+	p.SetUniform1f(p.program, "alpha", alpha)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()

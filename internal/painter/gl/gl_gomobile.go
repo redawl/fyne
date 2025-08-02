@@ -53,7 +53,7 @@ type (
 )
 
 var (
-	compiled          []Program // avoid multiple compilations with the re-used mobile GUI context
+	initialized       bool // avoid multiple compilations with the re-used mobile GUI context
 	noBuffer          = Buffer{}
 	noShader          = Shader{}
 	textureFilterToGL = [...]int32{gl.Linear, gl.Nearest}
@@ -64,21 +64,40 @@ func (p *painter) glctx() gl.Context {
 }
 
 func (p *painter) Init() {
-	p.ctx = &mobileContext{glContext: p.contextProvider.Context().(gl.Context)}
-	p.glctx().Disable(gl.DepthTest)
-	p.glctx().Enable(gl.Blend)
-	if compiled == nil {
-		compiled = []Program{
-			p.createProgram("simple_es"),
-			p.createProgram("line_es"),
-			p.createProgram("rectangle_es"),
-			p.createProgram("round_rectangle_es"),
-		}
+	if !initialized {
+		p.ctx = &mobileContext{glContext: p.contextProvider.Context().(gl.Context)}
+		p.glctx().Disable(gl.DepthTest)
+		p.glctx().Enable(gl.Blend)
+		initialized = true
+		p.program = ProgramState{ref: p.createProgram("simple_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.initUniform(p.program, "text")
+		p.initUniform(p.program, "alpha")
+
+		p.lineProgram = ProgramState{ref: p.createProgram("line_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.initUniform(p.lineProgram, "lineWidth")
+
+		p.rectangleProgram = ProgramState{ref: p.createProgram("rectangle_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.initUniform(p.rectangleProgram, "frame_size")
+		p.initUniform(p.rectangleProgram, "rect_coords")
+		p.initUniform(p.rectangleProgram, "stroke_width")
+		p.initUniform(p.rectangleProgram, "fill_color")
+		p.initUniform(p.rectangleProgram, "stroke_color")
+
+		p.roundRectangleProgram = ProgramState{ref: p.createProgram("round_rectangle_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.initUniform(p.roundRectangleProgram, "frame_size")
+		p.initUniform(p.roundRectangleProgram, "rect_coords")
+		p.initUniform(p.roundRectangleProgram, "stroke_width_half")
+		p.initUniform(p.roundRectangleProgram, "rect_size_half")
+		p.initUniform(p.roundRectangleProgram, "radius")
+		p.initUniform(p.roundRectangleProgram, "edge_softness")
+		p.initUniform(p.roundRectangleProgram, "fill_color")
+		p.initUniform(p.roundRectangleProgram, "stroke_color")
 	}
-	p.program = compiled[0]
-	p.lineProgram = compiled[1]
-	p.rectangleProgram = compiled[2]
-	p.roundRectangleProgram = compiled[3]
+}
+
+func (p *painter) initUniform(pState ProgramState, name string) {
+	u := p.ctx.GetUniformLocation(pState.ref, name)
+	pState.uniforms[name] = &UniformState{ref: u, prev: make([]float32, 4)}
 }
 
 type mobileContext struct {

@@ -50,6 +50,8 @@ import (
 
 const workbufLen = 3
 
+var GlCallCount int = 0
+
 type context struct {
 	cptr  uintptr
 	debug int32
@@ -140,6 +142,7 @@ func (ctx *context) DoWork() {
 			ctx.parg[i] = (*C.char)(q.parg)
 		}
 		ret := C.process(&ctx.cargs[0], ctx.parg[0], ctx.parg[1], ctx.parg[2], C.int(len(queue)))
+		GlCallCount++
 
 		// Cleanup and signal.
 		queue = queue[:0]
