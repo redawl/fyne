@@ -11,14 +11,21 @@ import (
 
 const edgeSoftness = 1.0
 
-func (p *painter) createBuffer(points []float32) Buffer {
+func (p *painter) createBuffer(size int) Buffer {
 	vbo := p.ctx.CreateBuffer()
 	p.logError()
 	p.ctx.BindBuffer(arrayBuffer, vbo)
 	p.logError()
-	p.ctx.BufferData(arrayBuffer, points, staticDraw)
+	p.ctx.BufferData(arrayBuffer, make([]float32, size), staticDraw)
 	p.logError()
 	return vbo
+}
+
+func (p *painter) updateBuffer(vbo Buffer, points []float32) {
+	p.ctx.BindBuffer(arrayBuffer, vbo)
+	p.logError()
+	p.ctx.BufferSubData(arrayBuffer, points)
+	p.logError()
 }
 
 func (p *painter) defineVertexArray(prog Program, name string, size, stride, offset int) {
@@ -39,7 +46,7 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	// Vertex: BEG
 	bounds, points := p.vecSquareCoords(pos, circle, frame)
 	p.ctx.UseProgram(program.ref)
-	vbo := p.createBuffer(points)
+	p.updateBuffer(program.buff, points)
 	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
 	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
 
@@ -81,7 +88,6 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 	p.logError()
-	p.freeBuffer(vbo)
 }
 
 func (p *painter) drawGradient(o fyne.CanvasObject, texCreator func(fyne.CanvasObject) Texture, pos fyne.Position, frame fyne.Size) {
@@ -98,7 +104,7 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 	}
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
 	p.ctx.UseProgram(p.lineProgram.ref)
-	vbo := p.createBuffer(points)
+	p.updateBuffer(p.lineProgram.buff, points)
 	p.defineVertexArray(p.lineProgram.ref, "vert", 2, 4, 0)
 	p.defineVertexArray(p.lineProgram.ref, "normal", 2, 4, 2)
 
@@ -114,7 +120,6 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 
 	p.ctx.DrawArrays(triangles, 0, 6)
 	p.logError()
-	p.freeBuffer(vbo)
 }
 
 func (p *painter) drawObject(o fyne.CanvasObject, pos fyne.Position, frame fyne.Size) {
@@ -168,7 +173,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	// Vertex: BEG
 	bounds, points := p.vecRectCoords(pos, obj, frame, aspect)
 	p.ctx.UseProgram(program.ref)
-	vbo := p.createBuffer(points)
+	p.updateBuffer(program.buff, points)
 	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
 	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
 
@@ -214,7 +219,6 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 	p.logError()
-	p.freeBuffer(vbo)
 }
 
 func (p *painter) drawText(text *canvas.Text, pos fyne.Position, frame fyne.Size) {
@@ -258,7 +262,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	}
 	points := p.rectCoords(size, pos, frame, fill, aspect, pad)
 	p.ctx.UseProgram(p.program.ref)
-	vbo := p.createBuffer(points)
+	p.updateBuffer(p.program.buff, points)
 	p.defineVertexArray(p.program.ref, "vert", 3, 5, 0)
 	p.defineVertexArray(p.program.ref, "vertTexCoord", 2, 5, 3)
 
@@ -273,7 +277,6 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 	p.logError()
-	p.freeBuffer(vbo)
 }
 
 func (p *painter) freeBuffer(vbo Buffer) {

@@ -36,68 +36,69 @@
 
 // TODO: generate this enum from fn.go.
 typedef enum {
-	glfnUNDEFINED,
-	glfnActiveTexture,
-	glfnAttachShader,
-	glfnBindBuffer,
-	glfnBindTexture,
-	glfnBindVertexArray,
-	glfnBlendColor,
-	glfnBlendFunc,
-	glfnBufferData,
-	glfnClear,
-	glfnClearColor,
-	glfnCompileShader,
-	glfnCreateProgram,
-	glfnCreateShader,
-	glfnDeleteBuffer,
-	glfnDeleteTexture,
-	glfnDisable,
-	glfnDrawArrays,
-	glfnEnable,
-	glfnEnableVertexAttribArray,
-	glfnFlush,
-	glfnGenBuffer,
-	glfnGenTexture,
-	glfnGenVertexArray,
-	glfnGetAttribLocation,
-	glfnGetError,
-	glfnGetProgramInfoLog,
-	glfnGetProgramiv,
-	glfnGetShaderInfoLog,
-	glfnGetShaderSource,
-	glfnGetShaderiv,
-	glfnGetTexParameteriv,
-	glfnGetUniformLocation,
-	glfnLinkProgram,
-	glfnReadPixels,
-	glfnScissor,
-	glfnShaderSource,
-	glfnTexImage2D,
-	glfnTexParameteri,
-	glfnUniform1f,
-	glfnUniform2f,
-	glfnUniform4f,
-	glfnUniform4fv,
-	glfnUseProgram,
-	glfnVertexAttribPointer,
-	glfnViewport,
+  glfnUNDEFINED,
+  glfnActiveTexture,
+  glfnAttachShader,
+  glfnBindBuffer,
+  glfnBindTexture,
+  glfnBindVertexArray,
+  glfnBlendColor,
+  glfnBlendFunc,
+  glfnBufferData,
+  glfnBufferSubData,
+  glfnClear,
+  glfnClearColor,
+  glfnCompileShader,
+  glfnCreateProgram,
+  glfnCreateShader,
+  glfnDeleteBuffer,
+  glfnDeleteTexture,
+  glfnDisable,
+  glfnDrawArrays,
+  glfnEnable,
+  glfnEnableVertexAttribArray,
+  glfnFlush,
+  glfnGenBuffer,
+  glfnGenTexture,
+  glfnGenVertexArray,
+  glfnGetAttribLocation,
+  glfnGetError,
+  glfnGetProgramInfoLog,
+  glfnGetProgramiv,
+  glfnGetShaderInfoLog,
+  glfnGetShaderSource,
+  glfnGetShaderiv,
+  glfnGetTexParameteriv,
+  glfnGetUniformLocation,
+  glfnLinkProgram,
+  glfnReadPixels,
+  glfnScissor,
+  glfnShaderSource,
+  glfnTexImage2D,
+  glfnTexParameteri,
+  glfnUniform1f,
+  glfnUniform2f,
+  glfnUniform4f,
+  glfnUniform4fv,
+  glfnUseProgram,
+  glfnVertexAttribPointer,
+  glfnViewport,
 } glfn;
 
 // TODO: generate this type from fn.go.
 struct fnargs {
-	glfn fn;
+  glfn fn;
 
-	uintptr_t a0;
-	uintptr_t a1;
-	uintptr_t a2;
-	uintptr_t a3;
-	uintptr_t a4;
-	uintptr_t a5;
-	uintptr_t a6;
-	uintptr_t a7;
-	uintptr_t a8;
-	uintptr_t a9;
+  uintptr_t a0;
+  uintptr_t a1;
+  uintptr_t a2;
+  uintptr_t a3;
+  uintptr_t a4;
+  uintptr_t a5;
+  uintptr_t a6;
+  uintptr_t a7;
+  uintptr_t a8;
+  uintptr_t a9;
 };
 
-extern uintptr_t processFn(struct fnargs* args, char* parg);
+extern uintptr_t processFn(struct fnargs *args, char *parg);

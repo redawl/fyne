@@ -69,21 +69,37 @@ func (p *painter) Init() {
 		p.glctx().Disable(gl.DepthTest)
 		p.glctx().Enable(gl.Blend)
 		initialized = true
-		p.program = ProgramState{ref: p.createProgram("simple_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.program = ProgramState{
+			ref:      p.createProgram("simple_es"),
+			buff:     p.createBuffer(20),
+			uniforms: make(map[string]*UniformState, 0),
+		}
 		p.initUniform(p.program, "text")
 		p.initUniform(p.program, "alpha")
 
-		p.lineProgram = ProgramState{ref: p.createProgram("line_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.lineProgram = ProgramState{
+			ref:      p.createProgram("line_es"),
+			buff:     p.createBuffer(24),
+			uniforms: make(map[string]*UniformState, 0),
+		}
 		p.initUniform(p.lineProgram, "lineWidth")
 
-		p.rectangleProgram = ProgramState{ref: p.createProgram("rectangle_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.rectangleProgram = ProgramState{
+			ref:      p.createProgram("rectangle_es"),
+			buff:     p.createBuffer(16),
+			uniforms: make(map[string]*UniformState, 0),
+		}
 		p.initUniform(p.rectangleProgram, "frame_size")
 		p.initUniform(p.rectangleProgram, "rect_coords")
 		p.initUniform(p.rectangleProgram, "stroke_width")
 		p.initUniform(p.rectangleProgram, "fill_color")
 		p.initUniform(p.rectangleProgram, "stroke_color")
 
-		p.roundRectangleProgram = ProgramState{ref: p.createProgram("round_rectangle_es"), uniforms: make(map[string]*UniformState, 0)}
+		p.roundRectangleProgram = ProgramState{
+			ref:      p.createProgram("round_rectangle_es"),
+			buff:     p.createBuffer(16),
+			uniforms: make(map[string]*UniformState, 0),
+		}
 		p.initUniform(p.roundRectangleProgram, "frame_size")
 		p.initUniform(p.roundRectangleProgram, "rect_coords")
 		p.initUniform(p.roundRectangleProgram, "stroke_width_half")
@@ -133,6 +149,11 @@ func (c *mobileContext) BlendFunc(srcFactor, destFactor uint32) {
 func (c *mobileContext) BufferData(target uint32, points []float32, usage uint32) {
 	data := toLEByteOrder(points...)
 	c.glContext.BufferData(gl.Enum(target), data, gl.Enum(usage))
+}
+
+func (c *mobileContext) BufferSubData(target uint32, points []float32) {
+	data := toLEByteOrder(points...)
+	c.glContext.BufferSubData(gl.Enum(target), data)
 }
 
 func (c *mobileContext) Clear(mask uint32) {

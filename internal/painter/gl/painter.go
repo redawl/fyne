@@ -54,6 +54,7 @@ type painter struct {
 
 type ProgramState struct {
 	ref      Program
+	buff     Buffer
 	uniforms map[string]*UniformState
 }
 
