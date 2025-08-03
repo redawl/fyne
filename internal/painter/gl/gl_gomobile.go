@@ -70,35 +70,45 @@ func (p *painter) Init() {
 		p.glctx().Enable(gl.Blend)
 		initialized = true
 		p.program = ProgramState{
-			ref:      p.createProgram("simple_es"),
-			buff:     p.createBuffer(20),
-			uniforms: make(map[string]*UniformState, 0),
+			ref:        p.createProgram("simple_es"),
+			buff:       p.createBuffer(20),
+			uniforms:   make(map[string]*UniformState),
+			attributes: make(map[string]*AttributeState),
 		}
 		p.initUniform(p.program, "text")
 		p.initUniform(p.program, "alpha")
+		p.initAttrib(p.program, "vert")
+		p.initAttrib(p.program, "vertTexCoord")
 
 		p.lineProgram = ProgramState{
-			ref:      p.createProgram("line_es"),
-			buff:     p.createBuffer(24),
-			uniforms: make(map[string]*UniformState, 0),
+			ref:        p.createProgram("line_es"),
+			buff:       p.createBuffer(24),
+			uniforms:   make(map[string]*UniformState),
+			attributes: make(map[string]*AttributeState),
 		}
 		p.initUniform(p.lineProgram, "lineWidth")
+		p.initAttrib(p.lineProgram, "vert")
+		p.initAttrib(p.lineProgram, "normal")
 
 		p.rectangleProgram = ProgramState{
-			ref:      p.createProgram("rectangle_es"),
-			buff:     p.createBuffer(16),
-			uniforms: make(map[string]*UniformState, 0),
+			ref:        p.createProgram("rectangle_es"),
+			buff:       p.createBuffer(16),
+			uniforms:   make(map[string]*UniformState),
+			attributes: make(map[string]*AttributeState),
 		}
 		p.initUniform(p.rectangleProgram, "frame_size")
 		p.initUniform(p.rectangleProgram, "rect_coords")
 		p.initUniform(p.rectangleProgram, "stroke_width")
 		p.initUniform(p.rectangleProgram, "fill_color")
 		p.initUniform(p.rectangleProgram, "stroke_color")
+		p.initAttrib(p.rectangleProgram, "vert")
+		p.initAttrib(p.rectangleProgram, "normal")
 
 		p.roundRectangleProgram = ProgramState{
-			ref:      p.createProgram("round_rectangle_es"),
-			buff:     p.createBuffer(16),
-			uniforms: make(map[string]*UniformState, 0),
+			ref:        p.createProgram("round_rectangle_es"),
+			buff:       p.createBuffer(16),
+			uniforms:   make(map[string]*UniformState),
+			attributes: make(map[string]*AttributeState),
 		}
 		p.initUniform(p.roundRectangleProgram, "frame_size")
 		p.initUniform(p.roundRectangleProgram, "rect_coords")
@@ -108,12 +118,20 @@ func (p *painter) Init() {
 		p.initUniform(p.roundRectangleProgram, "edge_softness")
 		p.initUniform(p.roundRectangleProgram, "fill_color")
 		p.initUniform(p.roundRectangleProgram, "stroke_color")
+		p.initAttrib(p.roundRectangleProgram, "vert")
+		p.initAttrib(p.roundRectangleProgram, "normal")
 	}
 }
 
 func (p *painter) initUniform(pState ProgramState, name string) {
 	u := p.ctx.GetUniformLocation(pState.ref, name)
 	pState.uniforms[name] = &UniformState{ref: u, prev: make([]float32, 4)}
+}
+
+func (p *painter) initAttrib(pState ProgramState, name string) {
+	a := p.ctx.GetAttribLocation(pState.ref, name)
+	p.ctx.EnableVertexAttribArray(a)
+	pState.attributes[name] = &AttributeState{ref: a}
 }
 
 type mobileContext struct {

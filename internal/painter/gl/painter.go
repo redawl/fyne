@@ -53,9 +53,20 @@ type painter struct {
 }
 
 type ProgramState struct {
-	ref      Program
-	buff     Buffer
-	uniforms map[string]*UniformState
+	ref        Program
+	buff       Buffer
+	uniforms   map[string]*UniformState
+	attributes map[string]*AttributeState
+}
+
+type UniformState struct {
+	ref  Uniform
+	prev []float32
+}
+
+type AttributeState struct {
+	ref                  Attribute
+	size, stride, offset int
 }
 
 func (p *painter) SetUniform1f(pState ProgramState, name string, v float32) {
@@ -89,9 +100,18 @@ func (p *painter) SetUniform4f(pState ProgramState, name string, v0, v1, v2, v3 
 	p.ctx.Uniform4f(u.ref, v0, v1, v2, v3)
 }
 
-type UniformState struct {
-	ref  Uniform
-	prev []float32
+func (p *painter) UpdateVertexArray(pState ProgramState, name string, size, stride, offset int) {
+	a := pState.attributes[name]
+
+	p.ctx.VertexAttribPointerWithOffset(a.ref, size, float, false, stride*floatSize, offset*floatSize)
+	if a.size == size && a.stride == stride && a.offset == offset {
+		return
+	}
+
+	a.size = size
+	a.stride = stride
+	a.offset = offset
+	p.logError()
 }
 
 // Declare conformity to Painter interface
@@ -198,6 +218,8 @@ func (p *painter) createProgram(shaderFilename string) Program {
 	if glErr := p.ctx.GetError(); glErr != 0 {
 		panic(fmt.Sprintf("failed to link OpenGL program; error code: %x", glErr))
 	}
+
+	p.ctx.UseProgram(prog)
 
 	return prog
 }

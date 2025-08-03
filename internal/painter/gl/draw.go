@@ -28,13 +28,6 @@ func (p *painter) updateBuffer(vbo Buffer, points []float32) {
 	p.logError()
 }
 
-func (p *painter) defineVertexArray(prog Program, name string, size, stride, offset int) {
-	vertAttrib := p.ctx.GetAttribLocation(prog, name)
-	p.ctx.EnableVertexAttribArray(vertAttrib)
-	p.ctx.VertexAttribPointerWithOffset(vertAttrib, size, float, false, stride*floatSize, offset*floatSize)
-	p.logError()
-}
-
 func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyne.Size) {
 	size := circle.Size()
 	radius := size.Width / 2
@@ -47,8 +40,8 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	bounds, points := p.vecSquareCoords(pos, circle, frame)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points)
-	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
-	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "vert", 2, 4, 0)
+	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -105,8 +98,8 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
 	p.ctx.UseProgram(p.lineProgram.ref)
 	p.updateBuffer(p.lineProgram.buff, points)
-	p.defineVertexArray(p.lineProgram.ref, "vert", 2, 4, 0)
-	p.defineVertexArray(p.lineProgram.ref, "normal", 2, 4, 2)
+	p.UpdateVertexArray(p.lineProgram, "vert", 2, 4, 0)
+	p.UpdateVertexArray(p.lineProgram, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -174,8 +167,8 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	bounds, points := p.vecRectCoords(pos, obj, frame, aspect)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points)
-	p.defineVertexArray(program.ref, "vert", 2, 4, 0)
-	p.defineVertexArray(program.ref, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "vert", 2, 4, 0)
+	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -263,8 +256,8 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	points := p.rectCoords(size, pos, frame, fill, aspect, pad)
 	p.ctx.UseProgram(p.program.ref)
 	p.updateBuffer(p.program.buff, points)
-	p.defineVertexArray(p.program.ref, "vert", 3, 5, 0)
-	p.defineVertexArray(p.program.ref, "vertTexCoord", 2, 5, 3)
+	p.UpdateVertexArray(p.program, "vert", 3, 5, 0)
+	p.UpdateVertexArray(p.program, "vertTexCoord", 2, 5, 3)
 
 	p.SetUniform1f(p.program, "alpha", alpha)
 
