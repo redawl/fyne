@@ -56,17 +56,12 @@ type ProgramState struct {
 	ref        Program
 	buff       Buffer
 	uniforms   map[string]*UniformState
-	attributes map[string]*AttributeState
+	attributes map[string]Attribute
 }
 
 type UniformState struct {
 	ref  Uniform
 	prev []float32
-}
-
-type AttributeState struct {
-	ref                  Attribute
-	size, stride, offset int
 }
 
 func (p *painter) SetUniform1f(pState ProgramState, name string, v float32) {
@@ -103,14 +98,7 @@ func (p *painter) SetUniform4f(pState ProgramState, name string, v0, v1, v2, v3 
 func (p *painter) UpdateVertexArray(pState ProgramState, name string, size, stride, offset int) {
 	a := pState.attributes[name]
 
-	p.ctx.VertexAttribPointerWithOffset(a.ref, size, float, false, stride*floatSize, offset*floatSize)
-	if a.size == size && a.stride == stride && a.offset == offset {
-		return
-	}
-
-	a.size = size
-	a.stride = stride
-	a.offset = offset
+	p.ctx.VertexAttribPointerWithOffset(a, size, float, false, stride*floatSize, offset*floatSize)
 	p.logError()
 }
 

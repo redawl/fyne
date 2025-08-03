@@ -73,65 +73,61 @@ func (p *painter) Init() {
 			ref:        p.createProgram("simple_es"),
 			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*UniformState),
-			attributes: make(map[string]*AttributeState),
+			attributes: make(map[string]Attribute),
 		}
-		p.initUniform(p.program, "text")
-		p.initUniform(p.program, "alpha")
-		p.initAttrib(p.program, "vert")
-		p.initAttrib(p.program, "vertTexCoord")
+		p.getUniformLocations(p.program, "text", "alpha")
+		p.enableAttribArrays(p.program, "vert", "vertTexCoord")
 
 		p.lineProgram = ProgramState{
 			ref:        p.createProgram("line_es"),
 			buff:       p.createBuffer(24),
 			uniforms:   make(map[string]*UniformState),
-			attributes: make(map[string]*AttributeState),
+			attributes: make(map[string]Attribute),
 		}
-		p.initUniform(p.lineProgram, "lineWidth")
-		p.initAttrib(p.lineProgram, "vert")
-		p.initAttrib(p.lineProgram, "normal")
+		p.getUniformLocations(p.lineProgram, "lineWidth")
+		p.enableAttribArrays(p.lineProgram, "vert", "normal")
 
 		p.rectangleProgram = ProgramState{
 			ref:        p.createProgram("rectangle_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*UniformState),
-			attributes: make(map[string]*AttributeState),
+			attributes: make(map[string]Attribute),
 		}
-		p.initUniform(p.rectangleProgram, "frame_size")
-		p.initUniform(p.rectangleProgram, "rect_coords")
-		p.initUniform(p.rectangleProgram, "stroke_width")
-		p.initUniform(p.rectangleProgram, "fill_color")
-		p.initUniform(p.rectangleProgram, "stroke_color")
-		p.initAttrib(p.rectangleProgram, "vert")
-		p.initAttrib(p.rectangleProgram, "normal")
+		p.getUniformLocations(
+			p.rectangleProgram,
+			"frame_size", "rect_coords", "stroke_width", "fill_color", "stroke_color",
+		)
+		p.enableAttribArrays(p.rectangleProgram, "vert", "normal")
 
 		p.roundRectangleProgram = ProgramState{
 			ref:        p.createProgram("round_rectangle_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*UniformState),
-			attributes: make(map[string]*AttributeState),
+			attributes: make(map[string]Attribute),
 		}
-		p.initUniform(p.roundRectangleProgram, "frame_size")
-		p.initUniform(p.roundRectangleProgram, "rect_coords")
-		p.initUniform(p.roundRectangleProgram, "stroke_width_half")
-		p.initUniform(p.roundRectangleProgram, "rect_size_half")
-		p.initUniform(p.roundRectangleProgram, "radius")
-		p.initUniform(p.roundRectangleProgram, "edge_softness")
-		p.initUniform(p.roundRectangleProgram, "fill_color")
-		p.initUniform(p.roundRectangleProgram, "stroke_color")
-		p.initAttrib(p.roundRectangleProgram, "vert")
-		p.initAttrib(p.roundRectangleProgram, "normal")
+		p.getUniformLocations(p.roundRectangleProgram,
+			"frame_size", "rect_coords",
+			"stroke_width_half", "rect_size_half",
+			"radius", "edge_softness",
+			"fill_color", "stroke_color",
+		)
+		p.enableAttribArrays(p.roundRectangleProgram, "vert", "normal")
 	}
 }
 
-func (p *painter) initUniform(pState ProgramState, name string) {
-	u := p.ctx.GetUniformLocation(pState.ref, name)
-	pState.uniforms[name] = &UniformState{ref: u, prev: make([]float32, 4)}
+func (p *painter) getUniformLocations(pState ProgramState, names ...string) {
+	for _, name := range names {
+		u := p.ctx.GetUniformLocation(pState.ref, name)
+		pState.uniforms[name] = &UniformState{ref: u, prev: make([]float32, 4)}
+	}
 }
 
-func (p *painter) initAttrib(pState ProgramState, name string) {
-	a := p.ctx.GetAttribLocation(pState.ref, name)
-	p.ctx.EnableVertexAttribArray(a)
-	pState.attributes[name] = &AttributeState{ref: a}
+func (p *painter) enableAttribArrays(pState ProgramState, names ...string) {
+	for _, name := range names {
+		a := p.ctx.GetAttribLocation(pState.ref, name)
+		p.ctx.EnableVertexAttribArray(a)
+		pState.attributes[name] = a
+	}
 }
 
 type mobileContext struct {

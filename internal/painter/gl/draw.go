@@ -272,13 +272,6 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	p.logError()
 }
 
-func (p *painter) freeBuffer(vbo Buffer) {
-	p.ctx.BindBuffer(arrayBuffer, noBuffer)
-	p.logError()
-	p.ctx.DeleteBuffer(vbo)
-	p.logError()
-}
-
 func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([]float32, float32, float32) {
 	// Shift line coordinates so that they match the target position.
 	xPosDiff := pos.X - fyne.Min(pos1.X, pos2.X)
