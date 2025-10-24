@@ -352,7 +352,7 @@ func TestMenuBar(t *testing.T) {
 			themeCounter++
 		})
 		container := container.NewWithoutLayout(button, menuBar)
-		w.SetContent(container)
+		runOnMain(func() { w.SetContent(container) })
 		w.Resize(fyne.NewSize(300, 300))
 		button.Resize(button.MinSize())
 		button.Move(fyne.NewPos(100, 50))
