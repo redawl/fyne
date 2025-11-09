@@ -2,6 +2,7 @@ package glfw
 
 import (
 	"runtime"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -32,7 +33,20 @@ func init() {
 }
 
 // force a function f to run on the main thread
+//
+//go:noinline
 func runOnMain(f func()) {
+	var pcs [1000]uintptr
+	runtime.Callers(2, pcs[:])
+	frames := runtime.CallersFrames(pcs[:])
+	frame, more := frames.Next()
+	for more {
+		name := frame.Func.Name()
+		if strings.Contains(name, "runGL") {
+			panic("runOnMain called from runGL!!!!!\n")
+		}
+		frame, more = frames.Next()
+	}
 	runOnMainWithWait(f, true)
 }
 
@@ -154,8 +168,14 @@ func (d *gLDriver) runGL() {
 			d.pollEvents()
 			for i := 0; i < len(d.windows); i++ {
 				w := d.windows[i].(*window)
-				w.processMouseMoved(w.newMousePosX, w.newMousePosY)
-				w.processResized(w.width, w.height)
+				if w.mousePos == fyne.NewPos(0, 0) || w.mousePos != fyne.NewPos(scale.ToFyneCoordinate(w.canvas, int(w.newMousePosX)), scale.ToFyneCoordinate(w.canvas, int(w.newMousePosY))) {
+					w.processMouseMoved(w.newMousePosX, w.newMousePosY)
+				}
+				if w.newWidth != w.width || w.newHeight != w.height {
+					w.processResized(w.newWidth, w.newHeight)
+					w.newWidth = w.width
+					w.newHeight = w.height
+				}
 
 				if w.viewport == nil {
 					continue

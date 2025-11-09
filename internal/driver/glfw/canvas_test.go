@@ -469,17 +469,20 @@ func TestGlCanvas_ResizeWithOverlays(t *testing.T) {
 	ensureCanvasSize(t, w, fyne.NewSize(69, 36))
 
 	size := fyne.NewSize(200, 100)
-	assert.NotEqual(t, size, content.Size())
-	assert.NotEqual(t, size, o1.Size())
-	assert.NotEqual(t, size, o2.Size())
-	assert.NotEqual(t, size, o3.Size())
-
+	runOnMain(func() {
+		assert.NotEqual(t, size, content.Size())
+		assert.NotEqual(t, size, o1.Size())
+		assert.NotEqual(t, size, o2.Size())
+		assert.NotEqual(t, size, o3.Size())
+	})
 	w.Resize(size)
 	ensureCanvasSize(t, w, size)
-	assert.Equal(t, size, content.Size(), "canvas content is resized")
-	assert.Equal(t, size, o1.Size(), "canvas overlay 1 is resized")
-	assert.Equal(t, size, o2.Size(), "canvas overlay 2 is resized")
-	assert.Equal(t, size, o3.Size(), "canvas overlay 3 is resized")
+	runOnMain(func() {
+		assert.Equal(t, size, content.Size(), "canvas content is resized")
+		assert.Equal(t, size, o1.Size(), "canvas overlay 1 is resized")
+		assert.Equal(t, size, o2.Size(), "canvas overlay 2 is resized")
+		assert.Equal(t, size, o3.Size(), "canvas overlay 3 is resized")
+	})
 }
 
 // TODO: this can be removed when #707 is addressed

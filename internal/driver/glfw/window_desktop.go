@@ -107,6 +107,7 @@ type window struct {
 	menuDeactivationPending fyne.KeyName
 
 	xpos, ypos                      int
+	newWidth, newHeight             int
 	width, height                   int
 	requestedWidth, requestedHeight int
 	shouldWidth, shouldHeight       int
@@ -338,10 +339,8 @@ func (w *window) moved(_ *glfw.Window, x, y int) {
 }
 
 func (w *window) resized(_ *glfw.Window, width, height int) {
-	if !w.fullScreen {
-		w.width = width
-		w.height = height
-	}
+	w.newWidth = width
+	w.newHeight = height
 }
 
 func (w *window) scaled(_ *glfw.Window, x float32, y float32) {

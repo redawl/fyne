@@ -352,7 +352,9 @@ func TestMenuBar(t *testing.T) {
 			themeCounter++
 		})
 		container := container.NewWithoutLayout(button, menuBar)
-		w.SetContent(container)
+		runOnMain(func() {
+			w.SetContent(container)
+		})
 		w.Resize(fyne.NewSize(300, 300))
 		button.Resize(button.MinSize())
 		button.Move(fyne.NewPos(100, 50))
@@ -494,14 +496,18 @@ func TestMenuBar_Toggle(t *testing.T) {
 		w.Resize(fyne.NewSize(300, 300))
 		c := w.Canvas()
 		menuBar := NewMenuBar(menu, c)
-		w.SetContent(container.NewWithoutLayout(menuBar))
-		w.Resize(fyne.NewSize(300, 300))
-		menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		runOnMain(func() {
+			w.SetContent(container.NewWithoutLayout(menuBar))
+			w.Resize(fyne.NewSize(300, 300))
+			menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		})
 
 		require.False(t, menuBar.IsActive())
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_deactivated.xml", c)
 
-		menuBar.Toggle()
+		runOnMain(func() {
+			menuBar.Toggle()
+		})
 		assert.True(t, menuBar.IsActive())
 		assert.Equal(t, c.Focused(), menuBar.Items[0])
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_first_item_active.xml", c)
@@ -514,15 +520,21 @@ func TestMenuBar_Toggle(t *testing.T) {
 		w.Resize(fyne.NewSize(300, 300))
 		c := w.Canvas()
 		menuBar := NewMenuBar(menu, c)
-		w.SetContent(container.NewWithoutLayout(menuBar))
-		w.Resize(fyne.NewSize(300, 300))
-		menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		runOnMain(func() {
+			w.SetContent(container.NewWithoutLayout(menuBar))
+			w.Resize(fyne.NewSize(300, 300))
+			menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		})
 
-		menuBar.Toggle()
+		runOnMain(func() {
+			menuBar.Toggle()
+		})
 		require.True(t, menuBar.IsActive())
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_first_item_active.xml", c)
 
-		menuBar.Toggle()
+		runOnMain(func() {
+			menuBar.Toggle()
+		})
 		assert.False(t, menuBar.IsActive())
 		assert.Nil(t, c.Focused())
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_deactivated.xml", c)
@@ -535,16 +547,22 @@ func TestMenuBar_Toggle(t *testing.T) {
 		w.Resize(fyne.NewSize(300, 300))
 		c := w.Canvas()
 		menuBar := NewMenuBar(menu, c)
-		w.SetContent(container.NewWithoutLayout(menuBar))
-		w.Resize(fyne.NewSize(300, 300))
-		menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		runOnMain(func() {
+			w.SetContent(container.NewWithoutLayout(menuBar))
+			w.Resize(fyne.NewSize(300, 300))
+			menuBar.Resize(fyne.NewSize(300, 0).Max(menuBar.MinSize()))
+		})
 
-		menuBar.Toggle()
-		c.(test.WindowlessCanvas).FocusNext()
+		runOnMain(func() {
+			menuBar.Toggle()
+			c.(test.WindowlessCanvas).FocusNext()
+		})
 		require.True(t, menuBar.IsActive())
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_second_item_active.xml", c)
 
-		menuBar.Toggle()
+		runOnMain(func() {
+			menuBar.Toggle()
+		})
 		assert.False(t, menuBar.IsActive())
 		assert.Nil(t, c.Focused())
 		test.AssertRendersToMarkup(t, "menu_bar_toggle_deactivated.xml", c)
