@@ -14,6 +14,40 @@ import (
 	"fyne.io/fyne/v2/test"
 )
 
+var fontTests = map[string]struct {
+	color    color.Color
+	style    fyne.TextStyle
+	size     float32
+	string   string
+	tabWidth int
+	want     string
+}{
+	"regular": {
+		color:    color.Black,
+		style:    fyne.TextStyle{},
+		size:     40,
+		string:   "Hello\tworld!",
+		tabWidth: 7,
+		want:     "hello_TAB_world_regular_size_40_height_50_tab_width_7.png",
+	},
+	"bold italic": {
+		color:    color.NRGBA{R: 255, A: 255},
+		style:    fyne.TextStyle{Bold: true, Italic: true},
+		size:     27.42,
+		string:   "Hello\tworld!",
+		tabWidth: 3,
+		want:     "hello_TAB_world_bold_italic_size_27.42_height_42_tab_width_3.png",
+	},
+	"missing glyphs": {
+		color:    color.Black,
+		style:    fyne.TextStyle{},
+		size:     40,
+		string:   "Missing: स",
+		tabWidth: 4,
+		want:     "missing_glyph.png",
+	},
+}
+
 func TestCachedFontFace(t *testing.T) {
 	for name, tt := range map[string]struct {
 		style fyne.TextStyle
@@ -42,39 +76,7 @@ func TestCachedFontFace(t *testing.T) {
 }
 
 func TestDrawString(t *testing.T) {
-	for name, tt := range map[string]struct {
-		color    color.Color
-		style    fyne.TextStyle
-		size     float32
-		string   string
-		tabWidth int
-		want     string
-	}{
-		"regular": {
-			color:    color.Black,
-			style:    fyne.TextStyle{},
-			size:     40,
-			string:   "Hello\tworld!",
-			tabWidth: 7,
-			want:     "hello_TAB_world_regular_size_40_height_50_tab_width_7.png",
-		},
-		"bold italic": {
-			color:    color.NRGBA{R: 255, A: 255},
-			style:    fyne.TextStyle{Bold: true, Italic: true},
-			size:     27.42,
-			string:   "Hello\tworld!",
-			tabWidth: 3,
-			want:     "hello_TAB_world_bold_italic_size_27.42_height_42_tab_width_3.png",
-		},
-		"missing glyphs": {
-			color:    color.Black,
-			style:    fyne.TextStyle{},
-			size:     40,
-			string:   "Missing: स",
-			tabWidth: 4,
-			want:     "missing_glyph.png",
-		},
-	} {
+	for name, tt := range fontTests {
 		t.Run(name, func(t *testing.T) {
 			img := image.NewNRGBA(image.Rect(0, 0, 300, 100))
 			f := painter.CachedFontFace(tt.style, nil, nil)
@@ -139,4 +141,18 @@ func TestHangul(t *testing.T) {
 	gid, ok := f.Cmap.Lookup('안')
 	assert.True(t, ok)
 	assert.NotZero(t, gid)
+}
+
+func BenchmarkDrawString(b *testing.B) {
+	for name, tt := range fontTests {
+		b.Run(name, func(b *testing.B) {
+			img := image.NewRGBA(image.Rect(0, 0, 300, 100))
+			f := painter.CachedFontFace(tt.style, nil, nil)
+
+			fontMap := &intTest.FontMap{f.Fonts.ResolveFace(' ')} // first (ascii) font
+			for i := 0; i < b.N; i++ {
+				painter.DrawString(img, tt.string, tt.color, fontMap, tt.size, 1, fyne.TextStyle{TabWidth: tt.tabWidth})
+			}
+		})
+	}
 }
