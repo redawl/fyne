@@ -368,13 +368,22 @@ type noopLogger struct{}
 func (n noopLogger) Printf(string, ...any) {}
 
 type dynamicFontMap struct {
-	faces  []*font.Face
-	family string
+	faces     []*font.Face
+	family    string
+	faceCache map[rune]*font.Face
 }
 
 func (d *dynamicFontMap) ResolveFace(r rune) *font.Face {
+	if d.faceCache == nil {
+		d.faceCache = make(map[rune]*font.Face)
+	}
+	if f, ok := d.faceCache[r]; ok {
+		d.faceCache[r] = f
+		return f
+	}
 	for _, f := range d.faces {
 		if _, ok := f.NominalGlyph(r); ok {
+			d.faceCache[r] = f
 			return f
 		}
 	}
@@ -382,9 +391,10 @@ func (d *dynamicFontMap) ResolveFace(r rune) *font.Face {
 	toAdd := lookupRuneFont(r, d.family, font.Aspect{})
 	if toAdd != nil {
 		d.addFace(toAdd)
+		d.faceCache[r] = toAdd
 		return toAdd
 	}
-
+	d.faceCache[r] = d.faces[0]
 	return d.faces[0]
 }
 
