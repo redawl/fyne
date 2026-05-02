@@ -57,6 +57,7 @@ func Localize(in string, data ...any) string {
 // The string can be templated and the template data can be passed as a struct with exported fields,
 // or as a map of string keys to any suitable value.
 func LocalizeKey(key, fallback string, data ...any) string {
+	return fallback
 	var d0 any
 	if len(data) > 0 {
 		d0 = data[0]
