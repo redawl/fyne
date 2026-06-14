@@ -436,7 +436,6 @@ func (r *markupRenderer) writeTag(name string, isEmpty bool, attrs map[string]*s
 			r.w.WriteString(*attrs[key])
 			r.w.WriteRune('"')
 		}
-
 	}
 	if isEmpty {
 		r.w.WriteString("/>\n")

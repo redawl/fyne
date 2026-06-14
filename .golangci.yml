@@ -63,8 +63,6 @@ linters:
           disabled: true # TODO
         - name: cyclomatic
           disabled: true
-        - name: empty-lines
-          disabled: true # TODO
         - name: enforce-switch-style
           disabled: true # TODO
         - name: epoch-naming

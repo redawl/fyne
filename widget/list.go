@@ -898,12 +898,10 @@ func (l *listLayout) updateSeparators() {
 			l.separators = l.separators[:lenChildren]
 		} else {
 			for i := lenSep; i < lenChildren; i++ {
-
 				sep := NewSeparator()
 				if cache.OverrideThemeMatchingScope(sep, l.list) {
 					sep.Refresh()
 				}
-
 				l.separators = append(l.separators, sep)
 			}
 		}
