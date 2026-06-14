@@ -968,12 +968,11 @@ func (t *Table) visibleColumnWidths(colWidth float32, cols int) (visible map[int
 			offX = colOffset
 			isVisible = true
 		}
-		if colOffset < t.offset.X+size.Width {
-			maxCol = i + 1
-		} else {
+		if colOffset >= t.offset.X+size.Width {
 			break
 		}
 
+		maxCol = i + 1
 		colOffset += width + padding
 		if isVisible || i < stick {
 			visible[i] = width
@@ -1068,12 +1067,11 @@ func (t *Table) visibleRowHeights(rowHeight float32, rows int) (visible map[int]
 			offY = rowOffset
 			isVisible = true
 		}
-		if rowOffset < t.offset.Y+size.Height {
-			maxRow = i + 1
-		} else {
+		if rowOffset >= t.offset.Y+size.Height {
 			break
 		}
 
+		maxRow = i + 1
 		rowOffset += height + padding
 		if isVisible || i < stick {
 			visible[i] = height

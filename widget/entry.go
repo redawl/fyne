@@ -1179,17 +1179,17 @@ func (e *Entry) rowColFromTextPos(pos int) (row int, col int) {
 		if b == nil {
 			continue
 		}
-		if b.begin <= pos {
-			if b.end < pos {
-				row++
-			}
-			col = pos - b.begin
-			// if this gap is at `pos` and is a line wrap, increment (safe to access boundary i-1)
-			if canWrap && b.begin == pos && pos != 0 && provider.rowBoundary(i-1).end == b.begin && row < (totalRows-1) {
-				row++
-			}
-		} else {
+		if b.begin > pos {
 			break
+		}
+
+		if b.end < pos {
+			row++
+		}
+		col = pos - b.begin
+		// if this gap is at `pos` and is a line wrap, increment (safe to access boundary i-1)
+		if canWrap && b.begin == pos && pos != 0 && provider.rowBoundary(i-1).end == b.begin && row < (totalRows-1) {
+			row++
 		}
 	}
 	return row, col

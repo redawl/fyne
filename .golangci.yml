@@ -63,10 +63,6 @@ linters:
           disabled: true # TODO
         - name: cyclomatic
           disabled: true
-        - name: deep-exit
-          disabled: true # TODO
-        - name: early-return
-          disabled: true # TODO
         - name: empty-block
           disabled: true # TODO
         - name: empty-lines

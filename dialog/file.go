@@ -641,8 +641,6 @@ func (f *FileDialog) effectiveStartingDir() fyne.ListableURI {
 			// the starting directory is set explicitly
 			if _, err := os.Stat(path); err != nil {
 				fyne.LogError("Error with StartingLocation", err)
-			} else {
-				return f.startingLocation
 			}
 		}
 		return f.startingLocation

@@ -180,11 +180,11 @@ func (d *gLDriver) windowList() []fyne.Window {
 func (d *gLDriver) initFailed(msg string, err error) {
 	fyne.LogError(msg, err)
 
-	if !running.Load() {
-		d.Quit()
-	} else {
-		os.Exit(1)
+	if running.Load() {
+		os.Exit(1) //revive:disable-line:deep-exit
 	}
+
+	d.Quit()
 }
 
 func (d *gLDriver) Run() {

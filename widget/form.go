@@ -166,11 +166,11 @@ func (f *Form) RemoveItem(item *FormItem) {
 			}
 		}
 
-		if pos != -1 {
-			f.Items = append(f.Items[:pos], f.Items[pos+1:]...)
-		} else {
+		if pos == -1 {
 			return
 		}
+
+		f.Items = append(f.Items[:pos], f.Items[pos+1:]...)
 	}
 
 	f.Refresh()
