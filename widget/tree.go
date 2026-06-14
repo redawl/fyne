@@ -723,11 +723,7 @@ func (r *treeContentRenderer) Layout(size fyne.Size) {
 		if isBranch {
 			m = r.treeContent.tree.branchMinSize
 		}
-		if y+m.Height < offsetY {
-			// Node is above viewport and not visible
-		} else if y > offsetY+viewport.Height {
-			// Node is below viewport and not visible
-		} else {
+		if y+m.Height >= offsetY && y <= offsetY+viewport.Height {
 			// Node is in viewport
 			r.visible = append(r.visible, uid)
 

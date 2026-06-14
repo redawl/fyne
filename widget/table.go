@@ -961,9 +961,7 @@ func (t *Table) visibleColumnWidths(colWidth float32, cols int) (visible map[int
 			width = w
 		}
 
-		if colOffset <= t.offset.X-width-padding {
-			// before visible content
-		} else if colOffset <= headWidth || colOffset <= t.offset.X {
+		if colOffset > t.offset.X-width-padding && (colOffset <= headWidth || colOffset <= t.offset.X) {
 			minCol = i
 			offX = colOffset
 			isVisible = true
@@ -1060,9 +1058,7 @@ func (t *Table) visibleRowHeights(rowHeight float32, rows int) (visible map[int]
 			height = h
 		}
 
-		if rowOffset <= t.offset.Y-height-padding {
-			// before visible content
-		} else if rowOffset <= headHeight || rowOffset <= t.offset.Y {
+		if rowOffset > t.offset.Y-height-padding && (rowOffset <= headHeight || rowOffset <= t.offset.Y) {
 			minRow = i
 			offY = rowOffset
 			isVisible = true

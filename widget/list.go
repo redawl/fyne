@@ -536,9 +536,7 @@ func (l *listLayout) calculateVisibleRowHeights(itemHeight float32, length int, 
 			height = h
 		}
 
-		if rowOffset <= l.list.offsetY-height-padding {
-			// before scroll
-		} else if rowOffset <= l.list.offsetY {
+		if rowOffset > l.list.offsetY-height-padding && rowOffset <= l.list.offsetY {
 			minRow = i
 			offY = rowOffset
 			isVisible = true
@@ -878,7 +876,7 @@ func (l *listLayout) updateList(newOnly bool) {
 		}
 
 		// a full refresh may change theme, we should drain the pool of unused items instead of refreshing them.
-		for l.itemPool.Get() != nil {
+		for l.itemPool.Get() != nil { //revive:disable-line:empty-block
 		}
 	}
 

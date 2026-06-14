@@ -165,7 +165,7 @@ func TestGlCanvas_ContentChangeWithoutMinSizeChangeDoesNotLayout(t *testing.T) {
 	repaintWindow(w)
 	runOnMain(func() {
 		// clear the recorded layouts
-		for layout.popLayoutEvent() != nil {
+		for layout.popLayoutEvent() != nil { //revive:disable-line:empty-block
 		}
 		assert.Nil(t, layout.popLayoutEvent())
 	})
