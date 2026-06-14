@@ -13,12 +13,11 @@ import (
 )
 
 // helper function to register the HTTP and HTTPS repositories
-func registerRepositories() (*HTTPRepository, *HTTPRepository) {
-	http := NewHTTPRepository()
+func registerRepositories() (http, https *HTTPRepository) {
+	http = NewHTTPRepository()
 	repository.Register("http", http)
-	https := NewHTTPRepository()
+	https = NewHTTPRepository()
 	repository.Register("https", https)
-
 	return http, https
 }
 

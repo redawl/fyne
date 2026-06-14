@@ -44,13 +44,13 @@ func (w *window) FullScreen() bool {
 }
 
 // minSizeOnScreen gets the padded minimum size of a window content in screen pixels
-func (w *window) minSizeOnScreen() (int, int) {
+func (w *window) minSizeOnScreen() (width, height int) {
 	// get minimum size of content inside the window
 	return w.screenSize(w.canvas.MinSize())
 }
 
 // screenSize computes the actual output size of the given content size in screen pixels
-func (w *window) screenSize(canvasSize fyne.Size) (int, int) {
+func (w *window) screenSize(canvasSize fyne.Size) (width, height int) {
 	return scale.ToScreenCoordinate(w.canvas, canvasSize.Width), scale.ToScreenCoordinate(w.canvas, canvasSize.Height)
 }
 

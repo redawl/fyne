@@ -61,8 +61,6 @@ linters:
           disabled: true
         - name: confusing-naming
           disabled: true # TODO
-        - name: confusing-results
-          disabled: true # TODO
         - name: cyclomatic
           disabled: true
         - name: deep-exit

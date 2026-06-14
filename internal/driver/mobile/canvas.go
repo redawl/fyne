@@ -109,7 +109,7 @@ func (c *canvas) OnTypedRune() func(rune) {
 	return c.onTypedRune
 }
 
-func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (int, int) {
+func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (x, y int) {
 	return int(pos.X * c.scale), int(pos.Y * c.scale)
 }
 

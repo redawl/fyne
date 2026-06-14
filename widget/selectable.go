@@ -194,14 +194,14 @@ func (s *selectable) cursorColAt(text []rune, pos fyne.Position) int {
 	return len(text)
 }
 
-func (s *selectable) getRowCol(p fyne.Position) (int, int) {
+func (s *selectable) getRowCol(p fyne.Position) (row, col int) {
 	th := s.theme
 	textSize := th.Size(s.getSizeName())
 	innerPad := th.Size(theme.SizeNameInnerPadding)
 
 	rowHeight := s.provider.charMinSize(false, s.style, textSize).Height // TODO handle Password
-	row := int(math.Floor(float64(p.Y-innerPad+th.Size(theme.SizeNameLineSpacing)) / float64(rowHeight)))
-	col := 0
+	row = int(math.Floor(float64(p.Y-innerPad+th.Size(theme.SizeNameLineSpacing)) / float64(rowHeight)))
+	col = 0
 	if row < 0 {
 		row = 0
 	} else if row >= s.provider.rows() {
@@ -232,7 +232,7 @@ func (s *selectable) selectCurrentRow(focus bool) {
 //	"T  e  s [t  i]_n  g" == 3, 5
 //	"T  e  s_[t  i] n  g" == 3, 5
 //	"T  e_[s  t  i] n  g" == 2, 5
-func (s *selectable) selection() (int, int) {
+func (s *selectable) selection() (start, end int) {
 	noSelection := !s.selecting || (s.cursorRow == s.selectRow && s.cursorColumn == s.selectColumn)
 
 	if noSelection {

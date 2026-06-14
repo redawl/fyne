@@ -820,7 +820,7 @@ func (r *textRenderer) associateSiblings(hl *Hyperlink, hlSeg *HyperlinkSegment,
 	}
 }
 
-func (r *textRenderer) layoutRow(texts []fyne.CanvasObject, align fyne.TextAlign, xPos, yPos, lineWidth float32) (float32, float32) {
+func (r *textRenderer) layoutRow(texts []fyne.CanvasObject, align fyne.TextAlign, xPos, yPos, lineWidth float32) (x, height float32) {
 	initialX := xPos
 	if len(texts) == 1 {
 		min := texts[0].MinSize()
@@ -841,7 +841,7 @@ func (r *textRenderer) layoutRow(texts []fyne.CanvasObject, align fyne.TextAlign
 		}
 		return min.Width, min.Height
 	}
-	height := float32(0)
+	height = float32(0)
 	tallestBaseline := float32(0)
 	realign := false
 	baselines := make([]float32, len(texts))

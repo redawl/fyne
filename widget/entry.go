@@ -1372,12 +1372,12 @@ func (e *Entry) updateFromData(data binding.DataItem) {
 	e.setText(val, true)
 }
 
-func (e *Entry) truncatePosition(row, col int) (int, int) {
+func (e *Entry) truncatePosition(row, col int) (newRow, newCol int) {
 	if e.Text == "" {
 		return 0, 0
 	}
-	newRow := row
-	newCol := col
+	newRow = row
+	newCol = col
 	if row >= e.textProvider().rows() {
 		newRow = e.textProvider().rows() - 1
 	}
@@ -1958,7 +1958,7 @@ func (r *entryContentRenderer) updateScrollDirections() {
 // getTextWhitespaceRegion returns the start/end markers for selection highlight on starting from col
 // and expanding to the start and end of the whitespace or text underneath the specified position.
 // Pass `true` for `expand` if you want whitespace selection to extend to the neighboring words.
-func getTextWhitespaceRegion(row []rune, col int, expand bool) (int, int) {
+func getTextWhitespaceRegion(row []rune, col int, expand bool) (start, end int) {
 	if len(row) == 0 || col < 0 {
 		return -1, -1
 	}
@@ -1998,11 +1998,11 @@ func getTextWhitespaceRegion(row []rune, col int, expand bool) (int, int) {
 
 	// LastIndexByte + 1 ensures that the position of the unwanted character ' ' is excluded
 	// +1 also has the added side effect whereby if ' ' isn't found then -1 is snapped to 0
-	start := strings.LastIndexByte(toks[:startCheck], c) + 1
+	start = strings.LastIndexByte(toks[:startCheck], c) + 1
 
 	// IndexByte will find the position of the next unwanted character, this is to be the end
 	// marker for the selection
-	end := -1
+	end = -1
 	if endCheck != -1 {
 		end = strings.IndexByte(toks[endCheck:], c)
 	}

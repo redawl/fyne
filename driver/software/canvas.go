@@ -160,7 +160,7 @@ func (c *canvas) Padded() bool {
 	return c.padded
 }
 
-func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (int, int) {
+func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (x, y int) {
 	return int(pos.X * c.scale), int(pos.Y * c.scale)
 }
 

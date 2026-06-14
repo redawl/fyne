@@ -187,7 +187,7 @@ func (r *splitContainerRenderer) Refresh() {
 	canvas.Refresh(r.split)
 }
 
-func (r *splitContainerRenderer) computeSplitLengths(total, lMin, tMin float32) (float32, float32) {
+func (r *splitContainerRenderer) computeSplitLengths(total, lMin, tMin float32) (leading, trailing float32) {
 	available := float64(total - dividerThickness(r.divider))
 	if available <= 0 {
 		return 0, 0

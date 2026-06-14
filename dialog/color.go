@@ -252,7 +252,7 @@ func stringsToColors(ss ...string) (colors []color.Color) {
 
 // https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
 
-func rgbToHsl(r, g, b uint8) (int, int, int) {
+func rgbToHsl(r, g, b uint8) (h, s, l int) {
 	red := float64(r) / math.MaxUint8
 	green := float64(g) / math.MaxUint8
 	blue := float64(b) / math.MaxUint8
@@ -289,13 +289,13 @@ func rgbToHsl(r, g, b uint8) (int, int, int) {
 		hue = 4 + (red-green)/delta
 	}
 
-	h := wrapHue(int(hue * 60.0)) //revive:disable-line:add-constant
-	s := int(saturation * 100.0)
-	l := int(lightness * 100.0)
+	h = wrapHue(int(hue * 60.0)) //revive:disable-line:add-constant
+	s = int(saturation * 100.0)
+	l = int(lightness * 100.0)
 	return h, s, l
 }
 
-func hslToRgb(h, s, l int) (uint8, uint8, uint8) {
+func hslToRgb(h, s, l int) (r, g, b uint8) {
 	hue := float64(h) / geom.AngleFull
 	saturation := float64(s) / 100
 	lightness := float64(l) / 100
@@ -319,10 +319,9 @@ func hslToRgb(h, s, l int) (uint8, uint8, uint8) {
 	green := hueToChannel(hue, v1, v2)
 	blue := hueToChannel(hue-(1.0/3), v1, v2)
 
-	r := uint8(math.Round(math.MaxUint8 * red))
-	g := uint8(math.Round(math.MaxUint8 * green))
-	b := uint8(math.Round(math.MaxUint8 * blue))
-
+	r = uint8(math.Round(math.MaxUint8 * red))
+	g = uint8(math.Round(math.MaxUint8 * green))
+	b = uint8(math.Round(math.MaxUint8 * blue))
 	return r, g, b
 }
 
