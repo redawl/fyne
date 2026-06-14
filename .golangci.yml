@@ -57,8 +57,6 @@ linters:
             - "**/test/**"
         - name: argument-limit
           disabled: true # TODO
-        - name: blank-imports
-          disabled: true # TODO
         - name: bool-literal-in-expr
           disabled: true # TODO
         - name: cognitive-complexity

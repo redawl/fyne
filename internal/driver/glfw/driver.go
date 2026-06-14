@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"image"
 	"image/draw"
-	_ "image/jpeg"
+	_ "image/jpeg" // allow to use JPEGs as icon source
 	"image/png"
 	"os"
 	"runtime"
