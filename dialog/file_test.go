@@ -8,9 +8,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	intWidget "fyne.io/fyne/v2/internal/widget"
 	"fyne.io/fyne/v2/lang"
-	"github.com/stretchr/testify/assert"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -223,7 +224,7 @@ func TestShowFileOpen(t *testing.T) {
 	id := 0
 	for i, icon := range objects {
 		item := test.TempWidgetRenderer(t, icon.(fyne.Widget)).Objects()[1].(*fileDialogItem)
-		if item.dir == false {
+		if !item.dir {
 			target = item
 			id = i
 			break
@@ -339,7 +340,7 @@ func TestShowFileSave(t *testing.T) {
 	id := -1
 	for i, icon := range objects {
 		item := test.TempWidgetRenderer(t, icon.(fyne.Widget)).Objects()[1].(*fileDialogItem)
-		if item.dir == false {
+		if !item.dir {
 			target = item
 			id = i
 			break
