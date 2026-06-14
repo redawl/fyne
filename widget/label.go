@@ -36,7 +36,7 @@ type Label struct {
 	// If set to true, Selectable indicates that this label should support select interaction
 	// to allow the text to be copied.
 	//
-	//Since: 2.6
+	// Since: 2.6
 	Selectable bool
 
 	provider  *RichText

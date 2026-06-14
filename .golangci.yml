@@ -59,8 +59,6 @@ linters:
           disabled: true # TODO
         - name: cognitive-complexity
           disabled: true
-        - name: comment-spacings
-          disabled: true # TODO
         - name: confusing-naming
           disabled: true # TODO
         - name: confusing-results

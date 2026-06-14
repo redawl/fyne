@@ -112,7 +112,7 @@ func TestGridWrap_ScrollToOffset(t *testing.T) {
 	assert.Equal(t, float32(0), g.GetScrollOffset())
 
 	g.ScrollToOffset(10000)
-	assert.LessOrEqual(t, g.GetScrollOffset(), float32(500) /*upper bound on content height*/)
+	assert.LessOrEqual(t, g.GetScrollOffset(), float32(500) /* upper bound on content height */)
 
 	// GridWrap viewport is larger than content size
 	g.Resize(fyne.NewSize(50, 250))

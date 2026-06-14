@@ -264,7 +264,7 @@ func TestList_ScrollOffset(t *testing.T) {
 	assert.Equal(t, float32(0), list.GetScrollOffset())
 
 	list.ScrollToOffset(1000)
-	assert.LessOrEqual(t, list.GetScrollOffset(), float32(500) /*upper bound on content height*/)
+	assert.LessOrEqual(t, list.GetScrollOffset(), float32(500) /* upper bound on content height */)
 
 	// list viewport is larger than content size
 	list.Resize(fyne.NewSize(100, 500))

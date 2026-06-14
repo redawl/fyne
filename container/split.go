@@ -150,7 +150,7 @@ func (r *splitContainerRenderer) MinSize() fyne.Size {
 	s := fyne.NewSize(0, 0)
 	dividerVisible := r.split.Leading.Visible() && r.split.Trailing.Visible()
 	for i, o := range r.objects {
-		if (i == 1 /*divider*/ && !dividerVisible) || (i != 1 && !o.Visible()) {
+		if (i == 1 /* divider */ && !dividerVisible) || (i != 1 && !o.Visible()) {
 			continue
 		}
 		min := o.MinSize()
