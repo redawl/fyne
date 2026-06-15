@@ -9,13 +9,13 @@ import (
 )
 
 func TestUnboundedChann(t *testing.T) {
-	N := 200
+	testCount := 200
 	if testing.Short() {
-		N = 20
+		testCount = 20
 	}
 
 	wg := sync.WaitGroup{}
-	for i := 0; i < N; i++ {
+	for i := 0; i < testCount; i++ {
 		t.Run("any", func(t *testing.T) {
 			t.Run("send", func(t *testing.T) {
 				// Ensure send to an unbounded channel does not block.
@@ -67,11 +67,11 @@ func TestUnboundedChann(t *testing.T) {
 
 			t.Run("graceful-close", func(t *testing.T) {
 				grs := runtime.NumGoroutine()
-				N := 10
+				const elementCount = 10
 				n := 0
 				done := make(chan struct{})
 				ch := async.NewUnboundedChan[any]()
-				for i := 0; i < N; i++ {
+				for i := 0; i < elementCount; i++ {
 					ch.In() <- true
 				}
 				go func() {
@@ -86,8 +86,8 @@ func TestUnboundedChann(t *testing.T) {
 				if runtime.NumGoroutine() > grs+2 {
 					t.Fatalf("leaking goroutines: %v", n)
 				}
-				if n != N {
-					t.Fatalf("After close, not all elements are received, got %v, want %v", n, N)
+				if n != elementCount {
+					t.Fatalf("After close, not all elements are received, got %v, want %v", n, elementCount)
 				}
 			})
 		})
@@ -147,11 +147,11 @@ func TestUnboundedChann(t *testing.T) {
 
 			t.Run("graceful-close", func(t *testing.T) {
 				grs := runtime.NumGoroutine()
-				N := 10
+				const elementCount = 10
 				n := 0
 				done := make(chan struct{})
 				ch := async.NewUnboundedStructChan()
-				for i := 0; i < N; i++ {
+				for i := 0; i < elementCount; i++ {
 					ch.In() <- struct{}{}
 				}
 				go func() {
@@ -166,8 +166,8 @@ func TestUnboundedChann(t *testing.T) {
 				if runtime.NumGoroutine() > grs+2 {
 					t.Fatalf("leaking goroutines: %v", n)
 				}
-				if n != N {
-					t.Fatalf("After close, not all elements are received, got %v, want %v", n, N)
+				if n != elementCount {
+					t.Fatalf("After close, not all elements are received, got %v, want %v", n, elementCount)
 				}
 			})
 		})
