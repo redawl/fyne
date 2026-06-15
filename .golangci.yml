@@ -95,8 +95,6 @@ linters:
           disabled: true # we rely on errcheck
         - name: use-slices-sort
           disabled: true # TODO
-        - name: var-declaration
-          disabled: true # TODO
     staticcheck:
       checks:
         - all

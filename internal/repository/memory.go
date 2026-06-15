@@ -83,7 +83,7 @@ func (n *nodeReaderWriter) Read(p []byte) (int, error) {
 	}
 
 	// generate EOF if needed
-	var err error = nil
+	var err error
 	if n.readCursor >= len(data) {
 		err = io.EOF
 	}
