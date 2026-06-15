@@ -21,7 +21,7 @@ type legacyWrapper struct {
 }
 
 func (l *legacyWrapper) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
-	switch n {
+	switch n { //revive:disable-line:identical-switch-branches
 	case ColorNameBackground:
 		return l.old.BackgroundColor()
 	case ColorNameForeground:

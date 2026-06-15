@@ -77,8 +77,6 @@ linters:
           disabled: true # TODO
         - name: get-return
           disabled: true # TODO
-        - name: identical-switch-branches
-          disabled: true # TODO
         - name: import-alias-naming
           disabled: true # TODO
         - name: import-shadowing

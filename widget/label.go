@@ -176,8 +176,6 @@ func (l *Label) syncSegments() {
 	switch l.Importance {
 	case LowImportance:
 		color = theme.ColorNameDisabled
-	case MediumImportance:
-		color = theme.ColorNameForeground
 	case HighImportance:
 		color = theme.ColorNamePrimary
 	case DangerImportance:
