@@ -206,7 +206,7 @@ func (d *gLDriver) SetDisableScreenBlanking(disable bool) {
 }
 
 // NewGLDriver sets up a new Driver instance implemented using the GLFW Go library and OpenGL bindings.
-func NewGLDriver() *gLDriver {
+func NewGLDriver() fyne.Driver {
 	repository.Register(fyne.URISchemeFile, intRepo.NewFileRepository())
 
 	return &gLDriver{

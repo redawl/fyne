@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var d = NewGLDriver()
+var d = NewGLDriver().(*gLDriver)
 
 func init() {
 	runtime.LockOSThread()
@@ -1866,7 +1866,7 @@ func TestWindow_CloseInterception(t *testing.T) {
 	// Note: The #Close() is run asynchronously when the window is notified about the viewport close.
 	// Therefore, we have to wait some time before checking its state via the onClosed callback.
 
-	d := NewGLDriver()
+	d := NewGLDriver().(*gLDriver)
 	t.Run("when closing window with #Close()", func(t *testing.T) {
 		w := createWindow("test")
 		onIntercepted := false

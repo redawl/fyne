@@ -91,8 +91,6 @@ linters:
           disabled: true # TODO
         - name: unchecked-type-assertion
           disabled: true # TODO
-        - name: unexported-return
-          disabled: true # TODO
         - name: unhandled-error
           disabled: true # we rely on errcheck
         - name: unnecessary-format
