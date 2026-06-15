@@ -4,6 +4,8 @@ import (
 	"image/color"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/driver/desktop"
@@ -11,7 +13,6 @@ import (
 	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSplitContainer_MinSize(t *testing.T) {
@@ -575,6 +576,6 @@ func (r *refreshCountingWidget) CreateRenderer() fyne.WidgetRenderer {
 }
 
 func (r *refreshCountingWidget) Refresh() {
-	r.refreshCount += 1
+	r.refreshCount++
 	r.BaseWidget.Refresh()
 }
