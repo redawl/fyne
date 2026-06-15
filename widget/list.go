@@ -27,8 +27,8 @@ var (
 type listBind struct {
 	listener annotatedListener
 
-	oldLength func() int                                  `json:"-"`
-	oldUpdate func(id ListItemID, item fyne.CanvasObject) `json:"-"`
+	oldLength func() int
+	oldUpdate func(id ListItemID, item fyne.CanvasObject)
 }
 
 // List is a widget that pools list items for performance and

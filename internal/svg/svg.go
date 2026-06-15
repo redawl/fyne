@@ -237,7 +237,7 @@ type objGroup struct {
 	Ellipses        []*ellipseObj `xml:"ellipse"`
 	Rects           []*rectObj    `xml:"rect"`
 	Polygons        []*polygonObj `xml:"polygon"`
-	Groups          []*objGroup   `xml:"g"`
+	Groups          []*objGroup   `xml:"g"` //revive:disable-line:struct-tag -- this is not a duplicate of the name tag but refers to children names
 }
 
 func replacePathsFill(paths []*pathObj, hexColor string, opacity string) {
