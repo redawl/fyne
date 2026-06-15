@@ -374,14 +374,13 @@ func (c *checkRenderer) updateResource(th fyne.Theme) {
 
 // must be called while holding c.check.propertyLock for reading
 func (c *checkRenderer) updateFocusIndicator(th fyne.Theme, v fyne.ThemeVariant) {
-	if c.check.Disabled() {
-		c.focusIndicator.FillColor = color.Transparent
-	} else if c.check.focused {
-		c.focusIndicator.FillColor = th.Color(theme.ColorNameFocus, v)
-	} else if c.check.hovered {
-		c.focusIndicator.FillColor = th.Color(theme.ColorNameHover, v)
-	} else {
-		c.focusIndicator.FillColor = color.Transparent
+	c.focusIndicator.FillColor = color.Transparent
+	if !c.check.Disabled() {
+		if c.check.focused {
+			c.focusIndicator.FillColor = th.Color(theme.ColorNameFocus, v)
+		} else if c.check.hovered {
+			c.focusIndicator.FillColor = th.Color(theme.ColorNameHover, v)
+		}
 	}
 }
 

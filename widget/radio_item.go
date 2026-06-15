@@ -195,13 +195,12 @@ func (r *radioItemRenderer) update() {
 	r.over.Resource = out
 	r.over.Refresh()
 
-	if r.item.Disabled() {
-		r.focusIndicator.FillColor = color.Transparent
-	} else if r.item.focused {
-		r.focusIndicator.FillColor = th.Color(theme.ColorNameFocus, v)
-	} else if r.item.hovered {
-		r.focusIndicator.FillColor = th.Color(theme.ColorNameHover, v)
-	} else {
-		r.focusIndicator.FillColor = color.Transparent
+	r.focusIndicator.FillColor = color.Transparent
+	if !r.item.Disabled() {
+		if r.item.focused {
+			r.focusIndicator.FillColor = th.Color(theme.ColorNameFocus, v)
+		} else if r.item.hovered {
+			r.focusIndicator.FillColor = th.Color(theme.ColorNameHover, v)
+		}
 	}
 }
