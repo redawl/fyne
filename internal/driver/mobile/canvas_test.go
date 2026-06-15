@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 
 		ret := m.Run()
 		fyne.SetCurrentApp(currentApp)
-		os.Exit(ret)
+		os.Exit(ret) //revive:disable-line:redundant-test-main-exit
 	}()
 
 	close(waitForStart) // Signal that execution can continue.

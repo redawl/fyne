@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 		time.Sleep(time.Millisecond * 100)
 
 		initMainMenu()
-		os.Exit(m.Run())
+		os.Exit(m.Run()) //revive:disable-line:redundant-test-main-exit
 	}()
 
 	master := createWindow("Master")

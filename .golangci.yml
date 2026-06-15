@@ -89,8 +89,6 @@ linters:
           disabled: true # TODO
         - name: package-naming
           disabled: true # TODO
-        - name: redundant-test-main-exit
-          disabled: true # TODO
         - name: struct-tag
           disabled: true # TODO
         - name: unchecked-type-assertion

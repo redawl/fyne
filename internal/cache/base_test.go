@@ -2,7 +2,6 @@ package cache
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -12,9 +11,8 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	ret := m.Run()
+	m.Run()
 	testClearAll()
-	os.Exit(ret)
 }
 
 func TestCacheClean(t *testing.T) {
