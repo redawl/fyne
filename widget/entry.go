@@ -2058,17 +2058,17 @@ type entryModifyAction struct {
 func (i *entryModifyAction) Undo(s string) string {
 	if i.Delete {
 		return i.add(s)
-	} else {
-		return i.sub(s)
 	}
+
+	return i.sub(s)
 }
 
 func (i *entryModifyAction) Redo(s string) string {
 	if i.Delete {
 		return i.sub(s)
-	} else {
-		return i.add(s)
 	}
+
+	return i.add(s)
 }
 
 // Inserts Text

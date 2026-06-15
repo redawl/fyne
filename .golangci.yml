@@ -79,8 +79,6 @@ linters:
           disabled: true # TODO
         - name: import-alias-naming
           disabled: true # TODO
-        - name: indent-error-flow
-          disabled: true # TODO
         - name: inefficient-map-lookup
           disabled: true # TODO
         - name: line-length-limit

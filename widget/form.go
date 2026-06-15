@@ -297,6 +297,7 @@ func (f *Form) checkValidation(err error) {
 			f.submitButton.Disable()
 			return
 		}
+
 		if item.Required {
 			if has, ok := item.Widget.(fyne.Requireable); ok && !has.HasValue() {
 				f.submitButton.Disable()
@@ -313,10 +314,10 @@ func (f *Form) checkValidation(err error) {
 			f.validateText.Show()
 			f.submitButton.Disable()
 			return
-		} else {
-			f.validationError = nil
-			f.validateText.Hide()
 		}
+
+		f.validationError = nil
+		f.validateText.Hide()
 	}
 
 	if !f.disabled {
