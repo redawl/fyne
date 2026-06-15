@@ -639,9 +639,9 @@ func (t *Table) Tapped(e *fyne.PointEvent) {
 
 	if !fyne.CurrentDevice().IsMobile() {
 		t.RefreshItem(t.currentHighlight)
-		canvas := fyne.CurrentApp().Driver().CanvasForObject(t.super())
-		if canvas != nil {
-			canvas.Focus(t.super().(fyne.Focusable))
+		c := fyne.CurrentApp().Driver().CanvasForObject(t.super())
+		if c != nil {
+			c.Focus(t.super().(fyne.Focusable))
 		}
 		t.RefreshItem(t.currentHighlight)
 	}

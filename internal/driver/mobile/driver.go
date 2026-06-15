@@ -140,7 +140,7 @@ func (d *driver) Clipboard() fyne.Clipboard {
 	return NewClipboard()
 }
 
-func (d *driver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (size fyne.Size, baseline float32) {
+func (d *driver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (fyne.Size, float32) {
 	return painter.RenderedTextSize(text, textSize, style, source)
 }
 
@@ -371,7 +371,7 @@ func (d *driver) onStop() {
 	}
 }
 
-func (d *driver) paintWindow(window fyne.Window, size fyne.Size) {
+func (d *driver) paintWindow(window fyne.Window, s fyne.Size) {
 	clips := &internal.ClipStack{}
 	c := window.Canvas().(*canvas)
 
@@ -389,10 +389,10 @@ func (d *driver) paintWindow(window fyne.Window, size fyne.Size) {
 			c.Painter().StartClipping(inner.Rect())
 		}
 
-		if size.Width <= 0 || size.Height <= 0 { // iconifying on Windows can do bad things
+		if s.Width <= 0 || s.Height <= 0 { // iconifying on Windows can do bad things
 			return
 		}
-		c.Painter().Paint(obj, pos, size, clips.Top())
+		c.Painter().Paint(obj, pos, s, clips.Top())
 	}
 	afterDraw := func(node *common.RenderCacheNode, pos fyne.Position) {
 		if intdriver.IsClip(node.Obj()) {
@@ -404,7 +404,7 @@ func (d *driver) paintWindow(window fyne.Window, size fyne.Size) {
 		}
 
 		if build.Mode == fyne.BuildDebug {
-			c.DrawDebugOverlay(node.Obj(), pos, size, clips.Top())
+			c.DrawDebugOverlay(node.Obj(), pos, s, clips.Top())
 		}
 	}
 

@@ -483,8 +483,8 @@ func TestSelect_Tapped(t *testing.T) {
 	combo.Resize(combo.MinSize())
 
 	test.Tap(combo)
-	canvas := fyne.CurrentApp().Driver().CanvasForObject(combo)
-	assert.Len(t, canvas.Overlays().List(), 1)
+	c := fyne.CurrentApp().Driver().CanvasForObject(combo)
+	assert.Len(t, c.Overlays().List(), 1)
 	assertRendersToPlatformMarkup(t, "select/%s/tapped.xml", w.Canvas())
 }
 
@@ -497,10 +497,10 @@ func TestSelect_Tapped_Constrained(t *testing.T) {
 	w.Resize(fyne.NewSize(200, 150))
 	combo.Resize(combo.MinSize())
 
-	canvas := w.Canvas()
-	combo.Move(fyne.NewPos(canvas.Size().Width-10, canvas.Size().Height-10))
+	c := w.Canvas()
+	combo.Move(fyne.NewPos(c.Size().Width-10, c.Size().Height-10))
 	test.Tap(combo)
-	assert.Len(t, canvas.Overlays().List(), 1)
+	assert.Len(t, c.Overlays().List(), 1)
 	assertRendersToPlatformMarkup(t, "select/%s/tapped_constrained.xml", w.Canvas())
 }
 

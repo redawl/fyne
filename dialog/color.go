@@ -213,10 +213,10 @@ func readRecentColors() (recents []string) {
 	return recents
 }
 
-func writeRecentColor(color string) {
-	recents := []string{color}
+func writeRecentColor(c string) {
+	recents := []string{c}
 	for _, r := range readRecentColors() {
-		if r == color {
+		if r == c {
 			continue // Color already in recents
 		}
 		recents = append(recents, r)

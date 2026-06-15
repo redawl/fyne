@@ -227,11 +227,11 @@ func (c *canvas) SetPadded(padded bool) {
 	c.doResize(c.Size())
 }
 
-func (c *canvas) SetScale(scale float32) {
+func (c *canvas) SetScale(s float32) {
 	c.propertyLock.Lock()
 	defer c.propertyLock.Unlock()
 
-	c.scale = scale
+	c.scale = s
 }
 
 func (c *canvas) Size() fyne.Size {

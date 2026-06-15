@@ -594,12 +594,12 @@ func TestList_Focus(t *testing.T) {
 	defer window.Close()
 	window.Resize(list.MinSize().Max(fyne.NewSize(150, 200)))
 
-	canvas := window.Canvas().(software.WindowlessCanvas)
-	assert.Nil(t, canvas.Focused())
+	c := window.Canvas().(software.WindowlessCanvas)
+	assert.Nil(t, c.Focused())
 
-	canvas.FocusNext()
-	assert.NotNil(t, canvas.Focused())
-	assert.Equal(t, 0, canvas.Focused().(*List).currentHighlight)
+	c.FocusNext()
+	assert.NotNil(t, c.Focused())
+	assert.Equal(t, 0, c.Focused().(*List).currentHighlight)
 
 	children := list.scroller.Content.(*fyne.Container).Layout.(*listLayout).children
 	assert.True(t, children[0].(*listItem).hovered)
@@ -616,7 +616,7 @@ func TestList_Focus(t *testing.T) {
 	assert.False(t, children[1].(*listItem).hovered)
 	assert.False(t, children[2].(*listItem).hovered)
 
-	canvas.Focused().TypedKey(&fyne.KeyEvent{Name: fyne.KeySpace})
+	c.Focused().TypedKey(&fyne.KeyEvent{Name: fyne.KeySpace})
 	assert.True(t, children[0].(*listItem).selected)
 }
 

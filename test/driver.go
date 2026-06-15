@@ -45,8 +45,8 @@ func NewDriver() fyne.Driver {
 
 // NewDriverWithPainter creates a new dummy driver that will pass the given
 // painter to all canvases created
-func NewDriverWithPainter(painter fynedriver.Painter) fyne.Driver {
-	return &driver{painter: painter}
+func NewDriverWithPainter(p fynedriver.Painter) fyne.Driver {
+	return &driver{painter: p}
 }
 
 // DoFromGoroutine on a test driver ignores the wait flag as our threading is simple

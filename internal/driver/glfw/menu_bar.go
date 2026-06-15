@@ -22,9 +22,9 @@ type MenuBar struct {
 }
 
 // NewMenuBar creates a menu bar populated with items from the passed main menu structure.
-func NewMenuBar(mainMenu *fyne.MainMenu, canvas fyne.Canvas) *MenuBar {
+func NewMenuBar(mainMenu *fyne.MainMenu, c fyne.Canvas) *MenuBar {
 	items := make([]fyne.CanvasObject, len(mainMenu.Items))
-	b := &MenuBar{Items: items, canvas: canvas}
+	b := &MenuBar{Items: items, canvas: c}
 	b.ExtendBaseWidget(b)
 	for i, menu := range mainMenu.Items {
 		barItem := &menuBarItem{Menu: menu, Parent: b}

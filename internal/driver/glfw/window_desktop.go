@@ -304,10 +304,10 @@ func getMonitorScale(monitor *glfw.Monitor) float32 {
 // getScaledMonitorSize returns the monitor dimensions adjusted for scaling
 func getScaledMonitorSize(monitor *glfw.Monitor) fyne.Size {
 	videoMode := monitor.GetVideoMode()
-	scale := getMonitorScale(monitor)
+	s := getMonitorScale(monitor)
 
-	scaledWidth := float32(videoMode.Width) / scale
-	scaledHeight := float32(videoMode.Height) / scale
+	scaledWidth := float32(videoMode.Width) / s
+	scaledHeight := float32(videoMode.Height) / s
 	return fyne.NewSize(scaledWidth, scaledHeight)
 }
 

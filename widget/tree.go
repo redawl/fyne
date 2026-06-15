@@ -972,10 +972,10 @@ func (n *treeNode) MouseOut() {
 
 func (n *treeNode) Tapped(*fyne.PointEvent) {
 	n.tree.Select(n.uid)
-	canvas := fyne.CurrentApp().Driver().CanvasForObject(n.tree.super())
-	if canvas != nil && canvas.Focused() != n.tree {
+	c := fyne.CurrentApp().Driver().CanvasForObject(n.tree.super())
+	if c != nil && c.Focused() != n.tree {
 		if !fyne.CurrentDevice().IsMobile() {
-			canvas.Focus(n.tree.super().(fyne.Focusable))
+			c.Focus(n.tree.super().(fyne.Focusable))
 		}
 	}
 	n.Refresh()

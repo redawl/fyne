@@ -25,9 +25,9 @@ type colorButton struct {
 }
 
 // newColorButton creates a colorButton with the given color and callback.
-func newColorButton(color color.Color, onTap func(color.Color)) *colorButton {
+func newColorButton(c color.Color, onTap func(color.Color)) *colorButton {
 	b := &colorButton{
-		color: color,
+		color: c,
 		onTap: onTap,
 	}
 	b.ExtendBaseWidget(b)
@@ -71,11 +71,11 @@ func (b *colorButton) MinSize() fyne.Size {
 }
 
 // SetColor updates the color selected in this color widget
-func (b *colorButton) SetColor(color color.Color) {
-	if b.color == color {
+func (b *colorButton) SetColor(c color.Color) {
+	if b.color == c {
 		return
 	}
-	b.color = color
+	b.color = c
 	b.Refresh()
 }
 

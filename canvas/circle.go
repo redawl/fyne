@@ -27,8 +27,8 @@ type Circle struct {
 }
 
 // NewCircle returns a new Circle instance
-func NewCircle(color color.Color) *Circle {
-	return &Circle{FillColor: color}
+func NewCircle(c color.Color) *Circle {
+	return &Circle{FillColor: c}
 }
 
 // Hide will set this circle to not be visible

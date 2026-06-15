@@ -235,16 +235,16 @@ func (t *RichText) cleanVisualCache() {
 	// mark cache entries that are still valid
 	t.visualCacheGen++
 	for _, seg := range t.Segments {
-		if cache, ok := t.visualCache[seg]; ok {
-			cache.gen = t.visualCacheGen
-			t.visualCache[seg] = cache
+		if c, ok := t.visualCache[seg]; ok {
+			c.gen = t.visualCacheGen
+			t.visualCache[seg] = c
 		}
 	}
 
 	// delete entries that are not marked as valid
 	var deletingSegs []RichTextSegment
-	for seg1, cache := range t.visualCache {
-		if cache.gen != t.visualCacheGen {
+	for seg1, c := range t.visualCache {
+		if c.gen != t.visualCacheGen {
 			deletingSegs = append(deletingSegs, seg1)
 		}
 	}

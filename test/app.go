@@ -241,9 +241,9 @@ func (s *testSettings) PrimaryColor() string {
 	return theme.ColorBlue
 }
 
-func (s *testSettings) SetTheme(theme fyne.Theme) {
+func (s *testSettings) SetTheme(t fyne.Theme) {
 	s.propertyLock.Lock()
-	s.theme = theme
+	s.theme = t
 	s.propertyLock.Unlock()
 
 	s.apply()

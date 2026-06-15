@@ -100,9 +100,9 @@ func (l *Line) Refresh() {
 }
 
 // NewLine returns a new Line instance
-func NewLine(color color.Color) *Line {
+func NewLine(c color.Color) *Line {
 	return &Line{
-		StrokeColor: color,
+		StrokeColor: c,
 		StrokeWidth: 1,
 	}
 }

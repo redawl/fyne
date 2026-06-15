@@ -342,17 +342,17 @@ func fastCopy(dst, src string) error {
 }
 
 func openFile(uri fyne.URI, write bool, truncate bool) (*file, error) {
-	path := uri.Path()
+	p := uri.Path()
 	var f *os.File
 	var err error
 	if write {
 		if truncate {
-			f, err = os.Create(path) // If it exists this will truncate which is what we wanted
+			f, err = os.Create(p) // If it exists this will truncate which is what we wanted
 		} else {
-			f, err = os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, filePermDefault)
+			f, err = os.OpenFile(p, os.O_APPEND|os.O_CREATE|os.O_WRONLY, filePermDefault)
 		}
 	} else {
-		f, err = os.Open(path)
+		f, err = os.Open(p)
 	}
 	return &file{File: f, uri: uri}, err
 }

@@ -76,9 +76,9 @@ func (t *Text) Refresh() {
 }
 
 // NewText returns a new Text implementation
-func NewText(text string, color color.Color) *Text {
+func NewText(text string, c color.Color) *Text {
 	return &Text{
-		Color:    color,
+		Color:    c,
 		Text:     text,
 		TextSize: theme.TextSize(),
 	}

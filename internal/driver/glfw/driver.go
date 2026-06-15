@@ -56,8 +56,8 @@ func toOSIcon(icon []byte) ([]byte, error) {
 
 // toOSIconForRuntime takes the input image bytes and converts it to an image type
 // that is suitable for the specified GOOS runtime. Which makes platform-specific icon handling testable.
-func toOSIconForRuntime(icon []byte, os string) ([]byte, error) {
-	if os != goos.Windows && !usesUnixSystrayIcon(os) {
+func toOSIconForRuntime(icon []byte, osName string) ([]byte, error) {
+	if osName != goos.Windows && !usesUnixSystrayIcon(osName) {
 		return icon, nil
 	}
 
@@ -67,7 +67,7 @@ func toOSIconForRuntime(icon []byte, os string) ([]byte, error) {
 	}
 
 	// keep windows behavior: convert to ico
-	if os == goos.Windows {
+	if osName == goos.Windows {
 		buf := &bytes.Buffer{}
 		if err = ico.Encode(buf, img); err != nil {
 			return nil, err
@@ -94,8 +94,8 @@ func convertToPNG(img image.Image) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func usesUnixSystrayIcon(os string) bool {
-	return os == goos.Linux || goos.IsBSD(os)
+func usesUnixSystrayIcon(osName string) bool {
+	return osName == goos.Linux || goos.IsBSD(osName)
 }
 
 func (d *gLDriver) DoFromGoroutine(f func(), wait bool) {
