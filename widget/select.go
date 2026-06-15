@@ -398,10 +398,10 @@ func (s *selectRenderer) MinSize() fyne.Size {
 	innerPad := th.Size(theme.SizeNameInnerPadding)
 
 	minPlaceholderWidth := fyne.MeasureText(s.combo.PlaceHolder, th.Size(theme.SizeNameText), fyne.TextStyle{}).Width
-	min := s.label.MinSize()
-	min.Width = minPlaceholderWidth
-	min = min.Add(fyne.NewSize(innerPad*3, innerPad))
-	return min.Add(fyne.NewSize(th.Size(theme.SizeNameInlineIcon)+innerPad, 0))
+	minSize := s.label.MinSize()
+	minSize.Width = minPlaceholderWidth
+	minSize = minSize.Add(fyne.NewSize(innerPad*3, innerPad))
+	return minSize.Add(fyne.NewSize(th.Size(theme.SizeNameInlineIcon)+innerPad, 0))
 }
 
 func (s *selectRenderer) Refresh() {

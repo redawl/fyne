@@ -44,11 +44,11 @@ type Slider struct {
 }
 
 // NewSlider returns a basic slider.
-func NewSlider(min, max float64) *Slider {
+func NewSlider(minValue, maxValue float64) *Slider {
 	slider := &Slider{
 		Value:       0,
-		Min:         min,
-		Max:         max,
+		Min:         minValue,
+		Max:         maxValue,
 		Step:        1,
 		Orientation: Horizontal,
 	}
@@ -59,8 +59,8 @@ func NewSlider(min, max float64) *Slider {
 // NewSliderWithData returns a slider connected with the specified data source.
 //
 // Since: 2.0
-func NewSliderWithData(min, max float64, data binding.Float) *Slider {
-	slider := NewSlider(min, max)
+func NewSliderWithData(minValue, maxValue float64, data binding.Float) *Slider {
+	slider := NewSlider(minValue, maxValue)
 	slider.Bind(data)
 
 	return slider
@@ -282,15 +282,16 @@ func (s *Slider) clampValueToRange() {
 	if rem == 0 {
 		return
 	}
-	min := value - rem
+
+	value -= rem
 	if rem > step/2 {
-		min += s.Step
+		value += s.Step
 	}
 
 	if invert {
-		s.Value = -min
+		s.Value = -value
 	} else {
-		s.Value = min
+		s.Value = value
 	}
 }
 

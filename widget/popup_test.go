@@ -155,9 +155,9 @@ func TestPopUp_MinSize(t *testing.T) {
 	assert.Equal(t, label.MinSize().Width, inner.Width)
 	assert.Equal(t, label.MinSize().Height, inner.Height)
 
-	min := pop.MinSize()
-	assert.Equal(t, label.MinSize().Width, min.Width)
-	assert.Equal(t, label.MinSize().Height, min.Height)
+	minSize := pop.MinSize()
+	assert.Equal(t, label.MinSize().Width, minSize.Width)
+	assert.Equal(t, label.MinSize().Height, minSize.Height)
 }
 
 func TestPopUp_Move(t *testing.T) {

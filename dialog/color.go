@@ -145,12 +145,12 @@ func (p *ColorPickerDialog) updateUI() {
 	}
 }
 
-func clamp(value, min, max int) int {
-	if value < min {
-		return min
+func clamp(value, minValue, maxValue int) int {
+	if value < minValue {
+		return minValue
 	}
-	if value > max {
-		return max
+	if value > maxValue {
+		return maxValue
 	}
 	return value
 }
@@ -257,12 +257,12 @@ func rgbToHsl(r, g, b uint8) (h, s, l int) {
 	green := float64(g) / math.MaxUint8
 	blue := float64(b) / math.MaxUint8
 
-	min := math.Min(red, math.Min(green, blue))
-	max := math.Max(red, math.Max(green, blue))
+	minComponentValue := math.Min(red, math.Min(green, blue))
+	maxComponentValue := math.Max(red, math.Max(green, blue))
 
-	lightness := (max + min) / 2
+	lightness := (maxComponentValue + minComponentValue) / 2
 
-	delta := max - min
+	delta := maxComponentValue - minComponentValue
 
 	if delta == 0.0 {
 		// Achromatic
@@ -274,18 +274,18 @@ func rgbToHsl(r, g, b uint8) (h, s, l int) {
 	var saturation float64
 
 	if lightness < 0.5 {
-		saturation = (max - min) / (max + min)
+		saturation = (maxComponentValue - minComponentValue) / (maxComponentValue + minComponentValue)
 	} else {
-		saturation = (max - min) / (2 - max - min)
+		saturation = (maxComponentValue - minComponentValue) / (2 - maxComponentValue - minComponentValue)
 	}
 
 	var hue float64
 
-	if red == max {
+	if red == maxComponentValue {
 		hue = (green - blue) / delta
-	} else if green == max {
+	} else if green == maxComponentValue {
 		hue = 2 + (blue-red)/delta
-	} else if blue == max {
+	} else if blue == maxComponentValue {
 		hue = 4 + (red-green)/delta
 	}
 

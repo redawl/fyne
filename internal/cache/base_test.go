@@ -6,8 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"fyne.io/fyne/v2"
 	"github.com/stretchr/testify/assert"
+
+	"fyne.io/fyne/v2"
 )
 
 func TestMain(m *testing.M) {
@@ -235,12 +236,12 @@ type timeMock struct {
 	now time.Time
 }
 
-func (t *timeMock) createTime(min, sec int) time.Time {
-	return time.Date(2021, time.June, 15, 2, min, sec, 0, time.UTC)
+func (t *timeMock) createTime(minute, second int) time.Time {
+	return time.Date(2021, time.June, 15, 2, minute, second, 0, time.UTC)
 }
 
-func (t *timeMock) setTime(min, sec int) {
-	t.now = time.Date(2021, time.June, 15, 2, min, sec, 0, time.UTC)
+func (t *timeMock) setTime(minute, second int) {
+	t.now = time.Date(2021, time.June, 15, 2, minute, second, 0, time.UTC)
 	timeNow = func() time.Time {
 		return t.now
 	}

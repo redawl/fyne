@@ -153,13 +153,13 @@ func (r *splitContainerRenderer) MinSize() fyne.Size {
 		if (i == 1 /* divider */ && !dividerVisible) || (i != 1 && !o.Visible()) {
 			continue
 		}
-		min := o.MinSize()
+		minSize := o.MinSize()
 		if r.split.Horizontal {
-			s.Width += min.Width
-			s.Height = fyne.Max(s.Height, min.Height)
+			s.Width += minSize.Width
+			s.Height = fyne.Max(s.Height, minSize.Height)
 		} else {
-			s.Width = fyne.Max(s.Width, min.Width)
-			s.Height += min.Height
+			s.Width = fyne.Max(s.Width, minSize.Width)
+			s.Height += minSize.Height
 		}
 	}
 	return s
@@ -196,14 +196,14 @@ func (r *splitContainerRenderer) computeSplitLengths(total, lMin, tMin float32) 
 	tr := float64(tMin)
 	offset := r.split.Offset
 
-	min := ld / available
-	max := 1 - tr/available
-	if min <= max {
-		if offset < min {
-			offset = min
+	minOffset := ld / available
+	maxOffset := 1 - tr/available
+	if minOffset <= maxOffset {
+		if offset < minOffset {
+			offset = minOffset
 		}
-		if offset > max {
-			offset = max
+		if offset > maxOffset {
+			offset = maxOffset
 		}
 	} else {
 		offset = ld / (ld + tr)

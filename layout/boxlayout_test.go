@@ -13,9 +13,9 @@ import (
 )
 
 // NewMinSizeRect returns a new Rectangle instance
-func NewMinSizeRect(min fyne.Size) *canvas.Rectangle {
+func NewMinSizeRect(minSize fyne.Size) *canvas.Rectangle {
 	rect := &canvas.Rectangle{}
-	rect.SetMinSize(min)
+	rect.SetMinSize(minSize)
 
 	return rect
 }

@@ -386,10 +386,10 @@ func (e *Entry) MinSize() fyne.Size {
 	}
 
 	e.ExtendBaseWidget(e)
-	min := e.BaseWidget.MinSize()
+	minSize := e.BaseWidget.MinSize()
 
-	e.minCache = min
-	return min
+	e.minCache = minSize
+	return minSize
 }
 
 // MouseDown called on mouse click, this triggers a mouse click which can move the cursor,

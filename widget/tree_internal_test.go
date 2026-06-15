@@ -383,9 +383,9 @@ func TestTree_MinSize(t *testing.T) {
 	separatorThickness := theme.Padding()
 	t.Run("Default", func(t *testing.T) {
 		tree := &Tree{}
-		min := tree.MinSize()
-		assert.Equal(t, float32(32), min.Width)
-		assert.Equal(t, float32(32), min.Height)
+		minSize := tree.MinSize()
+		assert.Equal(t, float32(32), minSize.Width)
+		assert.Equal(t, float32(32), minSize.Height)
 	})
 	t.Run("Callback", func(t *testing.T) {
 		for name, tt := range map[string]struct {
@@ -581,12 +581,12 @@ func TestTree_ScrollTo(t *testing.T) {
 	defer w.Close()
 
 	var (
-		min = getLeaf(t, tree, "A").MinSize()
-		sep = theme.Padding()
+		minSize = getLeaf(t, tree, "A").MinSize()
+		sep     = theme.Padding()
 	)
 
 	// Resize tall enough to display two nodes and the separator between them
-	treeHeight := 2*min.Height + sep
+	treeHeight := 2*minSize.Height + sep
 	w.Resize(fyne.Size{
 		Width:  100,
 		Height: treeHeight + 2*theme.Padding(),
@@ -594,7 +594,7 @@ func TestTree_ScrollTo(t *testing.T) {
 
 	tree.ScrollTo("F")
 
-	want := 3*min.Height + 2*sep
+	want := 3*minSize.Height + 2*sep
 	assert.Equal(t, want, tree.offset.Y)
 	assert.Equal(t, want, tree.scroller.Offset.Y)
 
@@ -623,12 +623,12 @@ func TestTree_ScrollToBottom(t *testing.T) {
 	defer w.Close()
 
 	var (
-		min = getLeaf(t, tree, "A").MinSize()
-		sep = theme.Padding()
+		minSize = getLeaf(t, tree, "A").MinSize()
+		sep     = theme.Padding()
 	)
 
 	// Resize tall enough to display two nodes and the separator between them
-	treeHeight := 2*min.Height + sep
+	treeHeight := 2*minSize.Height + sep
 	w.Resize(fyne.Size{
 		Width:  400,
 		Height: treeHeight + 2*theme.Padding(),
@@ -636,7 +636,7 @@ func TestTree_ScrollToBottom(t *testing.T) {
 
 	tree.ScrollToBottom()
 
-	want := 4 * (min.Height + sep)
+	want := 4 * (minSize.Height + sep)
 	assert.Equal(t, want, tree.offset.Y)
 	assert.Equal(t, want, tree.scroller.Offset.Y)
 }

@@ -729,8 +729,6 @@ func TestList_ScrollToLargeItem(t *testing.T) {
 	assert.Equal(t, list.scroller.Content.MinSize().Height-list.Size().Height, list.scroller.Offset.Y)
 }
 
-var minSize fyne.Size
-
 func BenchmarkContentMinSize(b *testing.B) {
 	b.StopTimer()
 
@@ -746,11 +744,11 @@ func BenchmarkContentMinSize(b *testing.B) {
 	l.SetItemHeight(10, 55)
 	l.SetItemHeight(12345, 2)
 
-	min := fyne.Size{}
+	minSize := fyne.Size{}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		min = l.contentMinSize()
+		minSize = l.contentMinSize()
 	}
 
-	minSize = min
+	assert.Equal(b, minSize, minSize)
 }

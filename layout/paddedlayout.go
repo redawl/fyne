@@ -24,16 +24,16 @@ func (l paddedLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 
 // MinSize finds the smallest size that satisfies all the child objects.
 // For PaddedLayout this is determined simply as the MinSize of the largest child plus padding all around.
-func (l paddedLayout) MinSize(objects []fyne.CanvasObject) (min fyne.Size) {
+func (l paddedLayout) MinSize(objects []fyne.CanvasObject) (minSize fyne.Size) {
 	for _, child := range objects {
 		if !child.Visible() {
 			continue
 		}
 
-		min = min.Max(child.MinSize())
+		minSize = minSize.Max(child.MinSize())
 	}
-	min = min.Add(fyne.NewSquareSize(2 * theme.Padding()))
-	return min
+	minSize = minSize.Add(fyne.NewSquareSize(2 * theme.Padding()))
+	return minSize
 }
 
 // NewPaddedLayout creates a new PaddedLayout instance

@@ -15,10 +15,10 @@ import (
 
 func TestCheckSize(t *testing.T) {
 	check := NewCheck("Hi", nil)
-	min := check.MinSize()
+	minSize := check.MinSize()
 
-	assert.Greater(t, min.Width, theme.InnerPadding())
-	assert.Greater(t, min.Height, theme.InnerPadding())
+	assert.Greater(t, minSize.Width, theme.InnerPadding())
+	assert.Greater(t, minSize.Height, theme.InnerPadding())
 }
 
 func TestCheckChecked(t *testing.T) {

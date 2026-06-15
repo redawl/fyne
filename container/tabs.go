@@ -547,7 +547,7 @@ func (b *tabButton) CreateRenderer() fyne.WidgetRenderer {
 	label := canvas.NewText(b.text, th.Color(theme.ColorNameForeground, v))
 	label.TextStyle.Bold = true
 
-	close := &tabCloseButton{
+	buttonClose := &tabCloseButton{
 		parent: b,
 		onTapped: func() {
 			if f := b.onClosed; f != nil {
@@ -555,16 +555,16 @@ func (b *tabButton) CreateRenderer() fyne.WidgetRenderer {
 			}
 		},
 	}
-	close.ExtendBaseWidget(close)
-	close.Hide()
+	buttonClose.ExtendBaseWidget(buttonClose)
+	buttonClose.Hide()
 
-	objects := []fyne.CanvasObject{background, label, close, icon}
+	objects := []fyne.CanvasObject{background, label, buttonClose, icon}
 	return &tabButtonRenderer{
 		button:     b,
 		background: background,
 		icon:       icon,
 		label:      label,
-		close:      close,
+		close:      buttonClose,
 		objects:    objects,
 	}
 }

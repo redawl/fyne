@@ -581,11 +581,11 @@ type treeRenderer struct {
 	scroller *widget.Scroll
 }
 
-func (r *treeRenderer) MinSize() (min fyne.Size) {
-	min = r.scroller.MinSize()
-	min = min.Max(r.tree.branchMinSize)
-	min = min.Max(r.tree.leafMinSize)
-	return min
+func (r *treeRenderer) MinSize() fyne.Size {
+	minSize := r.scroller.MinSize()
+	minSize = minSize.Max(r.tree.branchMinSize)
+	minSize = minSize.Max(r.tree.leafMinSize)
+	return minSize
 }
 
 func (r *treeRenderer) Layout(size fyne.Size) {
@@ -801,7 +801,7 @@ func (r *treeContentRenderer) Layout(size fyne.Size) {
 	r.leaves = leaves
 }
 
-func (r *treeContentRenderer) MinSize() (min fyne.Size) {
+func (r *treeContentRenderer) MinSize() fyne.Size {
 	if !r.minSizeCache.IsZero() {
 		return r.minSizeCache
 	}
@@ -809,6 +809,7 @@ func (r *treeContentRenderer) MinSize() (min fyne.Size) {
 	pad := th.Size(theme.SizeNamePadding)
 	iconSize := th.Size(theme.SizeNameInlineIcon)
 
+	var minSize fyne.Size
 	r.treeContent.tree.walkAll(func(uid, _ string, isBranch bool, depth int) {
 		// Root node is not rendered unless it has been customized
 		if r.treeContent.tree.Root == "" {
@@ -820,8 +821,8 @@ func (r *treeContentRenderer) MinSize() (min fyne.Size) {
 		}
 
 		// If this is not the first item, add a separator
-		if min.Height > 0 {
-			min.Height += pad
+		if minSize.Height > 0 {
+			minSize.Height += pad
 		}
 
 		m := r.treeContent.tree.leafMinSize
@@ -829,12 +830,12 @@ func (r *treeContentRenderer) MinSize() (min fyne.Size) {
 			m = r.treeContent.tree.branchMinSize
 		}
 		m.Width += float32(depth) * (iconSize + pad)
-		min.Width = fyne.Max(min.Width, m.Width)
-		min.Height += m.Height
+		minSize.Width = fyne.Max(minSize.Width, m.Width)
+		minSize.Height += m.Height
 	})
 
-	r.minSizeCache = min
-	return min
+	r.minSizeCache = minSize
+	return minSize
 }
 
 func (r *treeContentRenderer) Objects() []fyne.CanvasObject {
@@ -1021,16 +1022,17 @@ func (r *treeNodeRenderer) Layout(size fyne.Size) {
 	}
 }
 
-func (r *treeNodeRenderer) MinSize() (min fyne.Size) {
+func (r *treeNodeRenderer) MinSize() fyne.Size {
+	var minSize fyne.Size
 	if r.treeNode.content != nil {
-		min = r.treeNode.content.MinSize()
+		minSize = r.treeNode.content.MinSize()
 	}
 	th := r.treeNode.Theme()
 	iconSize := th.Size(theme.SizeNameInlineIcon)
 
-	min.Width += th.Size(theme.SizeNameInnerPadding) + r.treeNode.Indent() + iconSize
-	min.Height = fyne.Max(min.Height, iconSize)
-	return min
+	minSize.Width += th.Size(theme.SizeNameInnerPadding) + r.treeNode.Indent() + iconSize
+	minSize.Height = fyne.Max(minSize.Height, iconSize)
+	return minSize
 }
 
 func (r *treeNodeRenderer) Objects() (objects []fyne.CanvasObject) {

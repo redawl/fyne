@@ -285,13 +285,13 @@ func (c *checkRenderer) MinSize() fyne.Size {
 	th := c.check.Theme()
 
 	pad4 := th.Size(theme.SizeNameInnerPadding) * 2
-	min := c.label.MinSize().Add(fyne.NewSize(th.Size(theme.SizeNameInlineIcon)+pad4, pad4))
+	minSize := c.label.MinSize().Add(fyne.NewSize(th.Size(theme.SizeNameInlineIcon)+pad4, pad4))
 
 	if c.check.Text != "" {
-		min.Add(fyne.NewSize(th.Size(theme.SizeNamePadding), 0))
+		minSize.Add(fyne.NewSize(th.Size(theme.SizeNamePadding), 0))
 	}
 
-	return min
+	return minSize
 }
 
 // Layout the components of the check widget

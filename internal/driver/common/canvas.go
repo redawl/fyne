@@ -89,7 +89,7 @@ func (c *Canvas) EnsureMinSize() bool {
 	}
 	windowNeedsMinSizeUpdate := false
 	csize := c.impl.Size()
-	min := c.impl.MinSize()
+	minSize := c.impl.MinSize()
 
 	var parentNeedingUpdate *RenderCacheNode
 
@@ -142,9 +142,9 @@ func (c *Canvas) EnsureMinSize() bool {
 	}
 	c.WalkTrees(setup, ensureMinSize)
 
-	shouldResize := windowNeedsMinSizeUpdate && (csize.Width < min.Width || csize.Height < min.Height)
+	shouldResize := windowNeedsMinSizeUpdate && (csize.Width < minSize.Width || csize.Height < minSize.Height)
 	if shouldResize {
-		c.impl.Resize(csize.Max(min))
+		c.impl.Resize(csize.Max(minSize))
 	}
 	return windowNeedsMinSizeUpdate
 }

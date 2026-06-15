@@ -14,10 +14,10 @@ import (
 
 func TestCenterLayout(t *testing.T) {
 	size := fyne.NewSize(100, 100)
-	min := fyne.NewSize(10, 10)
+	minSize := fyne.NewSize(10, 10)
 
 	obj := canvas.NewRectangle(color.NRGBA{0, 0, 0, 0})
-	obj.SetMinSize(min)
+	obj.SetMinSize(minSize)
 	c := &fyne.Container{
 		Objects: []fyne.CanvasObject{obj},
 	}
@@ -25,7 +25,7 @@ func TestCenterLayout(t *testing.T) {
 
 	layout.NewCenterLayout().Layout(c.Objects, size)
 
-	assert.Equal(t, obj.Size(), min)
+	assert.Equal(t, obj.Size(), minSize)
 	assert.Equal(t, fyne.NewPos(45, 45), obj.Position())
 }
 

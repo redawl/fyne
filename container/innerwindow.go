@@ -77,11 +77,11 @@ func (w *InnerWindow) CreateRenderer() fyne.WidgetRenderer {
 	th := w.Theme()
 	v := fyne.CurrentApp().Settings().ThemeVariant()
 
-	min := newBorderButton(theme.WindowMinimizeIcon(), modeMinimize, th, w.OnMinimized)
+	buttonMin := newBorderButton(theme.WindowMinimizeIcon(), modeMinimize, th, w.OnMinimized)
 	if w.OnMinimized == nil {
-		min.Disable()
+		buttonMin.Disable()
 	}
-	max := newBorderButton(theme.WindowMaximizeIcon(), modeMaximize, th, func() {
+	buttonMax := newBorderButton(theme.WindowMaximizeIcon(), modeMaximize, th, func() {
 		w.maximized = !w.maximized
 		w.Refresh()
 
@@ -90,17 +90,17 @@ func (w *InnerWindow) CreateRenderer() fyne.WidgetRenderer {
 		}
 	})
 	if w.OnMaximized == nil {
-		max.Disable()
+		buttonMax.Disable()
 	}
 
-	close := newBorderButton(theme.WindowCloseIcon(), modeClose, th, func() {
+	buttonClose := newBorderButton(theme.WindowCloseIcon(), modeClose, th, func() {
 		if f := w.CloseIntercept; f != nil {
 			f()
 		} else {
 			w.Close()
 		}
 	})
-	buttons := NewCenter(NewHBox(close, min, max))
+	buttons := NewCenter(NewHBox(buttonClose, buttonMin, buttonMax))
 
 	borderIcon := newBorderButton(w.Icon, modeIcon, th, func() {
 		if f := w.OnTappedIcon; f != nil {
@@ -121,7 +121,7 @@ func (w *InnerWindow) CreateRenderer() fyne.WidgetRenderer {
 	off := (height - title.labelMinSize().Height) / 2
 	barMid := New(layout.NewCustomPaddedLayout(off, 0, 0, 0), title)
 	if w.buttonPosition() == widget.ButtonAlignTrailing {
-		buttons = NewCenter(NewHBox(min, max, close))
+		buttons = NewCenter(NewHBox(buttonMin, buttonMax, buttonClose))
 	}
 
 	bg := canvas.NewRectangle(th.Color(theme.ColorNameInnerWindowBorder, v))
@@ -138,7 +138,7 @@ func (w *InnerWindow) CreateRenderer() fyne.WidgetRenderer {
 	objects := []fyne.CanvasObject{bg, contentBG, bar, w.Content, corner}
 	r := &innerWindowRenderer{
 		BaseRenderer: intWidget.NewBaseRenderer(objects),
-		win:          w, bar: bar, buttonBox: buttons, buttons: []*borderButton{close, min, max}, bg: bg,
+		win:          w, bar: bar, buttonBox: buttons, buttons: []*borderButton{buttonClose, buttonMin, buttonMax}, bg: bg,
 		corner: corner, contentBG: contentBG, icon: borderIcon,
 	}
 	r.Layout(w.Size())
@@ -163,8 +163,8 @@ func (w *InnerWindow) SetContent(obj fyne.CanvasObject) {
 // SetMaximized tells the window if the maximized state should be set or not.
 //
 // Since: 2.6
-func (w *InnerWindow) SetMaximized(max bool) {
-	w.maximized = max
+func (w *InnerWindow) SetMaximized(maximized bool) {
+	w.maximized = maximized
 	w.Refresh()
 }
 
@@ -275,16 +275,16 @@ func (i *innerWindowRenderer) Refresh() {
 		i.buttons[1].Enable()
 	}
 
-	max := i.buttons[2]
+	maximize := i.buttons[2]
 	if i.win.OnMaximized == nil {
 		i.buttons[2].Disable()
 	} else {
-		max.Enable()
+		maximize.Enable()
 	}
 	if i.win.maximized {
-		max.b.SetIcon(theme.ViewRestoreIcon())
+		maximize.b.SetIcon(theme.ViewRestoreIcon())
 	} else {
-		max.b.SetIcon(theme.WindowMaximizeIcon())
+		maximize.b.SetIcon(theme.WindowMaximizeIcon())
 	}
 
 	title := i.bar.Objects[2].(*fyne.Container).Objects[0].(*draggableLabel)

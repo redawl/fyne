@@ -32,9 +32,9 @@ func TestAppTabs_Empty(t *testing.T) {
 	assert.Equal(t, 0, len(tabs.Items))
 	assert.Equal(t, -1, tabs.SelectedIndex())
 	assert.Nil(t, tabs.Selected())
-	min := tabs.MinSize()
-	assert.Equal(t, float32(0), min.Width)
-	assert.Equal(t, theme.Padding(), min.Height)
+	minSize := tabs.MinSize()
+	assert.Equal(t, float32(0), minSize.Width)
+	assert.Equal(t, theme.Padding(), minSize.Height)
 
 	tabs = &AppTabs{}
 	assert.Equal(t, 0, len(tabs.Items))

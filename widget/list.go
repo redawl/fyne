@@ -932,10 +932,10 @@ func (l *listLayout) searchVisible(visible []listItemAndID, id ListItemID) (*lis
 	return nil, false
 }
 
-func (l *listLayout) nilOldSliceData(objs []fyne.CanvasObject, len, oldLen int) {
-	if oldLen > len {
-		objs = objs[:oldLen] // gain view into old data
-		for i := len; i < oldLen; i++ {
+func (l *listLayout) nilOldSliceData(objs []fyne.CanvasObject, length, oldLength int) {
+	if oldLength > length {
+		objs = objs[:oldLength] // gain view into old data
+		for i := length; i < oldLength; i++ {
 			objs[i] = nil
 		}
 	}

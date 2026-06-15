@@ -279,10 +279,10 @@ func (r *buttonRenderer) Layout(size fyne.Size) {
 				objects = append(objects, r.label, r.icon)
 			}
 			r.icon.SetMinSize(iconSize)
-			min := r.layout.MinSize(objects)
-			r.layout.Layout(objects, min)
-			pos := alignedPosition(r.button.Alignment, padding, min, size)
-			labelOff := (min.Height - labelSize.Height) / 2
+			minSize := r.layout.MinSize(objects)
+			r.layout.Layout(objects, minSize)
+			pos := alignedPosition(r.button.Alignment, padding, minSize, size)
+			labelOff := (minSize.Height - labelSize.Height) / 2
 			r.label.Move(r.label.Position().Add(pos).AddXY(0, labelOff))
 			r.icon.Move(r.icon.Position().Add(pos))
 		} else {
