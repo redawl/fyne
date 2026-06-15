@@ -32,7 +32,7 @@ func TestUnboundedChann(t *testing.T) {
 				}()
 				wg.Wait()
 				if blocked {
-					t.Fatalf("send op to an unbounded channel blocked")
+					t.Fatal("send op to an unbounded channel blocked")
 				}
 				c.Close()
 			})
@@ -108,7 +108,7 @@ func TestUnboundedChann(t *testing.T) {
 				<-c.Out()
 				wg.Wait()
 				if blocked {
-					t.Fatalf("send op to an unbounded channel blocked")
+					t.Fatal("send op to an unbounded channel blocked")
 				}
 				c.Close()
 			})

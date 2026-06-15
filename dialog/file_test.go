@@ -72,7 +72,7 @@ func TestEffectiveStartingDir(t *testing.T) {
 	// make sure we fail over if the specified directory does not exist
 	dialog.startingLocation, err = storage.ListerForURI(storage.NewFileURI("/some/file/that/does/not/exist"))
 	if err == nil {
-		t.Errorf("Should have failed to create lister for nonexistent file")
+		t.Error("Should have failed to create lister for nonexistent file")
 	}
 	res = dialog.effectiveStartingDir()
 	expect = home
