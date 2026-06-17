@@ -173,10 +173,6 @@ func (d *gLDriver) focusPreviousWindow() {
 	chosen.RequestFocus()
 }
 
-func (d *gLDriver) windowList() []fyne.Window {
-	return d.windows
-}
-
 func (d *gLDriver) initFailed(msg string, err error) {
 	fyne.LogError(msg, err)
 
