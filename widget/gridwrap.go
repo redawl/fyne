@@ -575,7 +575,7 @@ type gridItemAndID struct {
 type gridWrapLayout struct {
 	gw *GridWrap
 
-	itemPool   async.Pool[fyne.CanvasObject]
+	itemPool   async.Pool[*gridWrapItem]
 	visible    []gridItemAndID
 	wasVisible []gridItemAndID
 }
@@ -595,15 +595,15 @@ func (l *gridWrapLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
 }
 
 func (l *gridWrapLayout) getItem() *gridWrapItem {
-	item := l.itemPool.Get()
-	if item == nil {
-		if f := l.gw.CreateItem; f != nil {
-			child := createItemAndApplyThemeScope(f, l.gw)
-
-			item = newGridWrapItem(child, nil)
-		}
+	if item := l.itemPool.Get(); item != nil {
+		return item
 	}
-	return item.(*gridWrapItem)
+
+	if f := l.gw.CreateItem; f != nil {
+		return newGridWrapItem(createItemAndApplyThemeScope(f, l.gw), nil)
+	}
+
+	return nil
 }
 
 func (l *gridWrapLayout) offsetUpdated(pos fyne.Position) {
