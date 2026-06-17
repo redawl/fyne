@@ -317,7 +317,7 @@ func (c *canvas) tapMove(pos fyne.Position, tapID int,
 		c.dragOffset = previousPos.Subtract(objPos)
 		c.dragStart = co.Position()
 		if scrollOtherDirection != nil {
-			c.draggingOuter = scrollOtherDirection.(fyne.Draggable)
+			c.draggingOuter, _ = scrollOtherDirection.(fyne.Draggable)
 		}
 	}
 
@@ -480,7 +480,7 @@ func (c *canvas) windowHeadIsDisplacing() bool {
 
 	chromeBox := c.windowHead
 	if c.padded {
-		chromeBox = chromeBox.Objects[0].(*fyne.Container) // the padded container
+		chromeBox, _ = chromeBox.Objects[0].(*fyne.Container) // the padded container
 	}
 	return len(chromeBox.Objects) > 1
 }

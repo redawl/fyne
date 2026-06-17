@@ -558,7 +558,8 @@ func codeInlineText(obj fyne.CanvasObject) (*canvas.Text, bool) {
 		return o, true
 	case *fyne.Container:
 		if _, ok := o.Layout.(*codeInlineLayout); ok {
-			return o.Objects[1].(*canvas.Text), true
+			t, _ := o.Objects[1].(*canvas.Text)
+			return t, true
 		}
 	}
 	return nil, false
@@ -784,7 +785,7 @@ func (r *textRenderer) Refresh() {
 				to, _ := codeInlineText(obj)
 				to.Text = txt
 			} else if isHyperlink {
-				hl := obj.(*fyne.Container).Objects[0].(*Hyperlink)
+				hl, _ := obj.(*fyne.Container).Objects[0].(*Hyperlink)
 				hl.Text = txt
 				r.associateSiblings(hl, hlSeg, reuse)
 				hl.Refresh()
@@ -815,7 +816,7 @@ func (r *textRenderer) Refresh() {
 func (r *textRenderer) associateSiblings(hl *Hyperlink, hlSeg *HyperlinkSegment, reuse int) {
 	hl.siblings = hl.siblings[:0]
 	for prev := 0; prev < reuse; prev++ {
-		prevHL := r.obj.cachedSegmentVisual(hlSeg, prev).(*fyne.Container).Objects[0].(*Hyperlink)
+		prevHL, _ := r.obj.cachedSegmentVisual(hlSeg, prev).(*fyne.Container).Objects[0].(*Hyperlink)
 		prevHL.siblings = append(prevHL.siblings, hl)
 		hl.siblings = append(hl.siblings, prevHL)
 	}

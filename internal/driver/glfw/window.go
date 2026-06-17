@@ -961,7 +961,7 @@ func (d *gLDriver) CreateWindow(title string) (win fyne.Window) {
 		return d.createWindow(title, true)
 	}
 
-	c := root.Canvas().(*glCanvas)
+	c, _ := root.Canvas().(*glCanvas)
 	multi := c.webExtraWindows
 	if multi == nil {
 		multi = container.NewMultipleWindows()

@@ -165,7 +165,7 @@ func (l *GridWrap) RefreshItem(id GridWrapItemID) {
 		return
 	}
 	l.BaseWidget.Refresh()
-	lo := l.scroller.Content.(*fyne.Container).Layout.(*gridWrapLayout)
+	lo, _ := l.scroller.Content.(*fyne.Container).Layout.(*gridWrapLayout)
 	item, ok := lo.searchVisible(lo.visible, id)
 	if ok {
 		lo.setupGridItem(item, id, l.focused && l.currentHighlight == id)
@@ -696,7 +696,7 @@ func (l *gridWrapLayout) updateGrid(newOnly bool) {
 	l.wasVisible = append(l.wasVisible, l.visible...)
 	l.visible = l.visible[:0]
 
-	c := l.gw.scroller.Content.(*fyne.Container)
+	c, _ := l.gw.scroller.Content.(*fyne.Container)
 	oldObjLen := len(c.Objects)
 	c.Objects = c.Objects[:0]
 	y := offY

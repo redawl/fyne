@@ -190,7 +190,7 @@ func (l *List) RefreshItem(id ListItemID) {
 		return
 	}
 	l.BaseWidget.Refresh()
-	lo := l.scroller.Content.(*fyne.Container).Layout.(*listLayout)
+	lo, _ := l.scroller.Content.(*fyne.Container).Layout.(*listLayout)
 	item, ok := lo.searchVisible(lo.visible, id)
 	if ok {
 		lo.setupListItem(item, id, l.focused && l.currentHighlight == id)
@@ -586,7 +586,7 @@ func (l *listRenderer) Refresh() {
 	}
 	l.Layout(l.list.Size())
 	l.scroller.Refresh()
-	layout := l.layout.Layout.(*listLayout)
+	layout, _ := l.layout.Layout.(*listLayout)
 	layout.updateList(false)
 
 	for _, s := range layout.separators {
@@ -857,7 +857,7 @@ func (l *listLayout) updateList(newOnly bool) {
 
 	l.updateSeparators()
 
-	c := l.list.scroller.Content.(*fyne.Container)
+	c, _ := l.list.scroller.Content.(*fyne.Container)
 	oldObjLen := len(c.Objects)
 	c.Objects = c.Objects[:0]
 	c.Objects = append(c.Objects, l.children...)
