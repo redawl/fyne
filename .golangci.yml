@@ -65,8 +65,6 @@ linters:
           disabled: true
         - name: enforce-switch-style
           disabled: true # TODO
-        - name: epoch-naming
-          disabled: true # TODO
         - name: exported
           disabled: true # TODO
         - name: filename-format

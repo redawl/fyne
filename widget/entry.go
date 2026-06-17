@@ -616,12 +616,12 @@ func (e *Entry) TappedSecondary(pe *fyne.PointEvent) {
 //
 // Since: 2.1
 func (e *Entry) TouchDown(ev *mobile.TouchEvent) {
-	now := time.Now().UnixMilli()
+	nowUnixMilli := time.Now().UnixMilli()
 	e.syncSegments()
 	if !e.Disabled() {
 		e.requestFocus()
 	}
-	if isTripleTap(e.sel.doubleTappedAtUnixMillis, now) {
+	if isTripleTap(e.sel.doubleTappedAtUnixMillis, nowUnixMilli) {
 		e.sel.selectCurrentRow(false)
 		e.CursorColumn = e.sel.cursorColumn
 		e.Refresh()

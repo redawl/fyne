@@ -87,6 +87,5 @@ func (t *timeBinding) Set(time time.Time) error {
 		*t.src = time
 	}
 
-	i := time.Unix()
-	return t.Int.Set(int(i))
+	return t.Int.Set(int(time.Unix()))
 }
