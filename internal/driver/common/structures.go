@@ -9,7 +9,7 @@ import (
 
 type deduplicatedObjectQueue struct {
 	queue *async.CanvasObjectQueue
-	dedup async.Map[fyne.CanvasObject, struct{}]
+	dedup async.Map[fyne.CanvasObject, struct{}] //revive:disable-line:nested-structs -- The empty struct here is a common pattern to simulate a set via a map.
 }
 
 // In adds an object to the queue if it is not already present.

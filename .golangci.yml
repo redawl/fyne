@@ -81,8 +81,6 @@ linters:
           disabled: true # TODO
         - name: max-public-structs
           disabled: true # TODO
-        - name: nested-structs
-          disabled: true # TODO
         - name: package-comments
           disabled: true # TODO
         - name: package-naming
