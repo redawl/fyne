@@ -387,7 +387,8 @@ func (ctx *context) GetShaderSource(s Shader) string {
 	return goString(buf)
 }
 
-func (ctx *context) GetTexParameteriv(_ []int32, target, pname Enum) {
+func (ctx *context) GetTexParameteriv(pname Enum) Enum {
+	var target Enum
 	ctx.enqueue(call{
 		args: fnargs{
 			fn: glfnGetTexParameteriv,
@@ -396,6 +397,7 @@ func (ctx *context) GetTexParameteriv(_ []int32, target, pname Enum) {
 		},
 		blocking: true,
 	})
+	return target
 }
 
 func (ctx *context) GetUniformLocation(p Program, name string) Uniform {
