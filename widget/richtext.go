@@ -259,11 +259,12 @@ func (t *RichText) insertAt(pos int, runes []rune) {
 	start := 0
 	var into *TextSegment
 	for i, seg := range t.Segments {
-		if _, ok := seg.(*TextSegment); !ok {
+		var ok bool
+		if into, ok = seg.(*TextSegment); !ok {
 			continue
 		}
-		end := start + len([]rune(seg.(*TextSegment).Text))
-		into = seg.(*TextSegment)
+
+		end := start + len([]rune(into.Text))
 		index = i
 		if end > pos {
 			break
