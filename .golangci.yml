@@ -67,8 +67,6 @@ linters:
           disabled: true # TODO
         - name: exported
           disabled: true # TODO
-        - name: filename-format
-          disabled: true # TODO
         - name: flag-parameter
           disabled: true # TODO
         - name: function-length
