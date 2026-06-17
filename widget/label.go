@@ -263,12 +263,12 @@ type focusSelectable struct {
 }
 
 func (f *focusSelectable) FocusGained() {
-	f.focussed = true
+	f.focused = true
 	f.Refresh()
 }
 
 func (f *focusSelectable) FocusLost() {
-	f.focussed = false
+	f.focused = false
 	f.Refresh()
 }
 

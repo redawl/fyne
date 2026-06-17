@@ -21,9 +21,9 @@ type selectable struct {
 	// position may occur before or after the select start position in the text.
 	selectRow, selectColumn int
 
-	focussed, selecting, selectEnded, password bool
-	sizeName                                   fyne.ThemeSizeName
-	style                                      fyne.TextStyle
+	focused, selecting, selectEnded, password bool
+	sizeName                                  fyne.ThemeSizeName
+	style                                     fyne.TextStyle
 
 	provider *RichText
 	theme    fyne.Theme
@@ -307,8 +307,7 @@ func (r *selectableRenderer) Refresh() {
 	for _, selection := range selections {
 		rect := selection.(*canvas.Rectangle)
 		rect.FillColor = selectionColor
-
-		if r.sel.focussed {
+		if r.sel.focused {
 			rect.Show()
 		} else {
 			rect.Hide()

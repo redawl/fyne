@@ -457,7 +457,7 @@ func (e *Entry) Refresh() {
 	if e.sel != nil {
 		e.sel.style = e.TextStyle
 		e.sel.theme = e.Theme()
-		e.sel.focussed = e.focused
+		e.sel.focused = e.focused
 		e.sel.Refresh()
 	}
 	e.BaseWidget.Refresh()
