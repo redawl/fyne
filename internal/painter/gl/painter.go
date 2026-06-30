@@ -43,27 +43,18 @@ func NewPainter(c fyne.Canvas, ctx driver.WithContext) Painter {
 }
 
 type painter struct {
-	canvas                  fyne.Canvas
-	ctx                     context
-	contextProvider         driver.WithContext
-	program                 programState
-	blurProgram             programState
-	lineProgram             programState
-	rectangleProgram        programState
-	roundRectangleProgram   programState
-	polygonProgram          programState
-	arcProgram              programState
-	bezierCurveProgram      programState
-	arbitraryPolygonProgram programState
-	ellipseProgram          programState
-	shaderPrograms          map[string]*shaderState // lazily compiled programs for user shaders, keyed by Shader.Name
-	texScale                float32
-	pixScale                float32    // pre-calculate scale*texScale for each draw
-	blurSnap                blurSnap   // cached texture for GPU-side blur snapshot
-	blurKernel              blurKernel // cached 1D kernel texture on GPU
-	fbHeight                int        // current framebuffer height in pixels
-	maxTextureSize          int
-	clippedTextTextures     map[*canvas.Text]clippedTextTexture
+	canvas              fyne.Canvas
+	ctx                 context
+	contextProvider     driver.WithContext
+	programs            programs
+	shaderPrograms      map[string]*shaderState // lazily compiled programs for user shaders, keyed by Shader.Name
+	texScale            float32
+	pixScale            float32    // pre-calculate scale*texScale for each draw
+	blurSnap            blurSnap   // cached texture for GPU-side blur snapshot
+	blurKernel          blurKernel // cached 1D kernel texture on GPU
+	fbHeight            int        // current framebuffer height in pixels
+	maxTextureSize      int
+	clippedTextTextures map[*canvas.Text]clippedTextTexture
 }
 
 // Declare conformity to Painter interface
@@ -328,6 +319,19 @@ type programState struct {
 	buff       Buffer
 	uniforms   map[string]*uniformState
 	attributes map[string]Attribute
+}
+
+type programs struct {
+	arbitraryPolygon programState
+	arc              programState
+	bezierCurve      programState
+	blur             programState
+	ellipse          programState
+	line             programState
+	polygon          programState
+	rectangle        programState
+	roundRectangle   programState
+	simple           programState
 }
 
 // shaderState caches a user shader's compiled program and uploaded textures.

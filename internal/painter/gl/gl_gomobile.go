@@ -77,70 +77,70 @@ func (p *painter) Init() {
 	p.glctx().Disable(gl.DepthTest)
 	p.glctx().Enable(gl.Blend)
 	if compiled == nil {
-		p.program = programState{
+		p.programs.simple = programState{
 			ref:        p.createProgram("simple_es"),
 			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.blurProgram = programState{
+		p.programs.blur = programState{
 			ref:        p.createProgram("blur_es"),
 			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.lineProgram = programState{
+		p.programs.line = programState{
 			ref:        p.createProgram("line_es"),
 			buff:       p.createBuffer(24),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.rectangleProgram = programState{
+		p.programs.rectangle = programState{
 			ref:        p.createProgram("rectangle_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.roundRectangleProgram = programState{
+		p.programs.roundRectangle = programState{
 			ref:        p.createProgram("round_rectangle_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.polygonProgram = programState{
+		p.programs.polygon = programState{
 			ref:        p.createProgram("polygon_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.arcProgram = programState{
+		p.programs.arc = programState{
 			ref:        p.createProgram("arc_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.bezierCurveProgram = programState{
+		p.programs.bezierCurve = programState{
 			ref:        p.createProgram("bezier_curve_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.arbitraryPolygonProgram = programState{
+		p.programs.arbitraryPolygon = programState{
 			ref:        p.createProgram("arbitrary_polygon_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		}
 
-		p.ellipseProgram = programState{
+		p.programs.ellipse = programState{
 			ref:        p.createProgram("ellipse_es"),
 			buff:       p.createBuffer(16),
 			uniforms:   make(map[string]*uniformState),
@@ -148,29 +148,29 @@ func (p *painter) Init() {
 		}
 
 		compiled = []programState{
-			p.program,
-			p.blurProgram,
-			p.lineProgram,
-			p.rectangleProgram,
-			p.roundRectangleProgram,
-			p.polygonProgram,
-			p.arcProgram,
-			p.bezierCurveProgram,
-			p.arbitraryPolygonProgram,
-			p.ellipseProgram,
+			p.programs.simple,
+			p.programs.blur,
+			p.programs.line,
+			p.programs.rectangle,
+			p.programs.roundRectangle,
+			p.programs.polygon,
+			p.programs.arc,
+			p.programs.bezierCurve,
+			p.programs.arbitraryPolygon,
+			p.programs.ellipse,
 		}
 	}
 
-	p.program = compiled[0]
-	p.blurProgram = compiled[1]
-	p.lineProgram = compiled[2]
-	p.rectangleProgram = compiled[3]
-	p.roundRectangleProgram = compiled[4]
-	p.polygonProgram = compiled[5]
-	p.arcProgram = compiled[6]
-	p.bezierCurveProgram = compiled[7]
-	p.arbitraryPolygonProgram = compiled[8]
-	p.ellipseProgram = compiled[9]
+	p.programs.simple = compiled[0]
+	p.programs.blur = compiled[1]
+	p.programs.line = compiled[2]
+	p.programs.rectangle = compiled[3]
+	p.programs.roundRectangle = compiled[4]
+	p.programs.polygon = compiled[5]
+	p.programs.arc = compiled[6]
+	p.programs.bezierCurve = compiled[7]
+	p.programs.arbitraryPolygon = compiled[8]
+	p.programs.ellipse = compiled[9]
 }
 
 type mobileContext struct {
