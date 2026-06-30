@@ -58,12 +58,10 @@ type painter struct {
 	ellipseProgram          programState
 	shaderPrograms          map[string]*shaderState // lazily compiled programs for user shaders, keyed by Shader.Name
 	texScale                float32
-	pixScale                float32  // pre-calculate scale*texScale for each draw
-	blurSnap                blurSnap // cached texture for GPU-side blur snapshot
-	blurKernelTex           Texture  // cached 1D kernel texture on GPU
-	blurKernelTexValid      bool     // whether blurKernelTex has been allocated
-	blurKernelRadius        float32  // radius the current kernel texture was built for
-	fbHeight                int      // current framebuffer height in pixels
+	pixScale                float32    // pre-calculate scale*texScale for each draw
+	blurSnap                blurSnap   // cached texture for GPU-side blur snapshot
+	blurKernel              blurKernel // cached 1D kernel texture on GPU
+	fbHeight                int        // current framebuffer height in pixels
 	maxTextureSize          int
 	clippedTextTextures     map[*canvas.Text]clippedTextTexture
 }
@@ -310,6 +308,12 @@ func (p *painter) getUniformLocation(pState programState, name string) *uniformS
 
 func (p *painter) logError() {
 	logGLError(p.ctx.GetError)
+}
+
+type blurKernel struct {
+	radius   float32
+	tex      Texture
+	texValid bool // whether tex has been allocated
 }
 
 type blurSnap struct {

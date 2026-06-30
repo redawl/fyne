@@ -71,19 +71,19 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	}
 
 	// Upload kernel as a 1D texture if radius changed.
-	if !p.blurKernelTexValid || p.blurKernelRadius != kernelRadius {
-		if !p.blurKernelTexValid {
-			p.blurKernelTex = p.ctx.CreateTexture()
+	if !p.blurKernel.texValid || p.blurKernel.radius != kernelRadius {
+		if !p.blurKernel.texValid {
+			p.blurKernel.tex = p.ctx.CreateTexture()
 		}
 		p.ctx.ActiveTexture(texture1)
-		p.ctx.BindTexture(texture2D, p.blurKernelTex)
+		p.ctx.BindTexture(texture2D, p.blurKernel.tex)
 		p.ctx.TexParameteri(texture2D, textureMinFilter, textureNearest)
 		p.ctx.TexParameteri(texture2D, textureMagFilter, textureNearest)
 		p.ctx.TexParameteri(texture2D, textureWrapS, clampToEdge)
 		p.ctx.TexParameteri(texture2D, textureWrapT, clampToEdge)
 		p.ctx.TexImage2D(texture2D, 0, len(values), 1, colorFormatRGBA, unsignedByte, kernelToRGBA(values))
-		p.blurKernelTexValid = true
-		p.blurKernelRadius = kernelRadius
+		p.blurKernel.texValid = true
+		p.blurKernel.radius = kernelRadius
 	}
 
 	// Copy the blur region from the framebuffer directly to the texture on the GPU.
@@ -117,7 +117,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 
 	// Bind kernel texture to unit 1.
 	p.ctx.ActiveTexture(texture1)
-	p.ctx.BindTexture(texture2D, p.blurKernelTex)
+	p.ctx.BindTexture(texture2D, p.blurKernel.tex)
 
 	// Bind source texture to unit 0.
 	p.ctx.ActiveTexture(texture0)
