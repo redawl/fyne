@@ -225,7 +225,7 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 	}
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
 	p.ctx.UseProgram(p.programs.line.ref)
-	p.updateBuffer(p.programs.line.buff, points)
+	p.updateBuffer(p.programs.line.buff, points[:])
 	p.UpdateVertexArray(p.programs.line, "vert", 2, 4, 0)
 	p.UpdateVertexArray(p.programs.line, "normal", 2, 4, 2)
 
@@ -981,7 +981,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	p.logError()
 }
 
-func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([]float32, float32, float32) {
+func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([24]float32, float32, float32) {
 	// Shift line coordinates so that they match the target position.
 	xPosDiff := pos.X - fyne.Min(pos1.X, pos2.X)
 	yPosDiff := pos.Y - fyne.Min(pos1.Y, pos2.Y)
@@ -1026,7 +1026,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 	halfWidth := (roundToPixel(lineWidth+feather, p.pixScale) * 0.5) / widthMultiplier
 	featherWidth := feather / widthMultiplier
 
-	return []float32{
+	return [24]float32{
 		// coord x, y normal x, y
 		x1, y1, normalX, normalY,
 		x2, y2, normalX, normalY,
