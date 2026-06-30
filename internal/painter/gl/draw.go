@@ -38,18 +38,18 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 		return
 	}
 
-	// Ensure blurSnapTex exists at the correct size; reallocate only when dimensions change.
-	if !p.blurSnapTexValid || p.blurSnapW != bw || p.blurSnapH != bh {
-		if p.blurSnapTexValid {
-			p.ctx.DeleteTexture(p.blurSnapTex)
+	// Ensure blurSnap.tex exists at the correct size; reallocate only when dimensions change.
+	if !p.blurSnap.texValid || p.blurSnap.width != bw || p.blurSnap.height != bh {
+		if p.blurSnap.texValid {
+			p.ctx.DeleteTexture(p.blurSnap.tex)
 		}
 		// Use ImageScaleSmooth to enable bilinear filtering.
 		// It ensures smooth interpolation between samples even when the blur radius is massive.
-		p.blurSnapTex = p.newTexture(canvas.ImageScaleSmooth)
+		p.blurSnap.tex = p.newTexture(canvas.ImageScaleSmooth)
 		p.ctx.TexImage2D(texture2D, 0, bw, bh, colorFormatRGBA, unsignedByte, nil)
-		p.blurSnapTexValid = true
-		p.blurSnapW = bw
-		p.blurSnapH = bh
+		p.blurSnap.texValid = true
+		p.blurSnap.width = bw
+		p.blurSnap.height = bh
 	}
 
 	// Cap the kernel samples at 101 (maxKernelRadius = 50.0) per pass to ensure high performance.
@@ -90,7 +90,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	// glCopyTexSubImage2D uses GL coordinates (y=0 at bottom), so convert the canvas-top y.
 	fbY := p.fbHeight - int(y) - bh
 	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, p.blurSnapTex)
+	p.ctx.BindTexture(texture2D, p.blurSnap.tex)
 	p.ctx.CopyTexSubImage2D(texture2D, 0, 0, 0, int(x), fbY, bw, bh)
 	p.logError()
 
@@ -121,7 +121,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 
 	// Bind source texture to unit 0.
 	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, p.blurSnapTex)
+	p.ctx.BindTexture(texture2D, p.blurSnap.tex)
 
 	// Set sampler uniforms.
 	p.SetUniform1i(p.blurProgram, "tex", 0)
@@ -134,7 +134,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 
-	// Capture the horizontally-blurred result back into blurSnapTex
+	// Capture the horizontally-blurred result back into blurSnap.tex
 	p.ctx.CopyTexSubImage2D(texture2D, 0, 0, 0, int(x), fbY, bw, bh)
 
 	// Vertical Blur
