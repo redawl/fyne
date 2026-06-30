@@ -154,7 +154,7 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	// Vertex: BEG
 	bounds, points := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -252,7 +252,7 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	bounds, points := p.vecRectCoords(pos, bezierCurve, frame, 0.0, canvas.Shadow{})
 	program := p.programs.bezierCurve
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -317,7 +317,7 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 	bounds, points := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
 	program := p.programs.arbitraryPolygon
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -470,7 +470,7 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	// Vertex: BEG
 	bounds, points := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -558,7 +558,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	// Vertex: BEG
 	bounds, points := p.vecRectCoords(pos, obj, frame, aspect, shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -646,7 +646,7 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 	bounds, points := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
 	program := p.programs.polygon
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -704,7 +704,7 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 	bounds, points := p.vecRectCoords(pos, arc, frame, 0.0, canvas.Shadow{})
 	program := p.programs.arc
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -779,7 +779,7 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	// Vertex: BEG
 	bounds, points := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
+	p.updateBuffer(program.buff, points[:])
 	p.UpdateVertexArray(program, "vert", 2, 4, 0)
 	p.UpdateVertexArray(program, "normal", 2, 4, 2)
 
@@ -1104,7 +1104,7 @@ func rectInnerCoords(size fyne.Size, pos fyne.Position, fill canvas.ImageFill, a
 	return size, pos
 }
 
-func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([4]float32, [16]float32) {
 	xPad, yPad := float32(0), float32(0)
 
 	if aspect != 0 {
@@ -1123,7 +1123,7 @@ func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame
 	return p.vecRectCoordsWithPad(pos, rect, frame, xPad, yPad, shadow)
 }
 
-func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([4]float32, [16]float32) {
 	size := rect.Size()
 	pos1 := rect.Position()
 
@@ -1152,7 +1152,7 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	y2Norm := 1 - (y2Pos+edgeSoftnessScaled+shadowPadBottom)*2/frame.Height
 
 	// output a norm for the fill and the vert is unused, but we pass 0 to avoid optimisation issues
-	coords := []float32{
+	coords := [16]float32{
 		0, 0, x1Norm, y1Norm, // first triangle
 		0, 0, x2Norm, y1Norm, // second triangle
 		0, 0, x1Norm, y2Norm,
@@ -1162,7 +1162,7 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	return [4]float32{x1Pos, y1Pos, x2Pos, y2Pos}, coords
 }
 
-func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([4]float32, [16]float32) {
 	return p.vecRectCoords(pos, rect, frame, 1, shadow)
 }
 

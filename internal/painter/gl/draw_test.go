@@ -132,9 +132,8 @@ func TestVecRectCoordsWithPad_Shadow(t *testing.T) {
 	frame := fyne.NewSize(100, 100)
 
 	bounds, coords := p.vecRectCoordsWithPad(pos, rect, frame, 0, 0, rect.Shadow)
-	assert.Len(t, coords, 16)
 	assert.Equal(t, [4]float32{5, 5, 5, 5}, bounds)
-	assert.Equal(t, []float32{
+	assert.Equal(t, [16]float32{
 		0, 0, -0.92, 0.92,
 		0, 0, -0.88, 0.92,
 		0, 0, -0.92, 0.88,
@@ -148,10 +147,9 @@ func TestVecRectCoordsWithPad_Shadow(t *testing.T) {
 	}
 
 	bounds, coords = p.vecRectCoordsWithPad(pos, rect, frame, 0, 0, rect.Shadow)
-	assert.Len(t, coords, 16)
 	// Check that shadow paddings affect the normalized coordinates
 	assert.Equal(t, [4]float32{5, 5, 5, 5}, bounds)
-	assert.Equal(t, []float32{
+	assert.Equal(t, [16]float32{
 		0, 0, -1.9200001, 2.92,
 		0, 0, 1.3199999, 2.92,
 		0, 0, -1.9200001, -0.32000005,
