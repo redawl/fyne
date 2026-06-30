@@ -100,7 +100,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 
 	// Build quad vertices. CopyTexSubImage2D places the framebuffer bottom at texture v=0,
 	// but rectCoords maps v=0 to the canvas top. Swap the v coordinates to correct orientation.
-	points, _ := p.rectCoords(b.Size(), pos, frame, canvas.ImageFillStretch, 1.0, 0)
+	points, _, _ := p.rectCoords(b.Size(), pos, frame, canvas.ImageFillStretch, 1.0, 0)
 	points[4], points[9] = points[9], points[4]
 	points[14], points[19] = points[19], points[14]
 
@@ -915,8 +915,7 @@ func visibleTextPixels(pos fyne.Position, size, frame fyne.Size, clip *internal.
 }
 
 func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size) {
-	points, insets := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
-	inner, _ := rectInnerCoords(size, pos, canvas.ImageFillStretch, 1)
+	points, insets, inner := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
 	p.updateBuffer(p.programs.simple.buff, points[:])
@@ -958,8 +957,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 			cornerRadius = img.CornerRadius
 		}
 	}
-	points, insets := p.rectCoords(size, pos, frame, fill, aspect, pad)
-	inner, _ := rectInnerCoords(size, pos, fill, aspect)
+	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
 	p.updateBuffer(p.programs.simple.buff, points[:])
@@ -1042,9 +1040,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 }
 
 // rectCoords calculates the openGL coordinate space of a rectangle
-func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
-	fill canvas.ImageFill, aspect float32, pad float32,
-) ([20]float32, [4]float32) {
+func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size, fill canvas.ImageFill, aspect, pad float32) ([20]float32, [4]float32, fyne.Size) {
 	innerSize, innerPos := rectInnerCoords(size, pos, fill, aspect)
 	pixelSize, pixelPos := roundToPixelCoords(innerSize, innerPos, p.pixScale)
 
@@ -1083,7 +1079,7 @@ func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 		x1, y1, 0, insets[0], insets[1], // bottom left
 		x2, y2, 0, insets[2], insets[3], // top right
 		x2, y1, 0, insets[2], insets[1], // bottom right
-	}, insets
+	}, insets, innerSize
 }
 
 func rectInnerCoords(size fyne.Size, pos fyne.Position, fill canvas.ImageFill, aspect float32) (fyne.Size, fyne.Position) {
