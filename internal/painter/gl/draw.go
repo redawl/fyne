@@ -12,7 +12,11 @@ import (
 	paint "fyne.io/fyne/v2/internal/painter"
 )
 
-const edgeSoftness = 0.5
+const (
+	edgeSoftness = 0.5
+
+	coordinatesSizeLine = 24
+)
 
 func (p *painter) createBuffer(size int) Buffer {
 	vbo := p.ctx.CreateBuffer()
@@ -981,7 +985,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	p.logError()
 }
 
-func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([24]float32, float32, float32) {
+func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([coordinatesSizeLine]float32, float32, float32) {
 	// Shift line coordinates so that they match the target position.
 	xPosDiff := pos.X - fyne.Min(pos1.X, pos2.X)
 	yPosDiff := pos.Y - fyne.Min(pos1.Y, pos2.Y)
@@ -1026,7 +1030,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 	halfWidth := (roundToPixel(lineWidth+feather, p.pixScale) * 0.5) / widthMultiplier
 	featherWidth := feather / widthMultiplier
 
-	return [24]float32{
+	return [coordinatesSizeLine]float32{
 		// coord x, y normal x, y
 		x1, y1, normalX, normalY,
 		x2, y2, normalX, normalY,
