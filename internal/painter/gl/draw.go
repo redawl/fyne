@@ -101,7 +101,7 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	points[14], points[19] = points[19], points[14]
 
 	p.ctx.UseProgram(p.programs.blur.ref)
-	p.updateBuffer(p.programs.blur.buff, points)
+	p.updateBuffer(p.programs.blur.buff, points[:])
 	p.UpdateVertexArray(p.programs.blur, "vert", 3, 5, 0)
 	p.UpdateVertexArray(p.programs.blur, "vertTexCoord", 2, 5, 3)
 
@@ -915,7 +915,7 @@ func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, fr
 	inner, _ := rectInnerCoords(size, pos, canvas.ImageFillStretch, 1)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
-	p.updateBuffer(p.programs.simple.buff, points)
+	p.updateBuffer(p.programs.simple.buff, points[:])
 	p.UpdateVertexArray(p.programs.simple, "vert", 3, 5, 0)
 	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 5, 3)
 
@@ -958,7 +958,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	inner, _ := rectInnerCoords(size, pos, fill, aspect)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
-	p.updateBuffer(p.programs.simple.buff, points)
+	p.updateBuffer(p.programs.simple.buff, points[:])
 	p.UpdateVertexArray(p.programs.simple, "vert", 3, 5, 0)
 	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 5, 3)
 
@@ -1040,7 +1040,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 // rectCoords calculates the openGL coordinate space of a rectangle
 func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 	fill canvas.ImageFill, aspect float32, pad float32,
-) ([]float32, [4]float32) {
+) ([20]float32, [4]float32) {
 	size, pos = rectInnerCoords(size, pos, fill, aspect)
 	size, pos = roundToPixelCoords(size, pos, p.pixScale)
 
@@ -1073,7 +1073,7 @@ func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 
 	insets := [4]float32{xInset, yInset, 1.0 - xInset, 1.0 - yInset}
 
-	return []float32{
+	return [20]float32{
 		// coord x, y, z texture x, y
 		x1, y2, 0, insets[0], insets[3], // top left
 		x1, y1, 0, insets[0], insets[1], // bottom left
