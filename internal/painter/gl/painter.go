@@ -43,18 +43,18 @@ func NewPainter(c fyne.Canvas, ctx driver.WithContext) Painter {
 }
 
 type painter struct {
+	blurKernel          blurKernel // cached 1D kernel texture on GPU
+	blurSnap            blurSnap   // cached texture for GPU-side blur snapshot
 	canvas              fyne.Canvas
-	ctx                 context
+	clippedTextTextures map[*canvas.Text]clippedTextTexture
 	contextProvider     driver.WithContext
+	ctx                 context
+	fbHeight            int // current framebuffer height in pixels
+	maxTextureSize      int
+	pixScale            float32 // pre-calculate scale*texScale for each draw
 	programs            programs
 	shaderPrograms      map[string]*shaderState // lazily compiled programs for user shaders, keyed by Shader.Name
 	texScale            float32
-	pixScale            float32    // pre-calculate scale*texScale for each draw
-	blurSnap            blurSnap   // cached texture for GPU-side blur snapshot
-	blurKernel          blurKernel // cached 1D kernel texture on GPU
-	fbHeight            int        // current framebuffer height in pixels
-	maxTextureSize      int
-	clippedTextTextures map[*canvas.Text]clippedTextTexture
 }
 
 // Declare conformity to Painter interface
