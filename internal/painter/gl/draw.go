@@ -1087,25 +1087,26 @@ func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 }
 
 func rectInnerCoords(size fyne.Size, pos fyne.Position, fill canvas.ImageFill, aspect float32) (fyne.Size, fyne.Position) {
-	if fill == canvas.ImageFillContain || fill == canvas.ImageFillOriginal {
-		// change pos and size accordingly
-
-		viewAspect := size.Width / size.Height
-
-		newWidth, newHeight := size.Width, size.Height
-		widthPad, heightPad := float32(0), float32(0)
-		if viewAspect > aspect {
-			newWidth = size.Height * aspect
-			widthPad = (size.Width - newWidth) / 2
-		} else if viewAspect < aspect {
-			newHeight = size.Width / aspect
-			heightPad = (size.Height - newHeight) / 2
-		}
-
-		return fyne.NewSize(newWidth, newHeight), fyne.NewPos(pos.X+widthPad, pos.Y+heightPad)
+	if fill != canvas.ImageFillContain && fill != canvas.ImageFillOriginal {
+		return size, pos
 	}
 
-	return size, pos
+	viewAspect := size.Width / size.Height
+	if viewAspect == aspect {
+		return size, pos
+	}
+
+	// change pos and size accordingly
+	newWidth, newHeight := size.Width, size.Height
+	newX, newY := pos.X, pos.Y
+	if viewAspect > aspect {
+		newWidth = size.Height * aspect
+		newX += (size.Width - newWidth) / 2
+	} else if viewAspect < aspect {
+		newHeight = size.Width / aspect
+		newY += (size.Height - newHeight) / 2
+	}
+	return fyne.NewSize(newWidth, newHeight), fyne.NewPos(newX, newY)
 }
 
 func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([16]float32, [4]float32) {
