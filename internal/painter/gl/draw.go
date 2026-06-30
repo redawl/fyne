@@ -1045,32 +1045,32 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 	fill canvas.ImageFill, aspect float32, pad float32,
 ) ([20]float32, [4]float32) {
-	size, pos = rectInnerCoords(size, pos, fill, aspect)
-	size, pos = roundToPixelCoords(size, pos, p.pixScale)
+	innerSize, innerPos := rectInnerCoords(size, pos, fill, aspect)
+	pixelSize, pixelPos := roundToPixelCoords(innerSize, innerPos, p.pixScale)
 
-	xPos := (pos.X - pad) / frame.Width
+	xPos := (pixelPos.X - pad) / frame.Width
 	x1 := -1 + xPos*2
-	x2Pos := (pos.X + size.Width + pad) / frame.Width
+	x2Pos := (pixelPos.X + pixelSize.Width + pad) / frame.Width
 	x2 := -1 + x2Pos*2
 
-	yPos := (pos.Y - pad) / frame.Height
+	yPos := (pixelPos.Y - pad) / frame.Height
 	y1 := 1 - yPos*2
-	y2Pos := (pos.Y + size.Height + pad) / frame.Height
+	y2Pos := (pixelPos.Y + pixelSize.Height + pad) / frame.Height
 	y2 := 1 - y2Pos*2
 
 	xInset := float32(0.0)
 	yInset := float32(0.0)
 
 	if fill == canvas.ImageFillCover {
-		viewAspect := size.Width / size.Height
+		viewAspect := pixelSize.Width / pixelSize.Height
 
 		if viewAspect > aspect {
-			newHeight := size.Width / aspect
-			heightPad := (newHeight - size.Height) / 2
+			newHeight := pixelSize.Width / aspect
+			heightPad := (newHeight - pixelSize.Height) / 2
 			yInset = heightPad / newHeight
 		} else if viewAspect < aspect {
-			newWidth := size.Height * aspect
-			widthPad := (newWidth - size.Width) / 2
+			newWidth := pixelSize.Height * aspect
+			widthPad := (newWidth - pixelSize.Width) / 2
 			xInset = widthPad / newWidth
 		}
 	}
