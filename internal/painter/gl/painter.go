@@ -199,6 +199,71 @@ func (p *painter) UpdateVertexArray(pState programState, name string, size, stri
 	p.logError()
 }
 
+func (p *painter) compilePrograms() *programs {
+	return &programs{
+		arbitraryPolygon: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		arc: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderArcFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		bezierCurve: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderBezierCurveFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		blur: programState{
+			ref:        p.createProgram(shaderBlurVert, shaderBlurFrag),
+			buff:       p.createBuffer(20),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		ellipse: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderEllipseFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		line: programState{
+			ref:        p.createProgram(shaderLineVert, shaderLineFrag),
+			buff:       p.createBuffer(coordinatesSizeLine),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		polygon: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		rectangle: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		roundRectangle: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		simple: programState{
+			ref:        p.createProgram(shaderSimpleVert, shaderSimpleFrag),
+			buff:       p.createBuffer(20),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+	}
+}
+
 func (p *painter) compileShader(source string, shaderType uint32) (Shader, error) {
 	shader := p.ctx.CreateShader(shaderType)
 
