@@ -81,38 +81,8 @@ func (p *painter) Init() {
 	gl.Enable(gl.BLEND)
 	p.logError()
 	p.programs = programs{
-		simple: programState{
-			ref:        p.createProgram(shaderSimpleVert, shaderSimpleFrag),
-			buff:       p.createBuffer(20),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		},
-		blur: programState{
-			ref:        p.createProgram(shaderBlurVert, shaderBlurFrag),
-			buff:       p.createBuffer(20),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		},
-		line: programState{
-			ref:        p.createProgram(shaderLineVert, shaderLineFrag),
-			buff:       p.createBuffer(coordinatesSizeLine),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		},
-		rectangle: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		},
-		roundRectangle: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		},
-		polygon: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
+		arbitraryPolygon: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
@@ -129,15 +99,45 @@ func (p *painter) Init() {
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
-		arbitraryPolygon: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
+		blur: programState{
+			ref:        p.createProgram(shaderBlurVert, shaderBlurFrag),
+			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		ellipse: programState{
 			ref:        p.createProgram(shaderRectangleVert, shaderEllipseFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		line: programState{
+			ref:        p.createProgram(shaderLineVert, shaderLineFrag),
+			buff:       p.createBuffer(coordinatesSizeLine),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		polygon: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		rectangle: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		roundRectangle: programState{
+			ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
+			uniforms:   make(map[string]*uniformState),
+			attributes: make(map[string]Attribute),
+		},
+		simple: programState{
+			ref:        p.createProgram(shaderSimpleVert, shaderSimpleFrag),
+			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
