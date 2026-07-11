@@ -52,32 +52,6 @@ var (
 	shaderEllipseFrag []byte
 )
 
-func shaderSourceNamed(name string) ([]byte, []byte) {
-	switch name {
-	case "blur":
-		return shaderBlurVert, shaderBlurFrag
-	case "line":
-		return shaderLineVert, shaderLineFrag
-	case "simple":
-		return shaderSimpleVert, shaderSimpleFrag
-	case "rectangle":
-		return shaderRectangleVert, shaderRectangleFrag
-	case "round_rectangle":
-		return shaderRectangleVert, shaderRoundrectangleFrag
-	case "polygon":
-		return shaderRectangleVert, shaderPolygonFrag
-	case "arc":
-		return shaderRectangleVert, shaderArcFrag
-	case "bezier_curve":
-		return shaderRectangleVert, shaderBezierCurveFrag
-	case "arbitrary_polygon":
-		return shaderRectangleVert, shaderArbitraryPolygonFrag
-	case "ellipse":
-		return shaderRectangleVert, shaderEllipseFrag
-	}
-	panic("shader not found: " + name)
-}
-
 // userShaderFragment returns the fragment shader source to use for the given
 // shader object on this build target.
 func userShaderFragment(s *canvas.Shader) []byte {
