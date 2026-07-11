@@ -54,25 +54,25 @@ var (
 
 func shaderSourceNamed(name string) ([]byte, []byte) {
 	switch name {
-	case "blur_es":
+	case "blur":
 		return shaderBlurVert, shaderBlurFrag
-	case "line_es":
+	case "line":
 		return shaderLineVert, shaderLineFrag
-	case "simple_es":
+	case "simple":
 		return shaderSimpleVert, shaderSimpleFrag
-	case "rectangle_es":
+	case "rectangle":
 		return shaderRectangleVert, shaderRectangleFrag
-	case "round_rectangle_es":
+	case "round_rectangle":
 		return shaderRectangleVert, shaderRoundrectangleFrag
-	case "polygon_es":
+	case "polygon":
 		return shaderRectangleVert, shaderPolygonFrag
-	case "arc_es":
+	case "arc":
 		return shaderRectangleVert, shaderArcFrag
-	case "bezier_curve_es":
+	case "bezier_curve":
 		return shaderRectangleVert, shaderBezierCurveFrag
-	case "arbitrary_polygon_es":
+	case "arbitrary_polygon":
 		return shaderRectangleVert, shaderArbitraryPolygonFrag
-	case "ellipse_es":
+	case "ellipse":
 		return shaderRectangleVert, shaderEllipseFrag
 	}
 	return nil, nil
