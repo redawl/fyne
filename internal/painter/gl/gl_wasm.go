@@ -93,49 +93,49 @@ func (p *painter) Init() {
 
 	p.programs.rectangle = programState{
 		ref:        p.createProgram("rectangle_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.roundRectangle = programState{
 		ref:        p.createProgram("round_rectangle_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.polygon = programState{
 		ref:        p.createProgram("polygon_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.arc = programState{
 		ref:        p.createProgram("arc_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.bezierCurve = programState{
 		ref:        p.createProgram("bezier_curve_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.arbitraryPolygon = programState{
 		ref:        p.createProgram("arbitrary_polygon_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}
 
 	p.programs.ellipse = programState{
 		ref:        p.createProgram("ellipse_es"),
-		buff:       p.createBuffer(16),
+		buff:       p.createBuffer(coordinatesSizeRectangle),
 		uniforms:   make(map[string]*uniformState),
 		attributes: make(map[string]Attribute),
 	}

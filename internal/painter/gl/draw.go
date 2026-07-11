@@ -15,7 +15,8 @@ import (
 const (
 	edgeSoftness = 0.5
 
-	coordinatesSizeLine = 24
+	coordinatesSizeLine      = 24
+	coordinatesSizeRectangle = 16
 )
 
 func (p *painter) createBuffer(size int) Buffer {
@@ -454,7 +455,7 @@ func (p *painter) shaderProgram(shader *canvas.Shader) (*shaderState, bool) {
 	state := &shaderState{
 		program: programState{
 			ref:        ref,
-			buff:       p.createBuffer(16),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
@@ -1105,7 +1106,7 @@ func rectInnerCoords(size fyne.Size, pos fyne.Position, fill canvas.ImageFill, a
 	return fyne.NewSize(newWidth, newHeight), fyne.NewPos(newX, newY)
 }
 
-func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([16]float32, [4]float32) {
+func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	xPad, yPad := float32(0), float32(0)
 
 	if aspect != 0 {
@@ -1124,7 +1125,7 @@ func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame
 	return p.vecRectCoordsWithPad(pos, rect, frame, xPad, yPad, shadow)
 }
 
-func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([16]float32, [4]float32) {
+func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	size := rect.Size()
 	pos1 := rect.Position()
 
@@ -1153,7 +1154,7 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	y2Norm := 1 - (y2Pos+edgeSoftnessScaled+shadowPadBottom)*2/frame.Height
 
 	// output a norm for the fill and the vert is unused, but we pass 0 to avoid optimisation issues
-	coords := [16]float32{
+	coords := [coordinatesSizeRectangle]float32{
 		0, 0, x1Norm, y1Norm, // first triangle
 		0, 0, x2Norm, y1Norm, // second triangle
 		0, 0, x1Norm, y2Norm,
@@ -1163,7 +1164,7 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	return coords, [4]float32{x1Pos, y1Pos, x2Pos, y2Pos}
 }
 
-func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([16]float32, [4]float32) {
+func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	return p.vecRectCoords(pos, rect, frame, 1, shadow)
 }
 
