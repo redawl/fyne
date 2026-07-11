@@ -138,7 +138,7 @@ func (p *painter) Init() {
 		}
 	}
 
-	p.programs = *compiled
+	p.programs = compiled
 }
 
 type mobileContext struct {

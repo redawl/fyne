@@ -70,7 +70,7 @@ func (p *painter) Init() {
 	gl.Disable(gl.DEPTH_TEST)
 	gl.Enable(gl.BLEND)
 	p.logError()
-	p.programs = programs{
+	p.programs = &programs{
 		arbitraryPolygon: programState{
 			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),

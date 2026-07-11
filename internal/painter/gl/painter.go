@@ -52,7 +52,7 @@ type painter struct {
 	fbHeight            int // current framebuffer height in pixels
 	maxTextureSize      int
 	pixScale            float32 // pre-calculate scale*texScale for each draw
-	programs            programs
+	programs            *programs
 	shaderPrograms      map[string]*shaderState // lazily compiled programs for user shaders, keyed by Shader.Name
 	texScale            float32
 }
