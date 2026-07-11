@@ -226,9 +226,6 @@ func (p *painter) createProgram(shaderFilename string) Program {
 	// Because this allows for a minimal change, once we reach Go 1.16 and use go:embed instead of
 	// fyne bundle.
 	vertexSrc, fragmentSrc := shaderSourceNamed(shaderFilename)
-	if vertexSrc == nil {
-		panic("shader not found: " + shaderFilename)
-	}
 
 	prog, err := p.createProgramFromSource(vertexSrc, fragmentSrc)
 	if err != nil {

@@ -75,7 +75,7 @@ func shaderSourceNamed(name string) ([]byte, []byte) {
 	case "ellipse":
 		return shaderRectangleVert, shaderEllipseFrag
 	}
-	return nil, nil
+	panic("shader not found: " + name)
 }
 
 // userShaderFragment returns the fragment shader source to use for the given
