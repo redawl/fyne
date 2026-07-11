@@ -58,7 +58,7 @@ type (
 )
 
 var (
-	compiled          []programState // avoid multiple compilations with the re-used mobile GUI context
+	compiled          *programs // avoid multiple compilations with the re-used mobile GUI context
 	noBuffer          = Buffer{}
 	noProgram         = Program{}
 	noShader          = Shader{}
@@ -77,100 +77,71 @@ func (p *painter) Init() {
 	p.glctx().Disable(gl.DepthTest)
 	p.glctx().Enable(gl.Blend)
 	if compiled == nil {
-		p.programs.simple = programState{
-			ref:        p.createProgram(shaderSimpleVert, shaderSimpleFrag),
-			buff:       p.createBuffer(20),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.blur = programState{
-			ref:        p.createProgram(shaderBlurVert, shaderBlurFrag),
-			buff:       p.createBuffer(20),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.line = programState{
-			ref:        p.createProgram(shaderLineVert, shaderLineFrag),
-			buff:       p.createBuffer(coordinatesSizeLine),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.rectangle = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.roundRectangle = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.polygon = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.arc = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderArcFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.bezierCurve = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderBezierCurveFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.arbitraryPolygon = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		p.programs.ellipse = programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderEllipseFrag),
-			buff:       p.createBuffer(coordinatesSizeRectangle),
-			uniforms:   make(map[string]*uniformState),
-			attributes: make(map[string]Attribute),
-		}
-
-		compiled = []programState{
-			p.programs.simple,
-			p.programs.blur,
-			p.programs.line,
-			p.programs.rectangle,
-			p.programs.roundRectangle,
-			p.programs.polygon,
-			p.programs.arc,
-			p.programs.bezierCurve,
-			p.programs.arbitraryPolygon,
-			p.programs.ellipse,
+		compiled = &programs{
+			simple: programState{
+				ref:        p.createProgram(shaderSimpleVert, shaderSimpleFrag),
+				buff:       p.createBuffer(20),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			blur: programState{
+				ref:        p.createProgram(shaderBlurVert, shaderBlurFrag),
+				buff:       p.createBuffer(20),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			line: programState{
+				ref:        p.createProgram(shaderLineVert, shaderLineFrag),
+				buff:       p.createBuffer(coordinatesSizeLine),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			rectangle: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			roundRectangle: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			polygon: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			arc: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderArcFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			bezierCurve: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderBezierCurveFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			arbitraryPolygon: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
+			ellipse: programState{
+				ref:        p.createProgram(shaderRectangleVert, shaderEllipseFrag),
+				buff:       p.createBuffer(coordinatesSizeRectangle),
+				uniforms:   make(map[string]*uniformState),
+				attributes: make(map[string]Attribute),
+			},
 		}
 	}
 
-	p.programs.simple = compiled[0]
-	p.programs.blur = compiled[1]
-	p.programs.line = compiled[2]
-	p.programs.rectangle = compiled[3]
-	p.programs.roundRectangle = compiled[4]
-	p.programs.polygon = compiled[5]
-	p.programs.arc = compiled[6]
-	p.programs.bezierCurve = compiled[7]
-	p.programs.arbitraryPolygon = compiled[8]
-	p.programs.ellipse = compiled[9]
+	p.programs = *compiled
 }
 
 type mobileContext struct {
