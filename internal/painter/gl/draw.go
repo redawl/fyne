@@ -16,7 +16,7 @@ const (
 	edgeSoftness = 0.5
 
 	coordinatesSizeLine      = 24
-	coordinatesSizeRectangle = 16
+	coordinatesSizeRectangle = 8
 )
 
 func (p *painter) createBuffer(size int) Buffer {
@@ -160,8 +160,7 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	points, bounds := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -258,8 +257,7 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	program := p.programs.bezierCurve
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -323,8 +321,7 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 	program := p.programs.arbitraryPolygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -476,8 +473,7 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	points, bounds := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -564,8 +560,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	points, bounds := p.vecRectCoords(pos, obj, frame, aspect, shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -652,8 +647,7 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 	program := p.programs.polygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -710,8 +704,7 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 	program := p.programs.arc
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -785,8 +778,7 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	points, bounds := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.UpdateVertexArray(program, "normal", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -1153,12 +1145,12 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	y2Pos := pos1.Y + size.Height
 	y2Norm := 1 - (y2Pos+edgeSoftnessScaled+shadowPadBottom)*2/frame.Height
 
-	// output a norm for the fill and the vert is unused, but we pass 0 to avoid optimisation issues
+	// output a norm for the fill
 	coords := [coordinatesSizeRectangle]float32{
-		0, 0, x1Norm, y1Norm, // first triangle
-		0, 0, x2Norm, y1Norm, // second triangle
-		0, 0, x1Norm, y2Norm,
-		0, 0, x2Norm, y2Norm,
+		x1Norm, y1Norm,
+		x2Norm, y1Norm,
+		x1Norm, y2Norm,
+		x2Norm, y2Norm,
 	}
 
 	return coords, [4]float32{x1Pos, y1Pos, x2Pos, y2Pos}
