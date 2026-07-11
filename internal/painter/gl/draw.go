@@ -15,8 +15,9 @@ import (
 const (
 	edgeSoftness = 0.5
 
-	coordinatesSizeLine      = 24
-	coordinatesSizeRectangle = 8
+	coordinatesSizeLine                 = 24
+	coordinatesSizeRectangle            = 8
+	coordinatesSizeRectangleWithTexture = 16
 )
 
 func (p *painter) createBuffer(size int) Buffer {
@@ -1033,7 +1034,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 }
 
 // rectCoords calculates the openGL coordinate space of a rectangle
-func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size, fill canvas.ImageFill, aspect, pad float32) ([16]float32, [4]float32, fyne.Size) {
+func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size, fill canvas.ImageFill, aspect, pad float32) ([coordinatesSizeRectangleWithTexture]float32, [4]float32, fyne.Size) {
 	innerSize, innerPos := rectInnerCoords(size, pos, fill, aspect)
 	pixelSize, pixelPos := roundToPixelCoords(innerSize, innerPos, p.pixScale)
 
@@ -1066,7 +1067,7 @@ func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 
 	insets := [4]float32{xInset, yInset, 1.0 - xInset, 1.0 - yInset}
 
-	return [16]float32{
+	return [coordinatesSizeRectangleWithTexture]float32{
 		// coord x, y, z texture x, y
 		x1, y2, insets[0], insets[3], // top left
 		x1, y1, insets[0], insets[1], // bottom left
