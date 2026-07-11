@@ -10,70 +10,70 @@ import (
 
 var (
 	//go:embed shaders/blur_es.frag
-	shaderBluresFrag []byte
+	shaderBlurFrag []byte
 
 	//go:embed shaders/blur_es.vert
-	shaderBluresVert []byte
+	shaderBlurVert []byte
 
 	//go:embed shaders/line_es.frag
-	shaderLineesFrag []byte
+	shaderLineFrag []byte
 
 	//go:embed shaders/line_es.vert
-	shaderLineesVert []byte
+	shaderLineVert []byte
 
 	//go:embed shaders/rectangle_es.frag
-	shaderRectangleesFrag []byte
+	shaderRectangleFrag []byte
 
 	//go:embed shaders/rectangle_es.vert
-	shaderRectangleesVert []byte
+	shaderRectangleVert []byte
 
 	//go:embed shaders/round_rectangle_es.frag
-	shaderRoundrectangleesFrag []byte
+	shaderRoundrectangleFrag []byte
 
 	//go:embed shaders/simple_es.frag
-	shaderSimpleesFrag []byte
+	shaderSimpleFrag []byte
 
 	//go:embed shaders/simple_es.vert
-	shaderSimpleesVert []byte
+	shaderSimpleVert []byte
 
 	//go:embed shaders/regular_polygon_es.frag
-	shaderPolygonesFrag []byte
+	shaderPolygonFrag []byte
 
 	//go:embed shaders/arc_es.frag
-	shaderArcesFrag []byte
+	shaderArcFrag []byte
 
 	//go:embed shaders/bezier_curve_es.frag
-	shaderBezierCurveesFrag []byte
+	shaderBezierCurveFrag []byte
 
 	//go:embed shaders/arbitrary_polygon_es.frag
-	shaderArbitraryPolygonesFrag []byte
+	shaderArbitraryPolygonFrag []byte
 
 	//go:embed shaders/ellipse_es.frag
-	shaderEllipseesFrag []byte
+	shaderEllipseFrag []byte
 )
 
 func shaderSourceNamed(name string) ([]byte, []byte) {
 	switch name {
 	case "blur_es":
-		return shaderBluresVert, shaderBluresFrag
+		return shaderBlurVert, shaderBlurFrag
 	case "line_es":
-		return shaderLineesVert, shaderLineesFrag
+		return shaderLineVert, shaderLineFrag
 	case "simple_es":
-		return shaderSimpleesVert, shaderSimpleesFrag
+		return shaderSimpleVert, shaderSimpleFrag
 	case "rectangle_es":
-		return shaderRectangleesVert, shaderRectangleesFrag
+		return shaderRectangleVert, shaderRectangleFrag
 	case "round_rectangle_es":
-		return shaderRectangleesVert, shaderRoundrectangleesFrag
+		return shaderRectangleVert, shaderRoundrectangleFrag
 	case "polygon_es":
-		return shaderRectangleesVert, shaderPolygonesFrag
+		return shaderRectangleVert, shaderPolygonFrag
 	case "arc_es":
-		return shaderRectangleesVert, shaderArcesFrag
+		return shaderRectangleVert, shaderArcFrag
 	case "bezier_curve_es":
-		return shaderRectangleesVert, shaderBezierCurveesFrag
+		return shaderRectangleVert, shaderBezierCurveFrag
 	case "arbitrary_polygon_es":
-		return shaderRectangleesVert, shaderArbitraryPolygonesFrag
+		return shaderRectangleVert, shaderArbitraryPolygonFrag
 	case "ellipse_es":
-		return shaderRectangleesVert, shaderEllipseesFrag
+		return shaderRectangleVert, shaderEllipseFrag
 	}
 	return nil, nil
 }
@@ -81,7 +81,7 @@ func shaderSourceNamed(name string) ([]byte, []byte) {
 // rectangleVertexSource returns the standard vertex shader used to fill a vector
 // shape's bounding box. User shaders reuse it, just like the built in shapes.
 func rectangleVertexSource() []byte {
-	return shaderRectangleesVert
+	return shaderRectangleVert
 }
 
 // userShaderFragment returns the fragment shader source to use for the given
