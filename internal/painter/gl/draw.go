@@ -160,7 +160,7 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	points, bounds := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -257,7 +257,7 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	program := p.programs.bezierCurve
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -321,7 +321,7 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 	program := p.programs.arbitraryPolygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -473,7 +473,7 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	points, bounds := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -560,7 +560,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	points, bounds := p.vecRectCoords(pos, obj, frame, aspect, shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -647,7 +647,7 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 	program := p.programs.polygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -704,7 +704,7 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 	program := p.programs.arc
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -778,7 +778,7 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	points, bounds := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "normal", 2, 2, 0)
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()

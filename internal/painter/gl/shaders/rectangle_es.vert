@@ -10,8 +10,8 @@ precision mediump int;
 precision lowp sampler2D;
 #endif
 
-attribute vec2 normal;
+attribute vec2 vert;
 
 void main() {
-    gl_Position = vec4(normal, 0, 1);
+    gl_Position = vec4(vert, 0, 1);
 }
