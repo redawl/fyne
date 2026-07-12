@@ -442,7 +442,7 @@ func (p *painter) shaderProgram(shader *canvas.Shader) (*shaderState, bool) {
 		return state, state.valid
 	}
 
-	ref, err := p.createProgramFromSource(shaderRectangleVert, userShaderFragment(shader))
+	ref, err := p.createProgramFromSource(shaderPassthrough2DVert, userShaderFragment(shader))
 	if err != nil {
 		fyne.LogError("Failed to compile shader "+shader.Name, err)
 		p.shaderPrograms[shader.Name] = &shaderState{} // cache the failure so we do not retry

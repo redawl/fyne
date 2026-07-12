@@ -24,8 +24,8 @@ var (
 	//go:embed shaders/rectangle_es.frag
 	shaderRectangleFrag []byte
 
-	//go:embed shaders/rectangle_es.vert
-	shaderRectangleVert []byte
+	//go:embed shaders/passthrough_2d_es.vert
+	shaderPassthrough2DVert []byte
 
 	//go:embed shaders/round_rectangle_es.frag
 	shaderRoundrectangleFrag []byte

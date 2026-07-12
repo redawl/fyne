@@ -202,19 +202,19 @@ func (p *painter) UpdateVertexArray(pState programState, name string, size, stri
 func (p *painter) compilePrograms() *programs {
 	return &programs{
 		arbitraryPolygon: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderArbitraryPolygonFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderArbitraryPolygonFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		arc: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderArcFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderArcFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		bezierCurve: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderBezierCurveFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderBezierCurveFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
@@ -226,7 +226,7 @@ func (p *painter) compilePrograms() *programs {
 			attributes: make(map[string]Attribute),
 		},
 		ellipse: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderEllipseFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderEllipseFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
@@ -238,19 +238,19 @@ func (p *painter) compilePrograms() *programs {
 			attributes: make(map[string]Attribute),
 		},
 		polygon: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderPolygonFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderPolygonFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		rectangle: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRectangleFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderRectangleFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		roundRectangle: programState{
-			ref:        p.createProgram(shaderRectangleVert, shaderRoundrectangleFrag),
+			ref:        p.createProgram(shaderPassthrough2DVert, shaderRoundrectangleFrag),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
