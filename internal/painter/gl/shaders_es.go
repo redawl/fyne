@@ -10,46 +10,46 @@ import (
 
 var (
 	//go:embed shaders/blur_es.frag
-	shaderBlurFrag []byte
+	shaderFragBlur []byte
 
 	//go:embed shaders/blur_es.vert
-	shaderBlurVert []byte
+	shaderVertBlur []byte
 
 	//go:embed shaders/line_es.frag
-	shaderLineFrag []byte
+	shaderFragLine []byte
 
 	//go:embed shaders/line_es.vert
-	shaderLineVert []byte
+	shaderVertLine []byte
 
 	//go:embed shaders/rectangle_es.frag
-	shaderRectangleFrag []byte
+	shaderFragRectangle []byte
 
 	//go:embed shaders/passthrough_2d_es.vert
-	shaderPassthrough2DVert []byte
+	shaderVertPassthrough2D []byte
 
 	//go:embed shaders/round_rectangle_es.frag
-	shaderRoundrectangleFrag []byte
+	shaderFragRoundRectangle []byte
 
 	//go:embed shaders/simple_es.frag
-	shaderSimpleFrag []byte
+	shaderFragSimple []byte
 
 	//go:embed shaders/simple_es.vert
-	shaderSimpleVert []byte
+	shaderVertSimple []byte
 
 	//go:embed shaders/regular_polygon_es.frag
-	shaderPolygonFrag []byte
+	shaderFragPolygon []byte
 
 	//go:embed shaders/arc_es.frag
-	shaderArcFrag []byte
+	shaderFragArc []byte
 
 	//go:embed shaders/bezier_curve_es.frag
-	shaderBezierCurveFrag []byte
+	shaderFragBezierCurve []byte
 
 	//go:embed shaders/arbitrary_polygon_es.frag
-	shaderArbitraryPolygonFrag []byte
+	shaderFragArbitraryPolygon []byte
 
 	//go:embed shaders/ellipse_es.frag
-	shaderEllipseFrag []byte
+	shaderFragEllipse []byte
 )
 
 // userShaderFragment returns the fragment shader source to use for the given
