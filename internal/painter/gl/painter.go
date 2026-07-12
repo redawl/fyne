@@ -220,7 +220,7 @@ func (p *painter) compilePrograms() *programs {
 			attributes: make(map[string]Attribute),
 		},
 		blur: programState{
-			ref:        p.createProgram(shaderVertBlur, shaderFragBlur),
+			ref:        p.createProgram(shaderVertSimple, shaderFragBlur),
 			buff:       p.createBuffer(20),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),

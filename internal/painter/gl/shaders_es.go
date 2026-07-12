@@ -30,8 +30,6 @@ var (
 	//go:embed shaders/simple_es.frag
 	shaderFragSimple []byte
 
-	//go:embed shaders/blur_es.vert
-	shaderVertBlur []byte
 	//go:embed shaders/line_es.vert
 	shaderVertLine []byte
 	//go:embed shaders/passthrough_2d_es.vert
