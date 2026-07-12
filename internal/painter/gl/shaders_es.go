@@ -34,8 +34,8 @@ var (
 	shaderVertLine []byte
 	//go:embed shaders/passthrough_2d_es.vert
 	shaderVertPassthrough2D []byte
-	//go:embed shaders/simple_es.vert
-	shaderVertSimple []byte
+	//go:embed shaders/textured_passthrough_2d_es.vert
+	shaderVertTexturedPassthrough2D []byte
 )
 
 // userShaderFragment returns the fragment shader source to use for the given
