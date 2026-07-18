@@ -33,7 +33,7 @@ func NewFileURI(path string) fyne.URI {
 	}
 
 	return &uri{url.URL{
-		Scheme: "file",
+		Scheme: fyne.URISchemeFile,
 		Path:   path,
 	}}
 }
@@ -45,7 +45,7 @@ func NewFileURI(path string) fyne.URI {
 // Since: 2.0
 func ParseURI(s string) (fyne.URI, error) {
 	// Extract the scheme.
-	scheme, path, ok := strings.Cut(s, ":")
+	scheme, path, ok := strings.Cut(s, fyne.URISchemeSeparator)
 	if !ok {
 		return nil, errors.New("invalid URI, scheme must be present")
 	}
@@ -63,11 +63,11 @@ func ParseURI(s string) (fyne.URI, error) {
 
 	if runtime.GOOS == "windows" && len(scheme) == 1 {
 		path = scheme + ":" + filepath.ToSlash(path)
-		scheme = "file"
+		scheme = fyne.URISchemeFile
 	}
 
-	if strings.EqualFold(scheme, "file") {
-		path = strings.TrimPrefix(path, "//")
+	if strings.EqualFold(scheme, fyne.URISchemeFile) {
+		path = strings.TrimPrefix(path, fyne.URIAuthorityPrefix)
 		if path == "" {
 			return nil, errors.New("invalid file URI, path cannot be empty")
 		}

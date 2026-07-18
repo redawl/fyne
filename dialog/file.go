@@ -627,7 +627,7 @@ func (f *fileDialog) getDataItem(id int) (fyne.URI, bool) {
 //   - "/" (should be filesystem root on all supported platforms)
 func (f *FileDialog) effectiveStartingDir() fyne.ListableURI {
 	if f.startingLocation != nil {
-		if f.startingLocation.Scheme() == "file" {
+		if f.startingLocation.Scheme() == fyne.URISchemeFile {
 			path := f.startingLocation.Path()
 
 			// the starting directory is set explicitly
