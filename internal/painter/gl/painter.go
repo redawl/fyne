@@ -286,10 +286,8 @@ func (p *painter) compileShader(source string, shaderType uint32) (Shader, error
 	return shader, nil
 }
 
-// createProgramFromSource compiles and links the given vertex and fragment shader sources
-// into a program. Unlike mustCreateProgram it returns an error rather than panicking, so it is
-// safe to use with application supplied shader source that may fail to compile.
-func (p *painter) createProgramFromSource(vertexSrc, fragmentSrc []byte) (Program, error) {
+// createProgram compiles and links the given vertex and fragment shader sources into a program.
+func (p *painter) createProgram(vertexSrc, fragmentSrc []byte) (Program, error) {
 	vertShader, err := p.compileShader(string(vertexSrc), vertexShader)
 	if err != nil {
 		return noProgram, err
@@ -350,7 +348,7 @@ func (p *painter) logError() {
 }
 
 func (p *painter) mustCreateProgram(vertexSrc, fragmentSrc []byte) Program {
-	prog, err := p.createProgramFromSource(vertexSrc, fragmentSrc)
+	prog, err := p.createProgram(vertexSrc, fragmentSrc)
 	if err != nil {
 		panic(err)
 	}
