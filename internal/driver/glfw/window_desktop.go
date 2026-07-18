@@ -745,7 +745,7 @@ func (w *window) focused(_ *glfw.Window, focused bool) {
 	w.processFocused(focused)
 }
 
-func (w *window) DetachCurrentContext() {
+func (*window) DetachCurrentContext() {
 	glfw.DetachCurrentContext()
 }
 

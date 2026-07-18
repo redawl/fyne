@@ -131,7 +131,7 @@ func (r *Runner) runOneFrame() (done bool) {
 }
 
 // tickAnimation will process a frame of animation and return true if this should continue animating
-func (r *Runner) tickAnimation(a *anim) bool {
+func (*Runner) tickAnimation(a *anim) bool {
 	duration := a.a.Duration
 	now := time.Now()
 

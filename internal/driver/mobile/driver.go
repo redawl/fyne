@@ -136,11 +136,11 @@ func (d *driver) currentWindow() *window {
 	return last
 }
 
-func (d *driver) Clipboard() fyne.Clipboard {
+func (*driver) Clipboard() fyne.Clipboard {
 	return NewClipboard()
 }
 
-func (d *driver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (fyne.Size, float32) {
+func (*driver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (fyne.Size, float32) {
 	return painter.RenderedTextSize(text, textSize, style, source)
 }
 
@@ -165,11 +165,11 @@ func (d *driver) AbsolutePositionForObject(co fyne.CanvasObject) fyne.Position {
 	return pos.Subtract(inset)
 }
 
-func (d *driver) GoBack() {
+func (*driver) GoBack() {
 	app.GoBack()
 }
 
-func (d *driver) Quit() {
+func (*driver) Quit() {
 	// Android and iOS guidelines say this should not be allowed!
 }
 
@@ -358,13 +358,13 @@ func (d *driver) handlePaint(e paint.Event, w *window) {
 	cache.Clean(canvasNeedRefresh)
 }
 
-func (d *driver) onStart() {
+func (*driver) onStart() {
 	if f := fyne.CurrentApp().Lifecycle().(*intapp.Lifecycle).OnStarted(); f != nil {
 		f()
 	}
 }
 
-func (d *driver) onStop() {
+func (*driver) onStop() {
 	l := fyne.CurrentApp().Lifecycle().(*intapp.Lifecycle)
 	if f := l.OnStopped(); f != nil {
 		l.QueueEvent(f)
@@ -433,7 +433,7 @@ func (d *driver) setTheme(dark bool) {
 	d.theme = mode
 }
 
-func (d *driver) tapDownCanvas(w *window, x, y float32, tapID touch.Sequence) {
+func (*driver) tapDownCanvas(w *window, x, y float32, tapID touch.Sequence) {
 	tapX := scale.ToFyneCoordinate(w.canvas, int(x))
 	tapY := scale.ToFyneCoordinate(w.canvas, int(y))
 	pos := fyne.NewPos(tapX, tapY+tapYOffset)
@@ -441,7 +441,7 @@ func (d *driver) tapDownCanvas(w *window, x, y float32, tapID touch.Sequence) {
 	w.canvas.tapDown(pos, int(tapID))
 }
 
-func (d *driver) tapMoveCanvas(w *window, x, y float32, tapID touch.Sequence) {
+func (*driver) tapMoveCanvas(w *window, x, y float32, tapID touch.Sequence) {
 	tapX := scale.ToFyneCoordinate(w.canvas, int(x))
 	tapY := scale.ToFyneCoordinate(w.canvas, int(y))
 	pos := fyne.NewPos(tapX, tapY+tapYOffset)
@@ -665,7 +665,7 @@ func (d *driver) typeDownCanvas(canvas *canvas, r rune, code key.Code, mod key.M
 	}
 }
 
-func (d *driver) typeUpCanvas(_ *canvas, _ rune, _ key.Code, _ key.Modifiers) {
+func (*driver) typeUpCanvas(_ *canvas, _ rune, _ key.Code, _ key.Modifiers) {
 }
 
 func (d *driver) Device() fyne.Device {
@@ -676,7 +676,7 @@ func (d *driver) SetOnConfigurationChanged(f func(*Configuration)) {
 	d.onConfigChanged = f
 }
 
-func (d *driver) DoubleTapDelay() time.Duration {
+func (*driver) DoubleTapDelay() time.Duration {
 	return tapDoubleDelay
 }
 

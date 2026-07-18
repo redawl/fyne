@@ -974,12 +974,12 @@ func storageURI(a fyne.App) fyne.URI {
 // NOTE: It assumes that the slice only contains one item.
 type iconPaddingLayout struct{}
 
-func (i *iconPaddingLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
+func (*iconPaddingLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	padding := theme.Padding() * 2
 	objects[0].Move(fyne.NewPos(padding, 0))
 	objects[0].Resize(size.SubtractWidthHeight(padding, 0))
 }
 
-func (i *iconPaddingLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
+func (*iconPaddingLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return objects[0].MinSize().AddWidthHeight(theme.Padding()*2, 0)
 }

@@ -228,7 +228,7 @@ func (w *window) ShowAndRun() {
 }
 
 // Clipboard returns the system clipboard
-func (w *window) Clipboard() fyne.Clipboard {
+func (*window) Clipboard() fyne.Clipboard {
 	return NewClipboard()
 }
 
@@ -332,7 +332,7 @@ func (w *window) processRefresh() {
 	refreshWindow(w)
 }
 
-func (w *window) findObjectAtPositionMatching(c *glCanvas, mouse fyne.Position, matches func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position, int) {
+func (*window) findObjectAtPositionMatching(c *glCanvas, mouse fyne.Position, matches func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position, int) {
 	return driver.FindObjectAtPositionMatching(mouse, matches, c.Overlays().Top(), c.menu, c.Content())
 }
 
@@ -933,7 +933,7 @@ func (w *window) RunWithContext(f func()) {
 	w.DetachCurrentContext()
 }
 
-func (w *window) Context() any {
+func (*window) Context() any {
 	return nil
 }
 

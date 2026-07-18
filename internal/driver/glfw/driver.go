@@ -98,7 +98,7 @@ func usesUnixSystrayIcon(osName string) bool {
 	return osName == goos.Linux || goos.IsBSD(osName)
 }
 
-func (d *gLDriver) DoFromGoroutine(f func(), wait bool) {
+func (*gLDriver) DoFromGoroutine(f func(), wait bool) {
 	if wait {
 		async.EnsureNotMain(func() {
 			runOnMainWithWait(f, true)
@@ -108,11 +108,11 @@ func (d *gLDriver) DoFromGoroutine(f func(), wait bool) {
 	}
 }
 
-func (d *gLDriver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (size fyne.Size, baseline float32) {
+func (*gLDriver) RenderedTextSize(text string, textSize float32, style fyne.TextStyle, source fyne.Resource) (size fyne.Size, baseline float32) {
 	return painter.RenderedTextSize(text, textSize, style, source)
 }
 
-func (d *gLDriver) CanvasForObject(obj fyne.CanvasObject) fyne.Canvas {
+func (*gLDriver) CanvasForObject(obj fyne.CanvasObject) fyne.Canvas {
 	return common.CanvasForObject(obj)
 }
 
@@ -126,7 +126,7 @@ func (d *gLDriver) AbsolutePositionForObject(co fyne.CanvasObject) fyne.Position
 	return driver.AbsolutePositionForObject(co, glc.ObjectTrees())
 }
 
-func (d *gLDriver) Device() fyne.Device {
+func (*gLDriver) Device() fyne.Device {
 	return &glDevice{}
 }
 
@@ -201,7 +201,7 @@ func (d *gLDriver) Run() {
 	l.DestroyEventQueue()
 }
 
-func (d *gLDriver) SetDisableScreenBlanking(disable bool) {
+func (*gLDriver) SetDisableScreenBlanking(disable bool) {
 	setDisableScreenBlank(disable)
 }
 

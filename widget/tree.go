@@ -451,7 +451,7 @@ func (t *Tree) TypedKey(event *fyne.KeyEvent) {
 }
 
 // TypedRune is called if a text event happens while this Tree is focused.
-func (t *Tree) TypedRune(_ rune) {
+func (*Tree) TypedRune(_ rune) {
 	// intentionally left blank
 }
 
@@ -962,7 +962,7 @@ func (n *treeNode) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved is called when a desktop pointer hovers over the widget
-func (n *treeNode) MouseMoved(*desktop.MouseEvent) {
+func (*treeNode) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut is called when a desktop pointer exits the widget

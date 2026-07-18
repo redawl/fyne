@@ -175,7 +175,7 @@ func (s *Slider) MouseIn(_ *desktop.MouseEvent) {
 // MouseMoved is called when a desktop pointer hovers over the widget.
 //
 // Since: 2.4
-func (s *Slider) MouseMoved(_ *desktop.MouseEvent) {
+func (*Slider) MouseMoved(_ *desktop.MouseEvent) {
 }
 
 // MouseOut is called when a desktop pointer exits the widget
@@ -215,10 +215,10 @@ func (s *Slider) TypedKey(key *fyne.KeyEvent) {
 // TypedRune is called when this item receives a char event.
 //
 // Since: 2.4
-func (s *Slider) TypedRune(_ rune) {
+func (*Slider) TypedRune(_ rune) {
 }
 
-func (s *Slider) buttonDiameter(inlineIconSize float32) float32 {
+func (*Slider) buttonDiameter(inlineIconSize float32) float32 {
 	return inlineIconSize - 4 // match radio icons
 }
 

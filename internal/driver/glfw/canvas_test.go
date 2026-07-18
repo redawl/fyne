@@ -600,7 +600,7 @@ func (l *recordingLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
 	l.layoutEvents = append(l.layoutEvents, size)
 }
 
-func (l *recordingLayout) MinSize([]fyne.CanvasObject) fyne.Size {
+func (*recordingLayout) MinSize([]fyne.CanvasObject) fyne.Size {
 	return fyne.NewSize(6, 9)
 }
 

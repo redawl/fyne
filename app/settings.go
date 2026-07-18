@@ -23,7 +23,7 @@ type SettingsSchema struct {
 }
 
 // StoragePath returns the location of the settings storage
-func (sc *SettingsSchema) StoragePath() string {
+func (*SettingsSchema) StoragePath() string {
 	return filepath.Join(app.RootConfigDir(), "settings.json")
 }
 
@@ -47,7 +47,7 @@ type settings struct {
 	schema SettingsSchema
 }
 
-func (s *settings) BuildType() fyne.BuildType {
+func (*settings) BuildType() fyne.BuildType {
 	return build.Mode
 }
 

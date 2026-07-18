@@ -253,7 +253,7 @@ func (t *Table) MouseOut() {
 }
 
 // MouseUp response to desktop mouse event
-func (t *Table) MouseUp(*desktop.MouseEvent) {
+func (*Table) MouseUp(*desktop.MouseEvent) {
 }
 
 // RefreshItem refreshes a single item, specified by the item ID passed in.
@@ -347,11 +347,11 @@ func (t *Table) TouchDown(e *mobile.TouchEvent) {
 }
 
 // TouchUp response to mobile touch event
-func (t *Table) TouchUp(*mobile.TouchEvent) {
+func (*Table) TouchUp(*mobile.TouchEvent) {
 }
 
 // TouchCancel response to mobile touch event
-func (t *Table) TouchCancel(*mobile.TouchEvent) {
+func (*Table) TouchCancel(*mobile.TouchEvent) {
 }
 
 // TypedKey is called if a key event happens while this Table is focused.
@@ -408,7 +408,7 @@ func (t *Table) TypedKey(event *fyne.KeyEvent) {
 }
 
 // TypedRune is called if a text event happens while this Table is focused.
-func (t *Table) TypedRune(_ rune) {
+func (*Table) TypedRune(_ rune) {
 	// intentionally left blank
 }
 

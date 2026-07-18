@@ -20,7 +20,7 @@ type StandardCursor int
 // Image is not used for any of the StandardCursor types.
 //
 // Since: 2.0
-func (d StandardCursor) Image() (img image.Image, hotspotX, hotspotY int) {
+func (StandardCursor) Image() (img image.Image, hotspotX, hotspotY int) {
 	return nil, 0, 0
 }
 

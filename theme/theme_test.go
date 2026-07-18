@@ -98,18 +98,18 @@ func TestTheme_Bootstrapping(*testing.T) {
 
 type emptyTheme struct{}
 
-func (e *emptyTheme) Color(fyne.ThemeColorName, fyne.ThemeVariant) color.Color {
+func (*emptyTheme) Color(fyne.ThemeColorName, fyne.ThemeVariant) color.Color {
 	return nil
 }
 
-func (e *emptyTheme) Font(fyne.TextStyle) fyne.Resource {
+func (*emptyTheme) Font(fyne.TextStyle) fyne.Resource {
 	return nil
 }
 
-func (e *emptyTheme) Icon(fyne.ThemeIconName) fyne.Resource {
+func (*emptyTheme) Icon(fyne.ThemeIconName) fyne.Resource {
 	return nil
 }
 
-func (e *emptyTheme) Size(fyne.ThemeSizeName) float32 {
+func (*emptyTheme) Size(fyne.ThemeSizeName) float32 {
 	return 0
 }

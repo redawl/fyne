@@ -571,7 +571,7 @@ type refreshCountingWidget struct {
 	refreshCount int
 }
 
-func (r *refreshCountingWidget) CreateRenderer() fyne.WidgetRenderer {
+func (*refreshCountingWidget) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(canvas.NewRectangle(color.Transparent))
 }
 

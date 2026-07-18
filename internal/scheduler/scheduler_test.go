@@ -142,7 +142,7 @@ func (m *memCache) exists(name string) bool {
 	return ok
 }
 
-func (m *memCache) RootURI() fyne.URI       { return nil }
+func (*memCache) RootURI() fyne.URI         { return nil }
 func (m *memCache) Exists(name string) bool { return m.exists(name) }
 
 func (m *memCache) Read(name string) (io.ReadCloser, error) {

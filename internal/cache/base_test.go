@@ -216,10 +216,10 @@ func (r *dummyWidgetRenderer) Destroy() {
 	}
 }
 
-func (r *dummyWidgetRenderer) Layout(fyne.Size) {
+func (*dummyWidgetRenderer) Layout(fyne.Size) {
 }
 
-func (r *dummyWidgetRenderer) MinSize() fyne.Size {
+func (*dummyWidgetRenderer) MinSize() fyne.Size {
 	return fyne.NewSize(0, 0)
 }
 
@@ -227,14 +227,14 @@ func (r *dummyWidgetRenderer) Objects() []fyne.CanvasObject {
 	return r.objects
 }
 
-func (r *dummyWidgetRenderer) Refresh() {
+func (*dummyWidgetRenderer) Refresh() {
 }
 
 type timeMock struct {
 	now time.Time
 }
 
-func (t *timeMock) createTime(minute, second int) time.Time {
+func (*timeMock) createTime(minute, second int) time.Time {
 	return time.Date(2021, time.June, 15, 2, minute, second, 0, time.UTC)
 }
 

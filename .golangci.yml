@@ -93,8 +93,6 @@ linters:
           disabled: true # TODO
         - name: unhandled-error
           disabled: true # we rely on errcheck
-        - name: unused-receiver
-          disabled: true # TODO
         - name: use-slices-sort
           disabled: true # TODO
         - name: var-declaration

@@ -40,7 +40,7 @@ func (c *Circle) Hide() {
 
 // MinSize for a Circle simply returns Size{1, 1} as there is no
 // explicit content
-func (c *Circle) MinSize() fyne.Size {
+func (*Circle) MinSize() fyne.Size {
 	return fyne.NewSize(1, 1)
 }
 

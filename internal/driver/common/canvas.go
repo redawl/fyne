@@ -414,7 +414,7 @@ func (c *Canvas) isMenuActive() bool {
 	return true
 }
 
-func (c *Canvas) walkTree(
+func (*Canvas) walkTree(
 	tree *renderCacheTree,
 	beforeChildren func(*RenderCacheNode, fyne.Position),
 	afterChildren func(*RenderCacheNode, fyne.Position),
@@ -470,7 +470,7 @@ type activatableMenu interface {
 	IsActive() bool
 }
 
-func (c *Canvas) updateLayout(objToLayout fyne.CanvasObject) {
+func (*Canvas) updateLayout(objToLayout fyne.CanvasObject) {
 	switch cont := objToLayout.(type) {
 	case *fyne.Container:
 		if cont.Layout != nil {

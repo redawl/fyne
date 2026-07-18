@@ -244,7 +244,7 @@ func TextSubHeadingSize() float32 {
 	return Current().Size(SizeNameSubHeadingText)
 }
 
-func (t *builtinTheme) Size(s fyne.ThemeSizeName) float32 {
+func (*builtinTheme) Size(s fyne.ThemeSizeName) float32 {
 	//revive:disable:add-constant
 	//revive:disable:identical-switch-branches
 	switch s {

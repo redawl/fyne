@@ -247,7 +247,7 @@ func (e *Entry) CursorTextOffset() (pos int) {
 }
 
 // Cursor returns the cursor type of this widget
-func (e *Entry) Cursor() desktop.Cursor {
+func (*Entry) Cursor() desktop.Cursor {
 	return desktop.TextCursor
 }
 
@@ -549,7 +549,7 @@ func (e *Entry) Append(text string) {
 
 // Tapped is called when this entry has been tapped.
 // Cursor position and selection state are updated in the device-specific down callbacks.
-func (e *Entry) Tapped(*fyne.PointEvent) {
+func (*Entry) Tapped(*fyne.PointEvent) {
 }
 
 // TappedSecondary is called when right or alternative tap is invoked.
@@ -638,13 +638,13 @@ func (e *Entry) TouchDown(ev *mobile.TouchEvent) {
 // TouchUp is called when this entry gets a touch up event on mobile device.
 //
 // Since: 2.1
-func (e *Entry) TouchUp(*mobile.TouchEvent) {
+func (*Entry) TouchUp(*mobile.TouchEvent) {
 }
 
 // TouchCancel is called when this entry gets a touch cancel event on mobile device (app was removed from focus).
 //
 // Since: 2.1
-func (e *Entry) TouchCancel(*mobile.TouchEvent) {
+func (*Entry) TouchCancel(*mobile.TouchEvent) {
 }
 
 // TypedKey receives key input events when the Entry widget is focused.
@@ -1522,7 +1522,7 @@ type entryRenderer struct {
 	entry   *Entry
 }
 
-func (r *entryRenderer) Destroy() {
+func (*entryRenderer) Destroy() {
 }
 
 func (r *entryRenderer) trailingInset() float32 {

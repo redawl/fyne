@@ -101,7 +101,7 @@ func (i *menuItem) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved does nothing.
-func (i *menuItem) MouseMoved(*desktop.MouseEvent) {
+func (*menuItem) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut deactivates the item unless it has an open submenu.

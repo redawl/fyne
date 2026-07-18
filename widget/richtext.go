@@ -150,7 +150,7 @@ func (t *RichText) String() string {
 }
 
 // charMinSize returns the average char size to use for internal computation
-func (t *RichText) charMinSize(concealed bool, style fyne.TextStyle, textSize float32) fyne.Size {
+func (*RichText) charMinSize(concealed bool, style fyne.TextStyle, textSize float32) fyne.Size {
 	defaultChar := "M"
 	if concealed {
 		defaultChar = passwordChar

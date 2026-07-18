@@ -199,7 +199,7 @@ type themedBackgroundRenderer struct {
 	objects []fyne.CanvasObject
 }
 
-func (renderer *themedBackgroundRenderer) Destroy() {
+func (*themedBackgroundRenderer) Destroy() {
 }
 
 func (renderer *themedBackgroundRenderer) Layout(size fyne.Size) {
@@ -228,7 +228,7 @@ type dialogLayout struct {
 	d *dialog
 }
 
-func (l *dialogLayout) Layout(obj []fyne.CanvasObject, size fyne.Size) {
+func (*dialogLayout) Layout(obj []fyne.CanvasObject, size fyne.Size) {
 	btnMin := obj[3].MinSize()
 	labelMin := obj[4].MinSize()
 
@@ -252,7 +252,7 @@ func (l *dialogLayout) Layout(obj []fyne.CanvasObject, size fyne.Size) {
 	obj[2].Resize(fyne.NewSize(size.Width-padWidth, contentEnd-contentStart))
 }
 
-func (l *dialogLayout) MinSize(obj []fyne.CanvasObject) fyne.Size {
+func (*dialogLayout) MinSize(obj []fyne.CanvasObject) fyne.Size {
 	contentMin := obj[2].MinSize()
 	btnMin := obj[3].MinSize()
 	labelMin := obj[4].MinSize()

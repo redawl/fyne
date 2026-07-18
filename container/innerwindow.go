@@ -320,7 +320,7 @@ func (d *draggableLabel) Dragged(ev *fyne.DragEvent) {
 	}
 }
 
-func (d *draggableLabel) DragEnd() {
+func (*draggableLabel) DragEnd() {
 }
 
 func (d *draggableLabel) MinSize() fyne.Size {
@@ -350,13 +350,13 @@ func newDraggableCorner(w *InnerWindow) *draggableCorner {
 	return d
 }
 
-func (c *draggableCorner) CreateRenderer() fyne.WidgetRenderer {
+func (*draggableCorner) CreateRenderer() fyne.WidgetRenderer {
 	prop := canvas.NewImageFromResource(fyne.CurrentApp().Settings().Theme().Icon(theme.IconNameDragCornerIndicator))
 	prop.SetMinSize(fyne.NewSquareSize(sizeDraggableCorner))
 	return widget.NewSimpleRenderer(prop)
 }
 
-func (c *draggableCorner) Cursor() desktop.Cursor {
+func (*draggableCorner) Cursor() desktop.Cursor {
 	return desktop.NWSEResizeCursor
 }
 
@@ -366,7 +366,7 @@ func (c *draggableCorner) Dragged(ev *fyne.DragEvent) {
 	}
 }
 
-func (c *draggableCorner) DragEnd() {
+func (*draggableCorner) DragEnd() {
 }
 
 type borderButton struct {

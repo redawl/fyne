@@ -67,7 +67,7 @@ func (l *legacyWrapper) Font(s fyne.TextStyle) fyne.Resource {
 	return l.old.TextFont()
 }
 
-func (l *legacyWrapper) Icon(n fyne.ThemeIconName) fyne.Resource {
+func (*legacyWrapper) Icon(n fyne.ThemeIconName) fyne.Resource {
 	return DefaultTheme().Icon(n)
 }
 

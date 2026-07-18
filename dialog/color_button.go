@@ -62,7 +62,7 @@ func (b *colorButton) MouseOut() {
 }
 
 // MouseMoved is called when a desktop pointer hovers over the widget
-func (b *colorButton) MouseMoved(*desktop.MouseEvent) {
+func (*colorButton) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MinSize returns the size that this widget should not shrink below

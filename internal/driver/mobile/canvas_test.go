@@ -522,7 +522,7 @@ func (a *mobileApp) Driver() fyne.Driver {
 	return a.driver
 }
 
-func (a *mobileApp) Run() {
+func (*mobileApp) Run() {
 	// This is an incomplete driver loop - our CI does not currently support booting the mobile graphics
 	// TODO replace with a full mobileApp.Run() once that is resolved
 	async.SetMainGoroutine()

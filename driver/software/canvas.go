@@ -164,7 +164,7 @@ func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (x, y int) {
 	return int(pos.X * c.scale), int(pos.Y * c.scale)
 }
 
-func (c *canvas) Refresh(fyne.CanvasObject) {
+func (*canvas) Refresh(fyne.CanvasObject) {
 }
 
 func (c *canvas) Resize(size fyne.Size) {

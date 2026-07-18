@@ -220,7 +220,7 @@ func (f *Form) createInput(item *FormItem) fyne.CanvasObject {
 	return &fyne.Container{Layout: formItemLayout{form: f}, Objects: []fyne.CanvasObject{item.Widget, textContainer}}
 }
 
-func (f *Form) itemWidgetHasValidator(w fyne.CanvasObject) bool {
+func (*Form) itemWidgetHasValidator(w fyne.CanvasObject) bool {
 	value := reflect.ValueOf(w).Elem()
 	validatorField := value.FieldByName("Validator")
 	if validatorField == (reflect.Value{}) {

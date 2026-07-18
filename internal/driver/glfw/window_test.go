@@ -2219,10 +2219,10 @@ func (f *focusable) Tapped(*fyne.PointEvent) {
 	d.CanvasForObject(f).Focus(f)
 }
 
-func (f *focusable) TypedRune(rune) {
+func (*focusable) TypedRune(rune) {
 }
 
-func (f *focusable) TypedKey(*fyne.KeyEvent) {
+func (*focusable) TypedKey(*fyne.KeyEvent) {
 }
 
 func (f *focusable) FocusGained() {

@@ -38,7 +38,7 @@ func (s *selectable) CreateRenderer() fyne.WidgetRenderer {
 	return &selectableRenderer{sel: s}
 }
 
-func (s *selectable) Cursor() desktop.Cursor {
+func (*selectable) Cursor() desktop.Cursor {
 	return desktop.TextCursor
 }
 
@@ -168,7 +168,7 @@ func (s *selectable) TouchDown(*mobile.TouchEvent) {
 	}
 }
 
-func (s *selectable) TouchUp(*mobile.TouchEvent) {
+func (*selectable) TouchUp(*mobile.TouchEvent) {
 }
 
 func (s *selectable) TypedShortcut(sh fyne.Shortcut) {
@@ -284,13 +284,13 @@ type selectableRenderer struct {
 	selections []fyne.CanvasObject
 }
 
-func (r *selectableRenderer) Destroy() {
+func (*selectableRenderer) Destroy() {
 }
 
-func (r *selectableRenderer) Layout(fyne.Size) {
+func (*selectableRenderer) Layout(fyne.Size) {
 }
 
-func (r *selectableRenderer) MinSize() fyne.Size {
+func (*selectableRenderer) MinSize() fyne.Size {
 	return fyne.Size{}
 }
 

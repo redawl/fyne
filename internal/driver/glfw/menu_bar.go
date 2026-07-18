@@ -177,17 +177,17 @@ var (
 	_ desktop.Hoverable = (*menuBarUnderlay)(nil) // block hover events on main content
 )
 
-func (u *menuBarUnderlay) CreateRenderer() fyne.WidgetRenderer {
+func (*menuBarUnderlay) CreateRenderer() fyne.WidgetRenderer {
 	return &menuUnderlayRenderer{}
 }
 
-func (u *menuBarUnderlay) MouseIn(*desktop.MouseEvent) {
+func (*menuBarUnderlay) MouseIn(*desktop.MouseEvent) {
 }
 
-func (u *menuBarUnderlay) MouseOut() {
+func (*menuBarUnderlay) MouseOut() {
 }
 
-func (u *menuBarUnderlay) MouseMoved(*desktop.MouseEvent) {
+func (*menuBarUnderlay) MouseMoved(*desktop.MouseEvent) {
 }
 
 func (u *menuBarUnderlay) Tapped(*fyne.PointEvent) {
@@ -200,12 +200,12 @@ type menuUnderlayRenderer struct {
 
 var _ fyne.WidgetRenderer = (*menuUnderlayRenderer)(nil)
 
-func (r *menuUnderlayRenderer) Layout(fyne.Size) {
+func (*menuUnderlayRenderer) Layout(fyne.Size) {
 }
 
-func (r *menuUnderlayRenderer) MinSize() fyne.Size {
+func (*menuUnderlayRenderer) MinSize() fyne.Size {
 	return fyne.NewSize(0, 0)
 }
 
-func (r *menuUnderlayRenderer) Refresh() {
+func (*menuUnderlayRenderer) Refresh() {
 }

@@ -369,7 +369,7 @@ var (
 
 type noopLogger struct{}
 
-func (n noopLogger) Printf(string, ...any) {}
+func (noopLogger) Printf(string, ...any) {}
 
 type dynamicFontMap struct {
 	faces  []*font.Face

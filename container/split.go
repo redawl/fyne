@@ -95,7 +95,7 @@ type splitContainerRenderer struct {
 	objects []fyne.CanvasObject
 }
 
-func (r *splitContainerRenderer) Destroy() {
+func (*splitContainerRenderer) Destroy() {
 }
 
 func (r *splitContainerRenderer) Layout(size fyne.Size) {
@@ -330,7 +330,7 @@ func (d *divider) MouseIn(*desktop.MouseEvent) {
 	d.Refresh()
 }
 
-func (d *divider) MouseMoved(*desktop.MouseEvent) {}
+func (*divider) MouseMoved(*desktop.MouseEvent) {}
 
 func (d *divider) MouseOut() {
 	d.hovered = false
@@ -346,7 +346,7 @@ type dividerRenderer struct {
 	objects    []fyne.CanvasObject
 }
 
-func (r *dividerRenderer) Destroy() {
+func (*dividerRenderer) Destroy() {
 }
 
 func (r *dividerRenderer) Layout(size fyne.Size) {

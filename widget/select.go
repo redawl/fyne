@@ -149,7 +149,7 @@ func (s *Select) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved is called when a desktop pointer hovers over the widget
-func (s *Select) MouseMoved(*desktop.MouseEvent) {
+func (*Select) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut is called when a desktop pointer exits the widget
@@ -251,7 +251,7 @@ func (s *Select) TypedKey(event *fyne.KeyEvent) {
 }
 
 // TypedRune is called if a text event happens while this Select is focused.
-func (s *Select) TypedRune(_ rune) {
+func (*Select) TypedRune(_ rune) {
 	// intentionally left blank
 }
 
@@ -370,7 +370,7 @@ func (s *selectRenderer) Objects() []fyne.CanvasObject {
 	return s.objects
 }
 
-func (s *selectRenderer) Destroy() {}
+func (*selectRenderer) Destroy() {}
 
 // Layout the components of the button widget
 func (s *selectRenderer) Layout(size fyne.Size) {

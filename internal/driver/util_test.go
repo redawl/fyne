@@ -476,7 +476,7 @@ func (o *objectTree) Hide() {
 	o.hidden = true
 }
 
-func (o *objectTree) Refresh() {
+func (*objectTree) Refresh() {
 }
 
 func (o *objectTree) CreateRenderer() fyne.WidgetRenderer {
@@ -491,14 +491,14 @@ type objectTreeRenderer struct {
 	internal_widget.BaseRenderer
 }
 
-func (o objectTreeRenderer) Layout(_ fyne.Size) {
+func (objectTreeRenderer) Layout(_ fyne.Size) {
 }
 
-func (o objectTreeRenderer) MinSize() fyne.Size {
+func (objectTreeRenderer) MinSize() fyne.Size {
 	return fyne.NewSize(0, 0)
 }
 
-func (o objectTreeRenderer) Refresh() {
+func (objectTreeRenderer) Refresh() {
 }
 
 type scrollable struct {
@@ -511,11 +511,11 @@ var (
 	_ fyne.Scrollable   = (*scrollable)(nil)
 )
 
-func (s *scrollable) Hide() {
+func (*scrollable) Hide() {
 	panic("implement me")
 }
 
-func (s *scrollable) MinSize() fyne.Size {
+func (*scrollable) MinSize() fyne.Size {
 	return fyne.NewSize(1, 1)
 }
 
@@ -527,7 +527,7 @@ func (s *scrollable) Position() fyne.Position {
 	return s.pos
 }
 
-func (s *scrollable) Refresh() {
+func (*scrollable) Refresh() {
 	panic("implement me")
 }
 
@@ -535,11 +535,11 @@ func (s *scrollable) Resize(size fyne.Size) {
 	s.size = size
 }
 
-func (s *scrollable) Scrolled(_ *fyne.ScrollEvent) {
+func (*scrollable) Scrolled(_ *fyne.ScrollEvent) {
 	panic("implement me")
 }
 
-func (s *scrollable) Show() {
+func (*scrollable) Show() {
 	panic("implement me")
 }
 
@@ -547,6 +547,6 @@ func (s *scrollable) Size() fyne.Size {
 	return s.size
 }
 
-func (s *scrollable) Visible() bool {
+func (*scrollable) Visible() bool {
 	return true
 }

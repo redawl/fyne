@@ -81,7 +81,7 @@ func (l *Label) AccessibilityLabel() string {
 // AccessibilityRole for a label is fyne.AccessibleRoleText.
 //
 // Since: 2.8
-func (l *Label) AccessibilityRole() fyne.AccessibleRole {
+func (*Label) AccessibilityRole() fyne.AccessibleRole {
 	return fyne.AccessibleRoleText
 }
 
@@ -224,7 +224,7 @@ type labelRenderer struct {
 	l *Label
 }
 
-func (r *labelRenderer) Destroy() {
+func (*labelRenderer) Destroy() {
 }
 
 func (r *labelRenderer) Layout(s fyne.Size) {
@@ -272,8 +272,8 @@ func (f *focusSelectable) FocusLost() {
 	f.Refresh()
 }
 
-func (f *focusSelectable) TypedKey(*fyne.KeyEvent) {
+func (*focusSelectable) TypedKey(*fyne.KeyEvent) {
 }
 
-func (f *focusSelectable) TypedRune(rune) {
+func (*focusSelectable) TypedRune(rune) {
 }

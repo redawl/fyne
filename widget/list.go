@@ -420,7 +420,7 @@ func (l *List) TypedKey(event *fyne.KeyEvent) {
 }
 
 // TypedRune is called if a text event happens while this List is focused.
-func (l *List) TypedRune(_ rune) {
+func (*List) TypedRune(_ rune) {
 	// intentionally left blank
 }
 
@@ -653,7 +653,7 @@ func (li *listItem) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved is called when a desktop pointer hovers over the widget.
-func (li *listItem) MouseMoved(*desktop.MouseEvent) {
+func (*listItem) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut is called when a desktop pointer exits the widget.
@@ -923,7 +923,7 @@ func (l *listLayout) updateSeparators() {
 }
 
 // invariant: visible is in ascending order of IDs
-func (l *listLayout) searchVisible(visible []listItemAndID, id ListItemID) (*listItem, bool) {
+func (*listLayout) searchVisible(visible []listItemAndID, id ListItemID) (*listItem, bool) {
 	ln := len(visible)
 	idx := sort.Search(ln, func(i int) bool { return visible[i].id >= id })
 	if idx < ln && visible[idx].id == id {
@@ -932,7 +932,7 @@ func (l *listLayout) searchVisible(visible []listItemAndID, id ListItemID) (*lis
 	return nil, false
 }
 
-func (l *listLayout) nilOldSliceData(objs []fyne.CanvasObject, length, oldLength int) {
+func (*listLayout) nilOldSliceData(objs []fyne.CanvasObject, length, oldLength int) {
 	if oldLength > length {
 		objs = objs[:oldLength] // gain view into old data
 		for i := length; i < oldLength; i++ {

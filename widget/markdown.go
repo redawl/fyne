@@ -43,7 +43,7 @@ func (t *RichText) AppendMarkdown(content string) {
 
 type markdownRenderer []RichTextSegment
 
-func (m *markdownRenderer) AddOptions(...renderer.Option) {}
+func (*markdownRenderer) AddOptions(...renderer.Option) {}
 
 func (m *markdownRenderer) Render(_ io.Writer, source []byte, n ast.Node) error {
 	segs, err := renderNode(source, n, 0, 0)

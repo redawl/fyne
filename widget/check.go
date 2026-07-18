@@ -216,7 +216,7 @@ func (c *Check) TypedRune(r rune) {
 }
 
 // TypedKey receives key input events when the Check is focused.
-func (c *Check) TypedKey(*fyne.KeyEvent) {}
+func (*Check) TypedKey(*fyne.KeyEvent) {}
 
 // SetText sets the text of the Check
 //

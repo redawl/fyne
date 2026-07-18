@@ -92,7 +92,7 @@ func (b *scrollBar) CreateRenderer() fyne.WidgetRenderer {
 	return r
 }
 
-func (b *scrollBar) Cursor() desktop.Cursor {
+func (*scrollBar) Cursor() desktop.Cursor {
 	return desktop.DefaultCursor
 }
 
@@ -133,7 +133,7 @@ func (b *scrollBar) MouseIn(e *desktop.MouseEvent) {
 	b.area.MouseIn(e)
 }
 
-func (b *scrollBar) MouseMoved(*desktop.MouseEvent) {
+func (*scrollBar) MouseMoved(*desktop.MouseEvent) {
 }
 
 func (b *scrollBar) MouseOut() {
@@ -337,7 +337,7 @@ func (a *scrollBarArea) MouseIn(*desktop.MouseEvent) {
 	a.scroll.refreshBars()
 }
 
-func (a *scrollBarArea) MouseMoved(*desktop.MouseEvent) {
+func (*scrollBarArea) MouseMoved(*desktop.MouseEvent) {
 }
 
 func (a *scrollBarArea) MouseOut() {
@@ -364,7 +364,7 @@ func (a *scrollBarArea) moveBar(offset float32, barSize fyne.Size) {
 	a.scroll.refreshWithoutOffsetUpdate()
 }
 
-func (a *scrollBarArea) computeScrollOffset(length, offset, scrollLength, contentLength float32) float32 {
+func (*scrollBarArea) computeScrollOffset(length, offset, scrollLength, contentLength float32) float32 {
 	maxOffset := scrollLength - length
 	if offset < 0 {
 		offset = 0

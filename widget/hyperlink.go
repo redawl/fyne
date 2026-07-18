@@ -76,7 +76,7 @@ func (hl *Hyperlink) AccessibilityLabel() string {
 // AccessibilityRole for a hyperlink is fyne.AccessibleRoleLink.
 //
 // Since: 2.8
-func (hl *Hyperlink) AccessibilityRole() fyne.AccessibleRole {
+func (*Hyperlink) AccessibilityRole() fyne.AccessibleRole {
 	return fyne.AccessibleRoleLink
 }
 
@@ -261,7 +261,7 @@ func (hl *Hyperlink) invokeAction() {
 }
 
 // TypedRune is a hook called by the input handling logic on text input events if this object is focused.
-func (hl *Hyperlink) TypedRune(rune) {
+func (*Hyperlink) TypedRune(rune) {
 }
 
 // TypedKey is a hook called by the input handling logic on key events if this object is focused.
@@ -326,7 +326,7 @@ type hyperlinkRenderer struct {
 	objects []fyne.CanvasObject
 }
 
-func (r *hyperlinkRenderer) Destroy() {
+func (*hyperlinkRenderer) Destroy() {
 }
 
 func (r *hyperlinkRenderer) Layout(s fyne.Size) {

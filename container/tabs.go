@@ -316,7 +316,7 @@ type baseTabsRenderer struct {
 	tabs baseTabs
 }
 
-func (r *baseTabsRenderer) Destroy() {
+func (*baseTabsRenderer) Destroy() {
 }
 
 func (r *baseTabsRenderer) applyTheme(t baseTabs) {
@@ -583,7 +583,7 @@ func (b *tabButton) MouseIn(*desktop.MouseEvent) {
 	b.Refresh()
 }
 
-func (b *tabButton) MouseMoved(*desktop.MouseEvent) {
+func (*tabButton) MouseMoved(*desktop.MouseEvent) {
 }
 
 func (b *tabButton) MouseOut() {
@@ -612,7 +612,7 @@ type tabButtonRenderer struct {
 	objects    []fyne.CanvasObject
 }
 
-func (r *tabButtonRenderer) Destroy() {
+func (*tabButtonRenderer) Destroy() {
 }
 
 func (r *tabButtonRenderer) Layout(size fyne.Size) {
@@ -816,7 +816,7 @@ func (b *tabCloseButton) MouseIn(*desktop.MouseEvent) {
 	b.parent.Refresh()
 }
 
-func (b *tabCloseButton) MouseMoved(*desktop.MouseEvent) {
+func (*tabCloseButton) MouseMoved(*desktop.MouseEvent) {
 }
 
 func (b *tabCloseButton) MouseOut() {
@@ -835,7 +835,7 @@ type tabCloseButtonRenderer struct {
 	objects    []fyne.CanvasObject
 }
 
-func (r *tabCloseButtonRenderer) Destroy() {
+func (*tabCloseButtonRenderer) Destroy() {
 }
 
 func (r *tabCloseButtonRenderer) Layout(size fyne.Size) {
