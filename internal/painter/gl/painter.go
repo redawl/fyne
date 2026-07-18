@@ -202,61 +202,61 @@ func (p *painter) UpdateVertexArray(pState programState, name string, size, stri
 func (p *painter) compilePrograms() *programs {
 	return &programs{
 		arbitraryPolygon: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragArbitraryPolygon),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragArbitraryPolygon),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		arc: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragArc),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragArc),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		bezierCurve: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragBezierCurve),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragBezierCurve),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		blur: programState{
-			ref:        p.createProgram(shaderVertTexturedPassthrough2D, shaderFragBlur),
+			ref:        p.mustCreateProgram(shaderVertTexturedPassthrough2D, shaderFragBlur),
 			buff:       p.createBuffer(coordinatesSizeRectangleWithTexture),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		ellipse: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragEllipse),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragEllipse),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		line: programState{
-			ref:        p.createProgram(shaderVertLine, shaderFragLine),
+			ref:        p.mustCreateProgram(shaderVertLine, shaderFragLine),
 			buff:       p.createBuffer(coordinatesSizeLine),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		polygon: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragPolygon),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragPolygon),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		rectangle: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragRectangle),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragRectangle),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		roundRectangle: programState{
-			ref:        p.createProgram(shaderVertPassthrough2D, shaderFragRoundRectangle),
+			ref:        p.mustCreateProgram(shaderVertPassthrough2D, shaderFragRoundRectangle),
 			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
 		simple: programState{
-			ref:        p.createProgram(shaderVertTexturedPassthrough2D, shaderFragSimple),
+			ref:        p.mustCreateProgram(shaderVertTexturedPassthrough2D, shaderFragSimple),
 			buff:       p.createBuffer(coordinatesSizeRectangleWithTexture),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
@@ -286,17 +286,8 @@ func (p *painter) compileShader(source string, shaderType uint32) (Shader, error
 	return shader, nil
 }
 
-func (p *painter) createProgram(vertexSrc, fragmentSrc []byte) Program {
-	prog, err := p.createProgramFromSource(vertexSrc, fragmentSrc)
-	if err != nil {
-		panic(err)
-	}
-
-	return prog
-}
-
 // createProgramFromSource compiles and links the given vertex and fragment shader sources
-// into a program. Unlike createProgram it returns an error rather than panicking, so it is
+// into a program. Unlike mustCreateProgram it returns an error rather than panicking, so it is
 // safe to use with application supplied shader source that may fail to compile.
 func (p *painter) createProgramFromSource(vertexSrc, fragmentSrc []byte) (Program, error) {
 	vertShader, err := p.compileShader(string(vertexSrc), vertexShader)
@@ -356,6 +347,15 @@ func (p *painter) getUniformLocation(pState programState, name string) *uniformS
 
 func (p *painter) logError() {
 	logGLError(p.ctx.GetError)
+}
+
+func (p *painter) mustCreateProgram(vertexSrc, fragmentSrc []byte) Program {
+	prog, err := p.createProgramFromSource(vertexSrc, fragmentSrc)
+	if err != nil {
+		panic(err)
+	}
+
+	return prog
 }
 
 type blurKernel struct {
