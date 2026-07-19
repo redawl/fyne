@@ -12,7 +12,13 @@ import (
 	paint "fyne.io/fyne/v2/internal/painter"
 )
 
-const edgeSoftness = 0.5
+const (
+	edgeSoftness = 0.5
+
+	coordinatesSizeLine                 = 24
+	coordinatesSizeRectangle            = 8
+	coordinatesSizeRectangleWithTexture = 16
+)
 
 func (p *painter) createBuffer(size int) Buffer {
 	vbo := p.ctx.CreateBuffer()
@@ -38,18 +44,18 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 		return
 	}
 
-	// Ensure blurSnapTex exists at the correct size; reallocate only when dimensions change.
-	if !p.blurSnapTexValid || p.blurSnapW != bw || p.blurSnapH != bh {
-		if p.blurSnapTexValid {
-			p.ctx.DeleteTexture(p.blurSnapTex)
+	// Ensure blurSnap.tex exists at the correct size; reallocate only when dimensions change.
+	if !p.blurSnap.texValid || p.blurSnap.width != bw || p.blurSnap.height != bh {
+		if p.blurSnap.texValid {
+			p.ctx.DeleteTexture(p.blurSnap.tex)
 		}
 		// Use ImageScaleSmooth to enable bilinear filtering.
 		// It ensures smooth interpolation between samples even when the blur radius is massive.
-		p.blurSnapTex = p.newTexture(canvas.ImageScaleSmooth)
+		p.blurSnap.tex = p.newTexture(canvas.ImageScaleSmooth)
 		p.ctx.TexImage2D(texture2D, 0, bw, bh, colorFormatRGBA, unsignedByte, nil)
-		p.blurSnapTexValid = true
-		p.blurSnapW = bw
-		p.blurSnapH = bh
+		p.blurSnap.texValid = true
+		p.blurSnap.width = bw
+		p.blurSnap.height = bh
 	}
 
 	// Cap the kernel samples at 101 (maxKernelRadius = 50.0) per pass to ensure high performance.
@@ -71,77 +77,77 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	}
 
 	// Upload kernel as a 1D texture if radius changed.
-	if !p.blurKernelTexValid || p.blurKernelRadius != kernelRadius {
-		if !p.blurKernelTexValid {
-			p.blurKernelTex = p.ctx.CreateTexture()
+	if !p.blurKernel.texValid || p.blurKernel.radius != kernelRadius {
+		if !p.blurKernel.texValid {
+			p.blurKernel.tex = p.ctx.CreateTexture()
 		}
 		p.ctx.ActiveTexture(texture1)
-		p.ctx.BindTexture(texture2D, p.blurKernelTex)
+		p.ctx.BindTexture(texture2D, p.blurKernel.tex)
 		p.ctx.TexParameteri(texture2D, textureMinFilter, textureNearest)
 		p.ctx.TexParameteri(texture2D, textureMagFilter, textureNearest)
 		p.ctx.TexParameteri(texture2D, textureWrapS, clampToEdge)
 		p.ctx.TexParameteri(texture2D, textureWrapT, clampToEdge)
 		p.ctx.TexImage2D(texture2D, 0, len(values), 1, colorFormatRGBA, unsignedByte, kernelToRGBA(values))
-		p.blurKernelTexValid = true
-		p.blurKernelRadius = kernelRadius
+		p.blurKernel.texValid = true
+		p.blurKernel.radius = kernelRadius
 	}
 
 	// Copy the blur region from the framebuffer directly to the texture on the GPU.
 	// glCopyTexSubImage2D uses GL coordinates (y=0 at bottom), so convert the canvas-top y.
 	fbY := p.fbHeight - int(y) - bh
 	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, p.blurSnapTex)
+	p.ctx.BindTexture(texture2D, p.blurSnap.tex)
 	p.ctx.CopyTexSubImage2D(texture2D, 0, 0, 0, int(x), fbY, bw, bh)
 	p.logError()
 
 	// Build quad vertices. CopyTexSubImage2D places the framebuffer bottom at texture v=0,
 	// but rectCoords maps v=0 to the canvas top. Swap the v coordinates to correct orientation.
-	points, _ := p.rectCoords(b.Size(), pos, frame, canvas.ImageFillStretch, 1.0, 0)
-	points[4], points[9] = points[9], points[4]
-	points[14], points[19] = points[19], points[14]
+	points, _, _ := p.rectCoords(b.Size(), pos, frame, canvas.ImageFillStretch, 1.0, 0)
+	points[3], points[7] = points[7], points[3]
+	points[11], points[15] = points[15], points[11]
 
-	p.ctx.UseProgram(p.blurProgram.ref)
-	p.updateBuffer(p.blurProgram.buff, points)
-	p.UpdateVertexArray(p.blurProgram, "vert", 3, 5, 0)
-	p.UpdateVertexArray(p.blurProgram, "vertTexCoord", 2, 5, 3)
+	p.ctx.UseProgram(p.programs.blur.ref)
+	p.updateBuffer(p.programs.blur.buff, points[:])
+	p.UpdateVertexArray(p.programs.blur, "vert", 2, 4, 0)
+	p.UpdateVertexArray(p.programs.blur, "vertTexCoord", 2, 4, 2)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
 
 	cornerRadius := fyne.Min(paint.GetMaximumRadius(b.Size()), b.CornerRadius)
-	p.SetUniform1f(p.blurProgram, "cornerRadius", roundToPixel(cornerRadius*p.pixScale, 1.0))
-	p.SetUniform2f(p.blurProgram, "size", float32(bw), float32(bh))
+	p.SetUniform1f(p.programs.blur, "cornerRadius", roundToPixel(cornerRadius*p.pixScale, 1.0))
+	p.SetUniform2f(p.programs.blur, "size", float32(bw), float32(bh))
 
-	p.SetUniform1f(p.blurProgram, "radius", kernelRadius)
-	p.SetUniform1f(p.blurProgram, "sampleScale", sampleScale)
+	p.SetUniform1f(p.programs.blur, "radius", kernelRadius)
+	p.SetUniform1f(p.programs.blur, "sampleScale", sampleScale)
 
 	// Bind kernel texture to unit 1.
 	p.ctx.ActiveTexture(texture1)
-	p.ctx.BindTexture(texture2D, p.blurKernelTex)
+	p.ctx.BindTexture(texture2D, p.blurKernel.tex)
 
 	// Bind source texture to unit 0.
 	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, p.blurSnapTex)
+	p.ctx.BindTexture(texture2D, p.blurSnap.tex)
 
 	// Set sampler uniforms.
-	p.SetUniform1i(p.blurProgram, "tex", 0)
-	p.SetUniform1i(p.blurProgram, "kernelTex", 1)
+	p.SetUniform1i(p.programs.blur, "tex", 0)
+	p.SetUniform1i(p.programs.blur, "kernelTex", 1)
 
 	// Horizontal Blur
 	// Draw horizontal blur over the background. Use gl: one, gl: zero to replace the screen content.
 	p.ctx.BlendFunc(one, zero)
-	p.SetUniform2f(p.blurProgram, "direction", 1.0/float32(bw), 0.0)
+	p.SetUniform2f(p.programs.blur, "direction", 1.0/float32(bw), 0.0)
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 
-	// Capture the horizontally-blurred result back into blurSnapTex
+	// Capture the horizontally-blurred result back into blurSnap.tex
 	p.ctx.CopyTexSubImage2D(texture2D, 0, 0, 0, int(x), fbY, bw, bh)
 
 	// Vertical Blur
 	// Draw vertical blur using the horizontally-blurred texture.
 	// Use one, zero since it replaces the exact same rect we just copied from.
 	p.ctx.BlendFunc(one, zero)
-	p.SetUniform2f(p.blurProgram, "direction", 0.0, 1.0/float32(bh))
+	p.SetUniform2f(p.programs.blur, "direction", 0.0, 1.0/float32(bh))
 
 	p.ctx.DrawArrays(triangleStrip, 0, 4)
 	p.logError()
@@ -149,14 +155,13 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 
 func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyne.Size) {
 	radius := paint.GetMaximumRadius(circle.Size())
-	program := p.roundRectangleProgram
+	program := p.programs.roundRectangle
 
 	// Vertex: BEG
-	bounds, points := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
+	points, bounds := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -224,20 +229,20 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 		return
 	}
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
-	p.ctx.UseProgram(p.lineProgram.ref)
-	p.updateBuffer(p.lineProgram.buff, points)
-	p.UpdateVertexArray(p.lineProgram, "vert", 2, 4, 0)
-	p.UpdateVertexArray(p.lineProgram, "normal", 2, 4, 2)
+	p.ctx.UseProgram(p.programs.line.ref)
+	p.updateBuffer(p.programs.line.buff, points[:])
+	p.UpdateVertexArray(p.programs.line, "vert", 2, 4, 0)
+	p.UpdateVertexArray(p.programs.line, "normal", 2, 4, 2)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
 
 	r, g, b, a := getFragmentColor(line.StrokeColor)
-	p.SetUniform4f(p.lineProgram, "color", r, g, b, a)
+	p.SetUniform4f(p.programs.line, "color", r, g, b, a)
 
-	p.SetUniform1f(p.lineProgram, "lineWidth", halfWidth)
+	p.SetUniform1f(p.programs.line, "lineWidth", halfWidth)
 
-	p.SetUniform1f(p.lineProgram, "feather", feather)
+	p.SetUniform1f(p.programs.line, "feather", feather)
 
 	p.ctx.DrawArrays(triangles, 0, 6)
 	p.logError()
@@ -249,12 +254,11 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	}
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, bezierCurve, frame, 0.0, canvas.Shadow{})
-	program := p.bezierCurveProgram
+	points, bounds := p.vecRectCoords(pos, bezierCurve, frame, 0.0, canvas.Shadow{})
+	program := p.programs.bezierCurve
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -314,12 +318,11 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 	}
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
-	program := p.arbitraryPolygonProgram
+	points, bounds := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
+	program := p.programs.arbitraryPolygon
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -440,7 +443,7 @@ func (p *painter) shaderProgram(shader *canvas.Shader) (*shaderState, bool) {
 		return state, state.valid
 	}
 
-	ref, err := p.createProgramFromSource(rectangleVertexSource(), userShaderFragment(shader))
+	ref, err := p.createProgram(shaderVertPassthrough2D, userShaderFragment(shader))
 	if err != nil {
 		fyne.LogError("Failed to compile shader "+shader.Name, err)
 		p.shaderPrograms[shader.Name] = &shaderState{} // cache the failure so we do not retry
@@ -450,7 +453,7 @@ func (p *painter) shaderProgram(shader *canvas.Shader) (*shaderState, bool) {
 	state := &shaderState{
 		program: programState{
 			ref:        ref,
-			buff:       p.createBuffer(16),
+			buff:       p.createBuffer(coordinatesSizeRectangle),
 			uniforms:   make(map[string]*uniformState),
 			attributes: make(map[string]Attribute),
 		},
@@ -468,11 +471,10 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	program := state.program
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
+	points, bounds := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -550,17 +552,16 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	roundedCorners := topRightRadius != 0 || topLeftRadius != 0 || bottomRightRadius != 0 || bottomLeftRadius != 0
 	var program programState
 	if roundedCorners {
-		program = p.roundRectangleProgram
+		program = p.programs.roundRectangle
 	} else {
-		program = p.rectangleProgram
+		program = p.programs.rectangle
 	}
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, obj, frame, aspect, shadow)
+	points, bounds := p.vecRectCoords(pos, obj, frame, aspect, shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -643,12 +644,11 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 	size := polygon.Size()
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
-	program := p.polygonProgram
+	points, bounds := p.vecRectCoords(pos, polygon, frame, 0.0, canvas.Shadow{})
+	program := p.programs.polygon
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -701,12 +701,11 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 	}
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoords(pos, arc, frame, 0.0, canvas.Shadow{})
-	program := p.arcProgram
+	points, bounds := p.vecRectCoords(pos, arc, frame, 0.0, canvas.Shadow{})
+	program := p.programs.arc
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -762,7 +761,7 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	size := ellipse.Size()
 	radiusX := size.Width / 2
 	radiusY := size.Height / 2
-	program := p.ellipseProgram
+	program := p.programs.ellipse
 
 	// when rotated, the ellipse needs more space
 	// add half the difference between width and height as padding
@@ -777,11 +776,10 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	}
 
 	// Vertex: BEG
-	bounds, points := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
+	points, bounds := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
 	p.ctx.UseProgram(program.ref)
-	p.updateBuffer(program.buff, points)
-	p.UpdateVertexArray(program, "vert", 2, 4, 0)
-	p.UpdateVertexArray(program, "normal", 2, 4, 2)
+	p.updateBuffer(program.buff, points[:])
+	p.UpdateVertexArray(program, "vert", 2, 2, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -911,18 +909,17 @@ func visibleTextPixels(pos fyne.Position, size, frame fyne.Size, clip *internal.
 }
 
 func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size) {
-	points, insets := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
-	inner, _ := rectInnerCoords(size, pos, canvas.ImageFillStretch, 1)
+	points, insets, inner := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
 
-	p.ctx.UseProgram(p.program.ref)
-	p.updateBuffer(p.program.buff, points)
-	p.UpdateVertexArray(p.program, "vert", 3, 5, 0)
-	p.UpdateVertexArray(p.program, "vertTexCoord", 2, 5, 3)
+	p.ctx.UseProgram(p.programs.simple.ref)
+	p.updateBuffer(p.programs.simple.buff, points[:])
+	p.UpdateVertexArray(p.programs.simple, "vert", 2, 4, 0)
+	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 4, 2)
 
-	p.SetUniform1f(p.program, "cornerRadius", 0)
-	p.SetUniform2f(p.program, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.program, "inset", insets[0], insets[1], insets[2], insets[3])
-	p.SetUniform1f(p.program, "alpha", 1.0)
+	p.SetUniform1f(p.programs.simple, "cornerRadius", 0)
+	p.SetUniform2f(p.programs.simple, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
+	p.SetUniform4f(p.programs.simple, "inset", insets[0], insets[1], insets[2], insets[3])
+	p.SetUniform1f(p.programs.simple, "alpha", 1.0)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
@@ -954,21 +951,20 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 			cornerRadius = img.CornerRadius
 		}
 	}
-	points, insets := p.rectCoords(size, pos, frame, fill, aspect, pad)
-	inner, _ := rectInnerCoords(size, pos, fill, aspect)
+	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
 
-	p.ctx.UseProgram(p.program.ref)
-	p.updateBuffer(p.program.buff, points)
-	p.UpdateVertexArray(p.program, "vert", 3, 5, 0)
-	p.UpdateVertexArray(p.program, "vertTexCoord", 2, 5, 3)
+	p.ctx.UseProgram(p.programs.simple.ref)
+	p.updateBuffer(p.programs.simple.buff, points[:])
+	p.UpdateVertexArray(p.programs.simple, "vert", 2, 4, 0)
+	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 4, 2)
 
 	// Set corner radius and texture size in pixels
 	cornerRadius = fyne.Min(paint.GetMaximumRadius(size), cornerRadius)
-	p.SetUniform1f(p.program, "cornerRadius", cornerRadius*p.pixScale)
-	p.SetUniform2f(p.program, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.program, "inset", insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
+	p.SetUniform1f(p.programs.simple, "cornerRadius", cornerRadius*p.pixScale)
+	p.SetUniform2f(p.programs.simple, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
+	p.SetUniform4f(p.programs.simple, "inset", insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
 
-	p.SetUniform1f(p.program, "alpha", alpha)
+	p.SetUniform1f(p.programs.simple, "alpha", alpha)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
@@ -981,7 +977,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 	p.logError()
 }
 
-func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([]float32, float32, float32) {
+func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([coordinatesSizeLine]float32, float32, float32) {
 	// Shift line coordinates so that they match the target position.
 	xPosDiff := pos.X - fyne.Min(pos1.X, pos2.X)
 	yPosDiff := pos.Y - fyne.Min(pos1.Y, pos2.Y)
@@ -1026,7 +1022,7 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 	halfWidth := (roundToPixel(lineWidth+feather, p.pixScale) * 0.5) / widthMultiplier
 	featherWidth := feather / widthMultiplier
 
-	return []float32{
+	return [coordinatesSizeLine]float32{
 		// coord x, y normal x, y
 		x1, y1, normalX, normalY,
 		x2, y2, normalX, normalY,
@@ -1038,73 +1034,72 @@ func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather f
 }
 
 // rectCoords calculates the openGL coordinate space of a rectangle
-func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
-	fill canvas.ImageFill, aspect float32, pad float32,
-) ([]float32, [4]float32) {
-	size, pos = rectInnerCoords(size, pos, fill, aspect)
-	size, pos = roundToPixelCoords(size, pos, p.pixScale)
+func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size, fill canvas.ImageFill, aspect, pad float32) ([coordinatesSizeRectangleWithTexture]float32, [4]float32, fyne.Size) {
+	innerSize, innerPos := rectInnerCoords(size, pos, fill, aspect)
+	pixelSize, pixelPos := roundToPixelCoords(innerSize, innerPos, p.pixScale)
 
-	xPos := (pos.X - pad) / frame.Width
+	xPos := (pixelPos.X - pad) / frame.Width
 	x1 := -1 + xPos*2
-	x2Pos := (pos.X + size.Width + pad) / frame.Width
+	x2Pos := (pixelPos.X + pixelSize.Width + pad) / frame.Width
 	x2 := -1 + x2Pos*2
 
-	yPos := (pos.Y - pad) / frame.Height
+	yPos := (pixelPos.Y - pad) / frame.Height
 	y1 := 1 - yPos*2
-	y2Pos := (pos.Y + size.Height + pad) / frame.Height
+	y2Pos := (pixelPos.Y + pixelSize.Height + pad) / frame.Height
 	y2 := 1 - y2Pos*2
 
 	xInset := float32(0.0)
 	yInset := float32(0.0)
 
 	if fill == canvas.ImageFillCover {
-		viewAspect := size.Width / size.Height
+		viewAspect := pixelSize.Width / pixelSize.Height
 
 		if viewAspect > aspect {
-			newHeight := size.Width / aspect
-			heightPad := (newHeight - size.Height) / 2
+			newHeight := pixelSize.Width / aspect
+			heightPad := (newHeight - pixelSize.Height) / 2
 			yInset = heightPad / newHeight
 		} else if viewAspect < aspect {
-			newWidth := size.Height * aspect
-			widthPad := (newWidth - size.Width) / 2
+			newWidth := pixelSize.Height * aspect
+			widthPad := (newWidth - pixelSize.Width) / 2
 			xInset = widthPad / newWidth
 		}
 	}
 
 	insets := [4]float32{xInset, yInset, 1.0 - xInset, 1.0 - yInset}
 
-	return []float32{
+	return [coordinatesSizeRectangleWithTexture]float32{
 		// coord x, y, z texture x, y
-		x1, y2, 0, insets[0], insets[3], // top left
-		x1, y1, 0, insets[0], insets[1], // bottom left
-		x2, y2, 0, insets[2], insets[3], // top right
-		x2, y1, 0, insets[2], insets[1], // bottom right
-	}, insets
+		x1, y2, insets[0], insets[3], // top left
+		x1, y1, insets[0], insets[1], // bottom left
+		x2, y2, insets[2], insets[3], // top right
+		x2, y1, insets[2], insets[1], // bottom right
+	}, insets, innerSize
 }
 
 func rectInnerCoords(size fyne.Size, pos fyne.Position, fill canvas.ImageFill, aspect float32) (fyne.Size, fyne.Position) {
-	if fill == canvas.ImageFillContain || fill == canvas.ImageFillOriginal {
-		// change pos and size accordingly
-
-		viewAspect := size.Width / size.Height
-
-		newWidth, newHeight := size.Width, size.Height
-		widthPad, heightPad := float32(0), float32(0)
-		if viewAspect > aspect {
-			newWidth = size.Height * aspect
-			widthPad = (size.Width - newWidth) / 2
-		} else if viewAspect < aspect {
-			newHeight = size.Width / aspect
-			heightPad = (size.Height - newHeight) / 2
-		}
-
-		return fyne.NewSize(newWidth, newHeight), fyne.NewPos(pos.X+widthPad, pos.Y+heightPad)
+	if fill != canvas.ImageFillContain && fill != canvas.ImageFillOriginal {
+		return size, pos
 	}
 
-	return size, pos
+	viewAspect := size.Width / size.Height
+	if viewAspect == aspect {
+		return size, pos
+	}
+
+	// change pos and size accordingly
+	newWidth, newHeight := size.Width, size.Height
+	newX, newY := pos.X, pos.Y
+	if viewAspect > aspect {
+		newWidth = size.Height * aspect
+		newX += (size.Width - newWidth) / 2
+	} else if viewAspect < aspect {
+		newHeight = size.Width / aspect
+		newY += (size.Height - newHeight) / 2
+	}
+	return fyne.NewSize(newWidth, newHeight), fyne.NewPos(newX, newY)
 }
 
-func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, aspect float32, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	xPad, yPad := float32(0), float32(0)
 
 	if aspect != 0 {
@@ -1123,7 +1118,7 @@ func (p *painter) vecRectCoords(pos fyne.Position, rect fyne.CanvasObject, frame
 	return p.vecRectCoordsWithPad(pos, rect, frame, xPad, yPad, shadow)
 }
 
-func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, xPad, yPad float32, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	size := rect.Size()
 	pos1 := rect.Position()
 
@@ -1151,18 +1146,18 @@ func (p *painter) vecRectCoordsWithPad(pos fyne.Position, rect fyne.CanvasObject
 	y2Pos := pos1.Y + size.Height
 	y2Norm := 1 - (y2Pos+edgeSoftnessScaled+shadowPadBottom)*2/frame.Height
 
-	// output a norm for the fill and the vert is unused, but we pass 0 to avoid optimisation issues
-	coords := []float32{
-		0, 0, x1Norm, y1Norm, // first triangle
-		0, 0, x2Norm, y1Norm, // second triangle
-		0, 0, x1Norm, y2Norm,
-		0, 0, x2Norm, y2Norm,
+	// output a norm for the fill
+	coords := [coordinatesSizeRectangle]float32{
+		x1Norm, y1Norm,
+		x2Norm, y1Norm,
+		x1Norm, y2Norm,
+		x2Norm, y2Norm,
 	}
 
-	return [4]float32{x1Pos, y1Pos, x2Pos, y2Pos}, coords
+	return coords, [4]float32{x1Pos, y1Pos, x2Pos, y2Pos}
 }
 
-func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([4]float32, []float32) {
+func (p *painter) vecSquareCoords(pos fyne.Position, rect fyne.CanvasObject, frame fyne.Size, shadow canvas.Shadow) ([coordinatesSizeRectangle]float32, [4]float32) {
 	return p.vecRectCoords(pos, rect, frame, 1, shadow)
 }
 
