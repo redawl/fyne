@@ -13,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/driver/mobile"
 	"fyne.io/fyne/v2/internal/cache"
+	"fyne.io/fyne/v2/internal/goos"
 	"fyne.io/fyne/v2/internal/widget"
 	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/theme"
@@ -468,6 +469,18 @@ func (e *Entry) SelectedText() string {
 	return e.sel.SelectedText()
 }
 
+// ClearSelection removes any active text selection in this Entry.
+// It has no effect if nothing is currently selected.
+//
+// Since: 2.9
+func (e *Entry) ClearSelection() {
+	if e.sel == nil || !e.sel.selecting {
+		return
+	}
+	e.sel.selecting = false
+	e.Refresh()
+}
+
 // SetIcon sets the leading icon resource for the entry.
 // The icon will be displayed at the outer left of the entry, but is not clickable.
 // This can be used to indicate the purpose of the entry, such as an email or password field.
@@ -564,7 +577,8 @@ func (e *Entry) TappedSecondary(pe *fyne.PointEvent) {
 	})
 	selectAllItem := fyne.NewMenuItem(lang.L("Select all"), e.selectAll)
 
-	menuItems := make([]*fyne.MenuItem, 0, 6)
+	const maxMenuItems = 6
+	menuItems := make([]*fyne.MenuItem, 0, maxMenuItems)
 	if e.Disabled() {
 		menuItems = append(menuItems, copyItem, selectAllItem)
 	} else if e.Password {
@@ -618,7 +632,7 @@ func (e *Entry) TouchDown(ev *mobile.TouchEvent) {
 		e.sel.selecting = false
 	}
 
-	e.updateMousePointer(ev.Position, false)
+	e.updateMousePointer(ev.Position.Add(e.scroll.Offset), false)
 }
 
 // TouchUp is called when this entry gets a touch up event on mobile device.
@@ -1119,7 +1133,7 @@ func (e *Entry) registerShortcut() {
 	}
 
 	moveWordModifier := fyne.KeyModifierShortcutDefault
-	if runtime.GOOS == "darwin" {
+	if runtime.GOOS == goos.Darwin {
 		moveWordModifier = fyne.KeyModifierAlt
 
 		// Cmd+left, Cmd+right shortcuts behave like Home and End keys on Mac OS
