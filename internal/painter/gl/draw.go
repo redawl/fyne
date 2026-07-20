@@ -922,7 +922,7 @@ func (p *painter) drawText(text *canvas.Text, pos fyne.Position, frame fyne.Size
 		if cache.IsValid(cache.TextureType(cached.texture)) {
 			clipPos := fyne.NewPos(pos.X+float32(cached.offset)/p.pixScale, pos.Y)
 			clipSize := fyne.NewSize(float32(cached.width)/p.pixScale, size.Height)
-			p.drawTextureRegion(cached.texture, clipPos, clipSize, frame)
+			p.drawTextureRegion(cached.texture, clipPos, clipSize, frame, canvas.ImageFillStretch, 1, 1, 0, 0)
 		}
 	}
 
@@ -959,18 +959,23 @@ func visibleTextPixels(pos fyne.Position, size, frame fyne.Size, clip *internal.
 	return offset, end - offset
 }
 
-func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size) {
-	points, insets, inner := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
+func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size, fill canvas.ImageFill, alpha, aspect, cornerRadius, pad float32) {
+	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
 	p.updateBuffer(p.programs.simple.buff, points[:])
 	p.UpdateVertexArray(p.programs.simple, attrVertex, coordinateSize2D, coordinateSize2DWithTexture, 0)
 	p.UpdateVertexArray(p.programs.simple, attrVertexTextureCoordinates, coordinateSize2D, coordinateSize2DWithTexture, coordinateSize2D)
 
-	p.SetUniform1f(p.programs.simple, attrRadiusCorner, 0)
+	// Set corner radius and texture size in pixels
+	if cornerRadius != 0 {
+		cornerRadius = fyne.Min(paint.GetMaximumRadius(size), cornerRadius) * p.pixScale
+	}
+	p.SetUniform1f(p.programs.simple, attrRadiusCorner, cornerRadius)
 	p.SetUniform2f(p.programs.simple, attrSize, inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.programs.simple, attrInset, insets[0], insets[1], insets[2], insets[3])
-	p.SetUniform1f(p.programs.simple, attrAlpha, 1.0)
+	p.SetUniform4f(p.programs.simple, attrInset, insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
+
+	p.SetUniform1f(p.programs.simple, attrAlpha, alpha)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
@@ -1002,30 +1007,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 			cornerRadius = img.CornerRadius
 		}
 	}
-	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
-
-	p.ctx.UseProgram(p.programs.simple.ref)
-	p.updateBuffer(p.programs.simple.buff, points[:])
-	p.UpdateVertexArray(p.programs.simple, attrVertex, coordinateSize2D, coordinateSize2DWithTexture, 0)
-	p.UpdateVertexArray(p.programs.simple, attrVertexTextureCoordinates, coordinateSize2D, coordinateSize2DWithTexture, coordinateSize2D)
-
-	// Set corner radius and texture size in pixels
-	cornerRadius = fyne.Min(paint.GetMaximumRadius(size), cornerRadius)
-	p.SetUniform1f(p.programs.simple, attrRadiusCorner, cornerRadius*p.pixScale)
-	p.SetUniform2f(p.programs.simple, attrSize, inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.programs.simple, attrInset, insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
-
-	p.SetUniform1f(p.programs.simple, attrAlpha, alpha)
-
-	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
-	p.logError()
-
-	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, texture)
-	p.logError()
-
-	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
-	p.logError()
+	p.drawTextureRegion(texture, pos, size, frame, fill, alpha, aspect, cornerRadius, pad)
 }
 
 func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([coordinatesSizeLine]float32, float32, float32) {
