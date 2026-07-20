@@ -13,11 +13,62 @@ import (
 )
 
 const (
+	attrAddShadow                = "addShadow"
+	attrAlpha                    = "alpha"
+	attrAngle                    = "angle"
+	attrAngleEnd                 = "endAngle"
+	attrAngleStart               = "startAngle"
+	attrBounds                   = "bounds"
+	attrColor                    = "color"
+	attrDirection                = "direction"
+	attrEdgeSoftness             = "edgeSoftness"
+	attrFeather                  = "feather"
+	attrFillColor                = "fillColor"
+	attrFrame                    = "frame"
+	attrInset                    = "inset"
+	attrLineWidth                = "lineWidth"
+	attrNormal                   = "normal"
+	attrPointControlCount        = "numControlPoints"
+	attrPointControl1            = "controlPoint1"
+	attrPointControl2            = "controlPoint2"
+	attrPointEnd                 = "endPoint"
+	attrPointStart               = "startPoint"
+	attrRadiiCorner              = "cornerRadii"
+	attrRadius                   = "radius"
+	attrRadiusCorner             = "cornerRadius"
+	attrRadiusInner              = "innerRadius"
+	attrRadiusOuter              = "outerRadius"
+	attrRectangleSizeHalf        = "rectSizeHalf"
+	attrSampleScale              = "sampleScale"
+	attrShadowBlurRadius         = "shadowBlurRadius"
+	attrShadowColor              = "shadowColor"
+	attrShadowOffset             = "shadowOffset"
+	attrShadowSpread             = "shadowSpread"
+	attrShadowType               = "shadowType"
+	attrSides                    = "sides"
+	attrSize                     = "size"
+	attrStrokeColor              = "strokeColor"
+	attrStrokeWidth              = "strokeWidth"
+	attrStrokeWidthHalf          = "strokeWidthHalf"
+	attrTexture                  = "tex"
+	attrTextureKernel            = "kernelTex"
+	attrVertex                   = "vert"
+	attrVertexCount              = "vertexCount"
+	attrVertexTextureCoordinates = "vertTexCoord"
+	attrVertices                 = "vertices"
+
+	coordinateSize2D            = 2
+	coordinateSize2DWithNormal  = coordinateSize2D + coordinateSize2D
+	coordinateSize2DWithTexture = coordinateSize2D + coordinateSize2D
+
+	coordinatesSizeLine                 = vertexCountLine * coordinateSize2DWithNormal
+	coordinatesSizeRectangle            = vertexCountRectangle * coordinateSize2D
+	coordinatesSizeRectangleWithTexture = vertexCountRectangle * coordinateSize2DWithTexture
+
 	edgeSoftness = 0.5
 
-	coordinatesSizeLine                 = 24
-	coordinatesSizeRectangle            = 8
-	coordinatesSizeRectangleWithTexture = 16
+	vertexCountLine      = 6
+	vertexCountRectangle = 4
 )
 
 func (p *painter) createBuffer(size int) Buffer {
@@ -103,23 +154,23 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	// Build quad vertices. CopyTexSubImage2D places the framebuffer bottom at texture v=0,
 	// but rectCoords maps v=0 to the canvas top. Swap the v coordinates to correct orientation.
 	points, _, _ := p.rectCoords(b.Size(), pos, frame, canvas.ImageFillStretch, 1.0, 0)
-	points[3], points[7] = points[7], points[3]
-	points[11], points[15] = points[15], points[11]
+	points[coordinateSize2DWithTexture-1], points[2*coordinateSize2DWithTexture-1] = points[2*coordinateSize2DWithTexture-1], points[coordinateSize2DWithTexture-1]
+	points[3*coordinateSize2DWithTexture-1], points[4*coordinateSize2DWithTexture-1] = points[4*coordinateSize2DWithTexture-1], points[3*coordinateSize2DWithTexture-1]
 
 	p.ctx.UseProgram(p.programs.blur.ref)
 	p.updateBuffer(p.programs.blur.buff, points[:])
-	p.UpdateVertexArray(p.programs.blur, "vert", 2, 4, 0)
-	p.UpdateVertexArray(p.programs.blur, "vertTexCoord", 2, 4, 2)
+	p.UpdateVertexArray(p.programs.blur, attrVertex, coordinateSize2D, coordinateSize2DWithTexture, 0)
+	p.UpdateVertexArray(p.programs.blur, attrVertexTextureCoordinates, coordinateSize2D, coordinateSize2DWithTexture, coordinateSize2D)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
 
 	cornerRadius := fyne.Min(paint.GetMaximumRadius(b.Size()), b.CornerRadius)
-	p.SetUniform1f(p.programs.blur, "cornerRadius", roundToPixel(cornerRadius*p.pixScale, 1.0))
-	p.SetUniform2f(p.programs.blur, "size", float32(bw), float32(bh))
+	p.SetUniform1f(p.programs.blur, attrRadiusCorner, roundToPixel(cornerRadius*p.pixScale, 1.0))
+	p.SetUniform2f(p.programs.blur, attrSize, float32(bw), float32(bh))
 
-	p.SetUniform1f(p.programs.blur, "radius", kernelRadius)
-	p.SetUniform1f(p.programs.blur, "sampleScale", sampleScale)
+	p.SetUniform1f(p.programs.blur, attrRadius, kernelRadius)
+	p.SetUniform1f(p.programs.blur, attrSampleScale, sampleScale)
 
 	// Bind kernel texture to unit 1.
 	p.ctx.ActiveTexture(texture1)
@@ -130,15 +181,15 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	p.ctx.BindTexture(texture2D, p.blurSnap.tex)
 
 	// Set sampler uniforms.
-	p.SetUniform1i(p.programs.blur, "tex", 0)
-	p.SetUniform1i(p.programs.blur, "kernelTex", 1)
+	p.SetUniform1i(p.programs.blur, attrTexture, 0)
+	p.SetUniform1i(p.programs.blur, attrTextureKernel, 1)
 
 	// Horizontal Blur
 	// Draw horizontal blur over the background. Use gl: one, gl: zero to replace the screen content.
 	p.ctx.BlendFunc(one, zero)
-	p.SetUniform2f(p.programs.blur, "direction", 1.0/float32(bw), 0.0)
+	p.SetUniform2f(p.programs.blur, attrDirection, 1.0/float32(bw), 0.0)
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 
 	// Capture the horizontally-blurred result back into blurSnap.tex
 	p.ctx.CopyTexSubImage2D(texture2D, 0, 0, 0, int(x), fbY, bw, bh)
@@ -147,9 +198,9 @@ func (p *painter) drawBlur(b *canvas.Blur, pos fyne.Position, frame fyne.Size) {
 	// Draw vertical blur using the horizontally-blurred texture.
 	// Use one, zero since it replaces the exact same rect we just copied from.
 	p.ctx.BlendFunc(one, zero)
-	p.SetUniform2f(p.programs.blur, "direction", 0.0, 1.0/float32(bh))
+	p.SetUniform2f(p.programs.blur, attrDirection, 0.0, 1.0/float32(bh))
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -161,7 +212,7 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 	points, bounds := p.vecSquareCoords(pos, circle, frame, circle.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -169,50 +220,50 @@ func (p *painter) drawCircle(circle *canvas.Circle, pos fyne.Position, frame fyn
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	strokeWidthScaled := roundToPixel(circle.StrokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidthHalf", strokeWidthScaled*0.5)
+	p.SetUniform1f(program, attrStrokeWidthHalf, strokeWidthScaled*0.5)
 
 	rectSizeWidthScaled := x2Scaled - x1Scaled - strokeWidthScaled
 	rectSizeHeightScaled := y2Scaled - y1Scaled - strokeWidthScaled
-	p.SetUniform2f(program, "rectSizeHalf", rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
+	p.SetUniform2f(program, attrRectangleSizeHalf, rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
 
 	radiusScaled := roundToPixel(radius*p.pixScale, 1.0)
-	p.SetUniform4f(program, "radius", radiusScaled, radiusScaled, radiusScaled, radiusScaled)
+	p.SetUniform4f(program, attrRadius, radiusScaled, radiusScaled, radiusScaled, radiusScaled)
 
 	r, g, b, a := getFragmentColor(circle.FillColor)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	strokeColor := circle.StrokeColor
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	var addShadow float32
 	if paint.IsShadowVisible(circle.Shadow) {
 		r, g, b, a = getFragmentColor(circle.Shadow.Color)
-		p.SetUniform4f(program, "shadowColor", r, g, b, a)
-		p.SetUniform2f(program, "shadowOffset", roundToPixel(circle.Shadow.Offset.X*p.pixScale, 1.0), roundToPixel(circle.Shadow.Offset.Y*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowBlurRadius", roundToPixel(circle.Shadow.BlurRadius*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowSpread", roundToPixel(circle.Shadow.Spread*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowType", float32(circle.Shadow.Variant))
+		p.SetUniform4f(program, attrShadowColor, r, g, b, a)
+		p.SetUniform2f(program, attrShadowOffset, roundToPixel(circle.Shadow.Offset.X*p.pixScale, 1.0), roundToPixel(circle.Shadow.Offset.Y*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowBlurRadius, roundToPixel(circle.Shadow.BlurRadius*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowSpread, roundToPixel(circle.Shadow.Spread*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowType, float32(circle.Shadow.Variant))
 		addShadow = 1.0
 	}
-	p.SetUniform1f(program, "addShadow", addShadow)
+	p.SetUniform1f(program, attrAddShadow, addShadow)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -231,20 +282,20 @@ func (p *painter) drawLine(line *canvas.Line, pos fyne.Position, frame fyne.Size
 	points, halfWidth, feather := p.lineCoords(pos, line.Position1, line.Position2, line.StrokeWidth, 0.5, frame)
 	p.ctx.UseProgram(p.programs.line.ref)
 	p.updateBuffer(p.programs.line.buff, points[:])
-	p.UpdateVertexArray(p.programs.line, "vert", 2, 4, 0)
-	p.UpdateVertexArray(p.programs.line, "normal", 2, 4, 2)
+	p.UpdateVertexArray(p.programs.line, attrVertex, coordinateSize2D, coordinateSize2DWithNormal, 0)
+	p.UpdateVertexArray(p.programs.line, attrNormal, coordinateSize2D, coordinateSize2DWithNormal, coordinateSize2D)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
 
 	r, g, b, a := getFragmentColor(line.StrokeColor)
-	p.SetUniform4f(p.programs.line, "color", r, g, b, a)
+	p.SetUniform4f(p.programs.line, attrColor, r, g, b, a)
 
-	p.SetUniform1f(p.programs.line, "lineWidth", halfWidth)
+	p.SetUniform1f(p.programs.line, attrLineWidth, halfWidth)
 
-	p.SetUniform1f(p.programs.line, "feather", feather)
+	p.SetUniform1f(p.programs.line, attrFeather, feather)
 
-	p.ctx.DrawArrays(triangles, 0, 6)
+	p.ctx.DrawArrays(triangles, 0, vertexCountLine)
 	p.logError()
 }
 
@@ -258,7 +309,7 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	program := p.programs.bezierCurve
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -266,13 +317,13 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	// ensure stroke width is not larger than the size of the object
 	strokeWidth := fyne.Min(bezierCurve.StrokeWidth, fyne.Min(bezierCurve.Size().Width, bezierCurve.Size().Height))
@@ -282,33 +333,33 @@ func (p *painter) drawBezierCurve(bezierCurve *canvas.BezierCurve, pos fyne.Posi
 	p1, p2, cp := paint.NormalizeBezierCurvePoints(bezierCurve.StartPoint, bezierCurve.EndPoint, bezierCurve.ControlPoints, bezierCurve.Size(), strokeWidth/2.0)
 
 	p1XScaled, p1YScaled := roundToPixel(p1.X*p.pixScale, 1.0), roundToPixel(p1.Y*p.pixScale, 1.0)
-	p.SetUniform2f(program, "startPoint", p1XScaled, p1YScaled)
+	p.SetUniform2f(program, attrPointStart, p1XScaled, p1YScaled)
 
 	p2XScaled, p2YScaled := roundToPixel(p2.X*p.pixScale, 1.0), roundToPixel(p2.Y*p.pixScale, 1.0)
-	p.SetUniform2f(program, "endPoint", p2XScaled, p2YScaled)
+	p.SetUniform2f(program, attrPointEnd, p2XScaled, p2YScaled)
 
 	if len(cp) == 1 {
 		cpXScaled, cpYScaled := roundToPixel(cp[0].X*p.pixScale, 1.0), roundToPixel(cp[0].Y*p.pixScale, 1.0)
-		p.SetUniform2f(program, "controlPoint1", cpXScaled, cpYScaled)
+		p.SetUniform2f(program, attrPointControl1, cpXScaled, cpYScaled)
 	} else if len(cp) == 2 {
 		cp1XScaled, cp1YScaled := roundToPixel(cp[0].X*p.pixScale, 1.0), roundToPixel(cp[0].Y*p.pixScale, 1.0)
-		p.SetUniform2f(program, "controlPoint1", cp1XScaled, cp1YScaled)
+		p.SetUniform2f(program, attrPointControl1, cp1XScaled, cp1YScaled)
 
 		cp2XScaled, cp2YScaled := roundToPixel(cp[1].X*p.pixScale, 1.0), roundToPixel(cp[1].Y*p.pixScale, 1.0)
-		p.SetUniform2f(program, "controlPoint2", cp2XScaled, cp2YScaled)
+		p.SetUniform2f(program, attrPointControl2, cp2XScaled, cp2YScaled)
 	}
-	p.SetUniform1f(program, "numControlPoints", fyne.Min(float32(len(cp)), 2))
+	p.SetUniform1f(program, attrPointControlCount, fyne.Min(float32(len(cp)), 2))
 
 	strokeWidthScaled := roundToPixel(strokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidthHalf", strokeWidthScaled*0.5)
+	p.SetUniform1f(program, attrStrokeWidthHalf, strokeWidthScaled*0.5)
 
 	r, g, b, a := getFragmentColor(bezierCurve.StrokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -322,7 +373,7 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 	program := p.programs.arbitraryPolygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -330,16 +381,16 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	numPoints := int(fyne.Min(paint.ArbitraryPolygonVerticesMaximum, float32(len(polygon.Points))))
-	p.SetUniform1f(program, "vertexCount", float32(numPoints))
+	p.SetUniform1f(program, attrVertexCount, float32(numPoints))
 
 	size := polygon.Size()
 	clampPoint := func(p fyne.Position) (float32, float32) {
@@ -374,23 +425,23 @@ func (p *painter) drawArbitraryPolygon(polygon *canvas.ArbitraryPolygon, pos fyn
 		cornerRadiiScaled[i] = roundToPixel(cornerRadii[i]*p.pixScale, 1.0)
 	}
 
-	p.SetUniform2fv(program, "vertices", verticesScaled)
-	p.SetUniform1fv(program, "cornerRadii", cornerRadiiScaled)
+	p.SetUniform2fv(program, attrVertices, verticesScaled)
+	p.SetUniform1fv(program, attrRadiiCorner, cornerRadiiScaled)
 
 	// Colors and Stroke
 	r, g, b, a := getFragmentColor(polygon.FillColor)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	r, g, b, a = getFragmentColor(polygon.StrokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	strokeWidthScaled := roundToPixel(polygon.StrokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidth", strokeWidthScaled)
+	p.SetUniform1f(program, attrStrokeWidth, strokeWidthScaled)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -474,7 +525,7 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	points, bounds := p.vecRectCoords(pos, shader, frame, 0.0, canvas.Shadow{})
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -482,10 +533,10 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 
 	// Fragment: BEG - the standard uniform contract shared with the built in vector shaders
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	for name, v := range shader.Uniforms {
 		p.SetUniform1f(program, name, v)
@@ -495,7 +546,7 @@ func (p *painter) drawShader(shader *canvas.Shader, pos fyne.Position, frame fyn
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -561,7 +612,7 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 	points, bounds := p.vecRectCoords(pos, obj, frame, aspect, shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -569,18 +620,18 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	strokeWidthScaled := roundToPixel(strokeWidth*p.pixScale, 1.0)
 	if roundedCorners {
-		p.SetUniform1f(program, "strokeWidthHalf", strokeWidthScaled*0.5)
+		p.SetUniform1f(program, attrStrokeWidthHalf, strokeWidthScaled*0.5)
 
 		rectSizeWidthScaled := x2Scaled - x1Scaled - strokeWidthScaled
 		rectSizeHeightScaled := y2Scaled - y1Scaled - strokeWidthScaled
-		p.SetUniform2f(program, "rectSizeHalf", rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
+		p.SetUniform2f(program, attrRectangleSizeHalf, rectSizeWidthScaled*0.5, rectSizeHeightScaled*0.5)
 
 		// the maximum possible corner radii for a circular shape, calculated taking into account the rect coords with aspect ratio
 		size := fyne.NewSize(bounds[2]-bounds[0], bounds[3]-bounds[1])
@@ -600,40 +651,40 @@ func (p *painter) drawOblong(obj fyne.CanvasObject, fill, stroke color.Color, st
 			paint.GetMaximumCornerRadius(bottomLeftRadius, bottomRightRadius, topLeftRadius, size)*p.pixScale,
 			1.0,
 		)
-		p.SetUniform4f(program, "radius", topRightRadiusScaled, bottomRightRadiusScaled, topLeftRadiusScaled, bottomLeftRadiusScaled)
+		p.SetUniform4f(program, attrRadius, topRightRadiusScaled, bottomRightRadiusScaled, topLeftRadiusScaled, bottomLeftRadiusScaled)
 
 		edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-		p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+		p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 	} else {
-		p.SetUniform1f(program, "strokeWidth", strokeWidthScaled)
+		p.SetUniform1f(program, attrStrokeWidth, strokeWidthScaled)
 	}
 
 	r, g, b, a := getFragmentColor(fill)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	strokeColor := stroke
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	var addShadow float32
 	if paint.IsShadowVisible(shadow) {
 		r, g, b, a = getFragmentColor(shadow.Color)
-		p.SetUniform4f(program, "shadowColor", r, g, b, a)
-		p.SetUniform2f(program, "shadowOffset", roundToPixel(shadow.Offset.X*p.pixScale, 1.0), roundToPixel(shadow.Offset.Y*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowBlurRadius", roundToPixel(shadow.BlurRadius*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowSpread", roundToPixel(shadow.Spread*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowType", float32(shadow.Variant))
+		p.SetUniform4f(program, attrShadowColor, r, g, b, a)
+		p.SetUniform2f(program, attrShadowOffset, roundToPixel(shadow.Offset.X*p.pixScale, 1.0), roundToPixel(shadow.Offset.Y*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowBlurRadius, roundToPixel(shadow.BlurRadius*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowSpread, roundToPixel(shadow.Spread*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowType, float32(shadow.Variant))
 		addShadow = 1.0
 	}
-	p.SetUniform1f(program, "addShadow", addShadow)
+	p.SetUniform1f(program, attrAddShadow, addShadow)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -648,7 +699,7 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 	program := p.programs.polygon
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -656,42 +707,42 @@ func (p *painter) drawPolygon(polygon *canvas.RegularPolygon, pos fyne.Position,
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	outerRadius := fyne.Min(size.Width, size.Height) / 2
 	outerRadiusScaled := roundToPixel(outerRadius*p.pixScale, 1.0)
-	p.SetUniform1f(program, "outerRadius", outerRadiusScaled)
+	p.SetUniform1f(program, attrRadiusOuter, outerRadiusScaled)
 
-	p.SetUniform1f(program, "angle", polygon.Angle)
-	p.SetUniform1f(program, "sides", float32(polygon.Sides))
+	p.SetUniform1f(program, attrAngle, polygon.Angle)
+	p.SetUniform1f(program, attrSides, float32(polygon.Sides))
 
 	cornerRadius := fyne.Min(paint.GetMaximumRadius(size), polygon.CornerRadius)
 	cornerRadiusScaled := roundToPixel(cornerRadius*p.pixScale, 1.0)
-	p.SetUniform1f(program, "cornerRadius", cornerRadiusScaled)
+	p.SetUniform1f(program, attrRadiusCorner, cornerRadiusScaled)
 
 	strokeWidthScaled := roundToPixel(polygon.StrokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidth", strokeWidthScaled)
+	p.SetUniform1f(program, attrStrokeWidth, strokeWidthScaled)
 
 	r, g, b, a := getFragmentColor(polygon.FillColor)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	strokeColor := polygon.StrokeColor
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -705,7 +756,7 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 	program := p.programs.arc
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -713,47 +764,47 @@ func (p *painter) drawArc(arc *canvas.Arc, pos fyne.Position, frame fyne.Size) {
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	outerRadius := fyne.Min(arc.Size().Width, arc.Size().Height) / 2
 	outerRadiusScaled := roundToPixel(outerRadius*p.pixScale, 1.0)
-	p.SetUniform1f(program, "outerRadius", outerRadiusScaled)
+	p.SetUniform1f(program, attrRadiusOuter, outerRadiusScaled)
 
 	innerRadius := outerRadius * float32(math.Min(1.0, math.Max(0.0, float64(arc.CutoutRatio))))
 	innerRadiusScaled := roundToPixel(innerRadius*p.pixScale, 1.0)
-	p.SetUniform1f(program, "innerRadius", innerRadiusScaled)
+	p.SetUniform1f(program, attrRadiusInner, innerRadiusScaled)
 
 	startAngle, endAngle := paint.NormalizeArcAngles(arc.StartAngle, arc.EndAngle)
-	p.SetUniform1f(program, "startAngle", startAngle)
-	p.SetUniform1f(program, "endAngle", endAngle)
+	p.SetUniform1f(program, attrAngleStart, startAngle)
+	p.SetUniform1f(program, attrAngleEnd, endAngle)
 
 	cornerRadius := fyne.Min(paint.GetMaximumRadiusArc(outerRadius, innerRadius, arc.EndAngle-arc.StartAngle), arc.CornerRadius)
 	cornerRadiusScaled := roundToPixel(cornerRadius*p.pixScale, 1.0)
-	p.SetUniform1f(program, "cornerRadius", cornerRadiusScaled)
+	p.SetUniform1f(program, attrRadiusCorner, cornerRadiusScaled)
 
 	strokeWidthScaled := roundToPixel(arc.StrokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidth", strokeWidthScaled)
+	p.SetUniform1f(program, attrStrokeWidth, strokeWidthScaled)
 
 	r, g, b, a := getFragmentColor(arc.FillColor)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	strokeColor := arc.StrokeColor
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -779,7 +830,7 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 	points, bounds := p.vecRectCoordsWithPad(pos, ellipse, frame, -xPad, -yPad, ellipse.Shadow)
 	p.ctx.UseProgram(program.ref)
 	p.updateBuffer(program.buff, points[:])
-	p.UpdateVertexArray(program, "vert", 2, 2, 0)
+	p.UpdateVertexArray(program, attrVertex, coordinateSize2D, coordinateSize2D, 0)
 
 	p.ctx.BlendFunc(srcAlpha, oneMinusSrcAlpha)
 	p.logError()
@@ -787,49 +838,49 @@ func (p *painter) drawEllipse(ellipse *canvas.Ellipse, pos fyne.Position, frame 
 
 	// Fragment: BEG
 	frameWidthScaled, frameHeightScaled := p.scaleFrameSize(frame)
-	p.SetUniform2f(program, "frame", frameWidthScaled, frameHeightScaled)
+	p.SetUniform2f(program, attrFrame, frameWidthScaled, frameHeightScaled)
 
 	x1Scaled, x2Scaled, y1Scaled, y2Scaled := p.scaleRectCoords(bounds[0], bounds[2], bounds[1], bounds[3])
-	p.SetUniform4f(program, "bounds", x1Scaled, y1Scaled, x2Scaled, y2Scaled)
+	p.SetUniform4f(program, attrBounds, x1Scaled, y1Scaled, x2Scaled, y2Scaled)
 
 	strokeWidthScaled := roundToPixel(ellipse.StrokeWidth*p.pixScale, 1.0)
-	p.SetUniform1f(program, "strokeWidth", strokeWidthScaled)
+	p.SetUniform1f(program, attrStrokeWidth, strokeWidthScaled)
 
 	radiusXScaled := roundToPixel(radiusX*p.pixScale, 1.0)
 	radiusYScaled := roundToPixel(radiusY*p.pixScale, 1.0)
-	p.SetUniform2f(program, "radius", radiusXScaled, radiusYScaled)
+	p.SetUniform2f(program, attrRadius, radiusXScaled, radiusYScaled)
 
-	p.SetUniform1f(program, "angle", 0) // angle of ellipse, in degrees (positive means clockwise, negative means counter-clockwise direction), not yet supported in public API but reserved for future use
+	p.SetUniform1f(program, attrAngle, 0) // angle of ellipse, in degrees (positive means clockwise, negative means counter-clockwise direction), not yet supported in public API but reserved for future use
 
 	r, g, b, a := getFragmentColor(ellipse.FillColor)
-	p.SetUniform4f(program, "fillColor", r, g, b, a)
+	p.SetUniform4f(program, attrFillColor, r, g, b, a)
 
 	strokeColor := ellipse.StrokeColor
 	if strokeColor == nil {
 		strokeColor = color.Transparent
 	}
 	r, g, b, a = getFragmentColor(strokeColor)
-	p.SetUniform4f(program, "strokeColor", r, g, b, a)
+	p.SetUniform4f(program, attrStrokeColor, r, g, b, a)
 
 	edgeSoftnessScaled := roundToPixel(edgeSoftness*p.pixScale, 1.0)
-	p.SetUniform1f(program, "edgeSoftness", edgeSoftnessScaled)
+	p.SetUniform1f(program, attrEdgeSoftness, edgeSoftnessScaled)
 
 	var addShadow float32
 	if paint.IsShadowVisible(ellipse.Shadow) {
 		r, g, b, a = getFragmentColor(ellipse.Shadow.Color)
-		p.SetUniform4f(program, "shadowColor", r, g, b, a)
-		p.SetUniform2f(program, "shadowOffset", roundToPixel(ellipse.Shadow.Offset.X*p.pixScale, 1.0), roundToPixel(ellipse.Shadow.Offset.Y*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowBlurRadius", roundToPixel(ellipse.Shadow.BlurRadius*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowSpread", roundToPixel(ellipse.Shadow.Spread*p.pixScale, 1.0))
-		p.SetUniform1f(program, "shadowType", float32(ellipse.Shadow.Variant))
+		p.SetUniform4f(program, attrShadowColor, r, g, b, a)
+		p.SetUniform2f(program, attrShadowOffset, roundToPixel(ellipse.Shadow.Offset.X*p.pixScale, 1.0), roundToPixel(ellipse.Shadow.Offset.Y*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowBlurRadius, roundToPixel(ellipse.Shadow.BlurRadius*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowSpread, roundToPixel(ellipse.Shadow.Spread*p.pixScale, 1.0))
+		p.SetUniform1f(program, attrShadowType, float32(ellipse.Shadow.Variant))
 		addShadow = 1.0
 	}
-	p.SetUniform1f(program, "addShadow", addShadow)
+	p.SetUniform1f(program, attrAddShadow, addShadow)
 
 	p.logError()
 	// Fragment: END
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -871,7 +922,7 @@ func (p *painter) drawText(text *canvas.Text, pos fyne.Position, frame fyne.Size
 		if cache.IsValid(cache.TextureType(cached.texture)) {
 			clipPos := fyne.NewPos(pos.X+float32(cached.offset)/p.pixScale, pos.Y)
 			clipSize := fyne.NewSize(float32(cached.width)/p.pixScale, size.Height)
-			p.drawTextureRegion(cached.texture, clipPos, clipSize, frame)
+			p.drawTextureRegion(cached.texture, clipPos, clipSize, frame, canvas.ImageFillStretch, 1, 1, 0, 0)
 		}
 	}
 
@@ -908,18 +959,23 @@ func visibleTextPixels(pos fyne.Position, size, frame fyne.Size, clip *internal.
 	return offset, end - offset
 }
 
-func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size) {
-	points, insets, inner := p.rectCoords(size, pos, frame, canvas.ImageFillStretch, 1, 0)
+func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, frame fyne.Size, fill canvas.ImageFill, alpha, aspect, cornerRadius, pad float32) {
+	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
 
 	p.ctx.UseProgram(p.programs.simple.ref)
 	p.updateBuffer(p.programs.simple.buff, points[:])
-	p.UpdateVertexArray(p.programs.simple, "vert", 2, 4, 0)
-	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 4, 2)
+	p.UpdateVertexArray(p.programs.simple, attrVertex, coordinateSize2D, coordinateSize2DWithTexture, 0)
+	p.UpdateVertexArray(p.programs.simple, attrVertexTextureCoordinates, coordinateSize2D, coordinateSize2DWithTexture, coordinateSize2D)
 
-	p.SetUniform1f(p.programs.simple, "cornerRadius", 0)
-	p.SetUniform2f(p.programs.simple, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.programs.simple, "inset", insets[0], insets[1], insets[2], insets[3])
-	p.SetUniform1f(p.programs.simple, "alpha", 1.0)
+	// Set corner radius and texture size in pixels
+	if cornerRadius != 0 {
+		cornerRadius = fyne.Min(paint.GetMaximumRadius(size), cornerRadius) * p.pixScale
+	}
+	p.SetUniform1f(p.programs.simple, attrRadiusCorner, cornerRadius)
+	p.SetUniform2f(p.programs.simple, attrSize, inner.Width*p.pixScale, inner.Height*p.pixScale)
+	p.SetUniform4f(p.programs.simple, attrInset, insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
+
+	p.SetUniform1f(p.programs.simple, attrAlpha, alpha)
 
 	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
 	p.logError()
@@ -928,7 +984,7 @@ func (p *painter) drawTextureRegion(texture Texture, pos fyne.Position, size, fr
 	p.ctx.BindTexture(texture2D, texture)
 	p.logError()
 
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
+	p.ctx.DrawArrays(triangleStrip, 0, vertexCountRectangle)
 	p.logError()
 }
 
@@ -951,30 +1007,7 @@ func (p *painter) drawTextureWithDetails(o fyne.CanvasObject, creator func(canva
 			cornerRadius = img.CornerRadius
 		}
 	}
-	points, insets, inner := p.rectCoords(size, pos, frame, fill, aspect, pad)
-
-	p.ctx.UseProgram(p.programs.simple.ref)
-	p.updateBuffer(p.programs.simple.buff, points[:])
-	p.UpdateVertexArray(p.programs.simple, "vert", 2, 4, 0)
-	p.UpdateVertexArray(p.programs.simple, "vertTexCoord", 2, 4, 2)
-
-	// Set corner radius and texture size in pixels
-	cornerRadius = fyne.Min(paint.GetMaximumRadius(size), cornerRadius)
-	p.SetUniform1f(p.programs.simple, "cornerRadius", cornerRadius*p.pixScale)
-	p.SetUniform2f(p.programs.simple, "size", inner.Width*p.pixScale, inner.Height*p.pixScale)
-	p.SetUniform4f(p.programs.simple, "inset", insets[0], insets[1], insets[2], insets[3]) // texture coordinate insets (minX, minY, maxX, maxY)
-
-	p.SetUniform1f(p.programs.simple, "alpha", alpha)
-
-	p.ctx.BlendFunc(one, oneMinusSrcAlpha)
-	p.logError()
-
-	p.ctx.ActiveTexture(texture0)
-	p.ctx.BindTexture(texture2D, texture)
-	p.logError()
-
-	p.ctx.DrawArrays(triangleStrip, 0, 4)
-	p.logError()
+	p.drawTextureRegion(texture, pos, size, frame, fill, alpha, aspect, cornerRadius, pad)
 }
 
 func (p *painter) lineCoords(pos, pos1, pos2 fyne.Position, lineWidth, feather float32, frame fyne.Size) ([coordinatesSizeLine]float32, float32, float32) {
@@ -1068,7 +1101,7 @@ func (p *painter) rectCoords(size fyne.Size, pos fyne.Position, frame fyne.Size,
 	insets := [4]float32{xInset, yInset, 1.0 - xInset, 1.0 - yInset}
 
 	return [coordinatesSizeRectangleWithTexture]float32{
-		// coord x, y, z texture x, y
+		// coord x, y texture x, y
 		x1, y2, insets[0], insets[3], // top left
 		x1, y1, insets[0], insets[1], // bottom left
 		x2, y2, insets[2], insets[3], // top right
@@ -1225,19 +1258,19 @@ func createKernel(radius float32) []float32 {
 	return values
 }
 
-// kernelToRGBA packs normalised float32 kernel weights into RGBA uint8 pixel
-// data suitable for upload via TexImage2D. Each weight is quantised to [0,255]
+// kernelToRGBA packs normalized float32 kernel weights into RGBA uint8 pixel
+// data suitable for upload via TexImage2D. Each weight is quantized to [0,255]
 // and written to all four channels (we read .r in the shader; the remaining
 // channels are padding for universal RGBA compatibility across GL backends).
 func kernelToRGBA(values []float32) []uint8 {
 	data := make([]uint8, len(values)*4)
 	for i, v := range values {
-		b := uint8(v*255.0 + 0.5)
+		b := uint8(v*math.MaxUint8 + 0.5)
 		off := i * 4
-		data[off+0] = b   // R
-		data[off+1] = b   // G
-		data[off+2] = b   // B
-		data[off+3] = 255 // A
+		data[off+0] = b             // R
+		data[off+1] = b             // G
+		data[off+2] = b             // B
+		data[off+3] = math.MaxUint8 // A
 	}
 	return data
 }
