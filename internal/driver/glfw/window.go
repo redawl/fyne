@@ -711,9 +711,9 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 			}
 		}
 
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyUp(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyUp(keyEvent)
 			}
 		} else if w.canvas.onKeyUp != nil {
 			w.canvas.onKeyUp(keyEvent)
