@@ -692,7 +692,7 @@ func (w *window) capturesTab(modifier fyne.KeyModifier) bool {
 }
 
 func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, scancode int, action action, keyDesktopModifier fyne.KeyModifier) {
-	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}}
+	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}, Repeat: action == repeat}
 
 	pendingMenuToggle := w.menuTogglePending
 	w.menuTogglePending = desktop.KeyNone
@@ -737,7 +737,14 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 			w.canvas.onKeyDown(keyEvent)
 		}
 	default:
-		// key repeat will fall through to TypedKey and TypedShortcut
+		// key repeat triggers KeyDown and falls through to TypedKey and TypedShortcut
+		if w.canvas.Focused() != nil {
+			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
+				focused.KeyDown(keyEvent)
+			}
+		} else if w.canvas.onKeyDown != nil {
+			w.canvas.onKeyDown(keyEvent)
+		}
 	}
 
 	modifierOtherThanShift := (keyDesktopModifier & fyne.KeyModifierControl) |
