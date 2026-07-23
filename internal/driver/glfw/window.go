@@ -729,18 +729,18 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 		case fyne.KeyEscape:
 			w.menuDeactivationPending = keyName
 		}
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyDown(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
 			}
 		} else if w.canvas.onKeyDown != nil {
 			w.canvas.onKeyDown(keyEvent)
 		}
 	default:
 		// key repeat triggers KeyDown and falls through to TypedKey and TypedShortcut
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyDown(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
 			}
 		} else if w.canvas.onKeyDown != nil {
 			w.canvas.onKeyDown(keyEvent)
@@ -756,8 +756,7 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 	}
 
 	// No shortcut detected, pass down to TypedKey
-	focused := w.canvas.Focused()
-	if focused != nil {
+	if focused := w.canvas.Focused(); focused != nil {
 		focused.TypedKey(keyEvent)
 	} else if w.canvas.onTypedKey != nil {
 		w.canvas.onTypedKey(keyEvent)
