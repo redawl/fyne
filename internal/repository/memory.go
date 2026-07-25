@@ -174,7 +174,7 @@ func (m *InMemoryRepository) CanRead(u fyne.URI) (bool, error) {
 }
 
 // Destroy tears down the InMemoryRepository.
-func (m *InMemoryRepository) Destroy(scheme string) {
+func (m *InMemoryRepository) Destroy(string) {
 	// do nothing
 }
 
@@ -203,7 +203,7 @@ func (m *InMemoryRepository) Appender(u fyne.URI) (fyne.URIWriteCloser, error) {
 //
 // Since: 2.0
 func (m *InMemoryRepository) CanWrite(u fyne.URI) (bool, error) {
-	return withValidPath(u.Path(), func(path string) bool {
+	return withValidPath(u.Path(), func(string) bool {
 		return true
 	})
 }

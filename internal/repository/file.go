@@ -117,7 +117,7 @@ func (r *FileRepository) CanRead(u fyne.URI) (bool, error) {
 }
 
 // Destroy tears down the repository for the specified scheme.
-func (r *FileRepository) Destroy(scheme string) {
+func (r *FileRepository) Destroy(string) {
 	// do nothing
 }
 

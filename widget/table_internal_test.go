@@ -851,7 +851,7 @@ func TestTable_SetColumnWidth_Dragged(t *testing.T) {
 		func() fyne.CanvasObject {
 			return NewLabel("")
 		},
-		func(id TableCellID, obj fyne.CanvasObject) {
+		func(TableCellID, fyne.CanvasObject) {
 		},
 	)
 	table.ShowHeaderColumn = false
@@ -933,7 +933,7 @@ func TestTable_SetRowHeight_Dragged(t *testing.T) {
 		func() fyne.CanvasObject {
 			return NewLabel("")
 		},
-		func(id TableCellID, obj fyne.CanvasObject) {
+		func(TableCellID, fyne.CanvasObject) {
 		},
 	)
 	table.ShowHeaderRow = false

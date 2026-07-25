@@ -227,7 +227,7 @@ func TestWindow_ToggleMainMenuByKeyboard(t *testing.T) {
 		assert.False(t, menuBar.IsActive())
 	})
 
-	t.Run("when canvas has no menu", func(t *testing.T) {
+	t.Run("when canvas has no menu", func(*testing.T) {
 		w = createWindow("Test")
 		w.SetContent(canvas.NewRectangle(color.Black))
 
@@ -326,7 +326,7 @@ func TestWindow_HandleOutsideHoverableObject(t *testing.T) {
 	l := widget.NewList(
 		func() int { return 2 },
 		func() fyne.CanvasObject { return widget.NewEntry() },
-		func(lii widget.ListItemID, co fyne.CanvasObject) {},
+		func(widget.ListItemID, fyne.CanvasObject) {},
 	)
 	l.Resize(fyne.NewSize(200, 300))
 	w.SetContent(l)
@@ -1967,7 +1967,7 @@ func TestWindow_Shortcut(t *testing.T) {
 	w.SetContent(content)
 
 	called := ""
-	w.Canvas().AddShortcut(testShortcut, func(sc fyne.Shortcut) {
+	w.Canvas().AddShortcut(testShortcut, func(fyne.Shortcut) {
 		called = "canvas"
 	})
 
@@ -2029,7 +2029,7 @@ func createWindow(title string) *safeWindow {
 		w.create()
 		// disable the GLFW window size callback because it causes a delayed canvas
 		// resize that breaks some tests sometimes
-		w.view().SetSizeCallback(func(_ *glfw.Window, width, height int) {})
+		w.view().SetSizeCallback(func(_ *glfw.Window, _, _ int) {})
 	})
 	return &safeWindow{window: w}
 }

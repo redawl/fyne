@@ -118,10 +118,10 @@ func NewTreeWithStrings(data map[string][]string) (t *Tree) {
 			_, b = data[uid]
 			return b
 		},
-		CreateNode: func(branch bool) fyne.CanvasObject {
+		CreateNode: func(bool) fyne.CanvasObject {
 			return NewLabel("Template Object")
 		},
-		UpdateNode: func(uid string, branch bool, node fyne.CanvasObject) {
+		UpdateNode: func(uid string, _ bool, node fyne.CanvasObject) {
 			node.(*Label).SetText(uid)
 		},
 	}
@@ -214,7 +214,7 @@ func (t *Tree) RefreshItem(id TreeNodeID) {
 // OpenAllBranches opens all branches in the tree.
 func (t *Tree) OpenAllBranches() {
 	t.ensureOpenMap()
-	t.walkAll(func(uid, parent TreeNodeID, branch bool, depth int) {
+	t.walkAll(func(uid, _ TreeNodeID, branch bool, _ int) {
 		if branch {
 			t.open[uid] = true
 		}
@@ -401,7 +401,7 @@ func (t *Tree) TypedKey(event *fyne.KeyEvent) {
 		t.Select(t.currentHighlight)
 	case fyne.KeyDown:
 		next := false
-		t.walk(t.Root, "", 0, false, func(id, p TreeNodeID, _ bool, _ int) {
+		t.walk(t.Root, "", 0, false, func(id, _ TreeNodeID, _ bool, _ int) {
 			if next {
 				t.setItemFocus(id)
 				next = false
@@ -435,7 +435,7 @@ func (t *Tree) TypedKey(event *fyne.KeyEvent) {
 		}
 	case fyne.KeyUp:
 		previous := ""
-		t.walk(t.Root, "", 0, false, func(id, p TreeNodeID, _ bool, _ int) {
+		t.walk(t.Root, "", 0, false, func(id, _ TreeNodeID, _ bool, _ int) {
 			if id == t.currentHighlight && previous != "" {
 				t.setItemFocus(previous)
 			}

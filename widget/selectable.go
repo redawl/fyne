@@ -161,7 +161,7 @@ func (s *selectable) TouchCancel(m *mobile.TouchEvent) {
 	s.TouchUp(m)
 }
 
-func (s *selectable) TouchDown(m *mobile.TouchEvent) {
+func (s *selectable) TouchDown(*mobile.TouchEvent) {
 	if isTripleTap(s.doubleTappedAtUnixMillis, time.Now().UnixMilli()) {
 		s.selectCurrentRow(true)
 		return
@@ -214,7 +214,7 @@ func (s *selectable) getRowCol(p fyne.Position) (row, col int) {
 }
 
 // Selects the row where the cursorColumn is currently positioned
-func (s *selectable) selectCurrentRow(focus bool) {
+func (s *selectable) selectCurrentRow(bool) {
 	s.grabFocus()
 	provider := s.provider
 	s.selectRow = s.cursorRow

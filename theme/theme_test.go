@@ -86,7 +86,7 @@ func TestThemeChange(t *testing.T) {
 	assert.NotEqual(t, bg, theme.BackgroundColor())
 }
 
-func TestTheme_Bootstrapping(t *testing.T) {
+func TestTheme_Bootstrapping(*testing.T) {
 	current := fyne.CurrentApp().Settings().Theme()
 	fyne.CurrentApp().Settings().SetTheme(nil)
 
@@ -98,18 +98,18 @@ func TestTheme_Bootstrapping(t *testing.T) {
 
 type emptyTheme struct{}
 
-func (e *emptyTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
+func (e *emptyTheme) Color(fyne.ThemeColorName, fyne.ThemeVariant) color.Color {
 	return nil
 }
 
-func (e *emptyTheme) Font(s fyne.TextStyle) fyne.Resource {
+func (e *emptyTheme) Font(fyne.TextStyle) fyne.Resource {
 	return nil
 }
 
-func (e *emptyTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
+func (e *emptyTheme) Icon(fyne.ThemeIconName) fyne.Resource {
 	return nil
 }
 
-func (e *emptyTheme) Size(n fyne.ThemeSizeName) float32 {
+func (e *emptyTheme) Size(fyne.ThemeSizeName) float32 {
 	return 0
 }

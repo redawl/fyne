@@ -147,7 +147,7 @@ func TestList_SetItemHeight_InUpdate(t *testing.T) {
 			r.SetMinSize(fyne.NewSize(10, 10))
 			return r
 		},
-		func(id ListItemID, o fyne.CanvasObject) {
+		func(id ListItemID, _ fyne.CanvasObject) {
 			list.SetItemHeight(id, 32)
 		},
 	)
@@ -673,7 +673,7 @@ func TestList_LimitUpdateItem(t *testing.T) {
 		func() fyne.CanvasObject {
 			return NewLabel("")
 		},
-		func(id ListItemID, item fyne.CanvasObject) {
+		func(id ListItemID, _ fyne.CanvasObject) {
 			printOut += fmt.Sprintf("%d.", id)
 		},
 	)
@@ -698,7 +698,7 @@ func TestList_RefreshUpdatesAllItems(t *testing.T) {
 		func() fyne.CanvasObject {
 			return NewLabel("Test")
 		},
-		func(id ListItemID, item fyne.CanvasObject) {
+		func(id ListItemID, _ fyne.CanvasObject) {
 			printOut += fmt.Sprintf("%d.", id)
 		},
 	)
@@ -718,7 +718,7 @@ func TestList_ScrollToLargeItem(t *testing.T) {
 		func() fyne.CanvasObject {
 			return NewLabel("Row")
 		},
-		func(id ListItemID, item fyne.CanvasObject) {
+		func(ListItemID, fyne.CanvasObject) {
 		},
 	)
 	list.SetItemHeight(9, 50)

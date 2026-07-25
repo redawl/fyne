@@ -156,7 +156,7 @@ func (h *HyperlinkSegment) Update(o fyne.CanvasObject) {
 }
 
 // Select tells the segment that the user is selecting the content between the two positions.
-func (h *HyperlinkSegment) Select(begin, end fyne.Position) {
+func (h *HyperlinkSegment) Select(_, _ fyne.Position) {
 	// no-op: this will be added when we progress to editor
 }
 
@@ -212,7 +212,7 @@ func (i *ImageSegment) Update(o fyne.CanvasObject) {
 }
 
 // Select tells the segment that the user is selecting the content between the two positions.
-func (i *ImageSegment) Select(begin, end fyne.Position) {
+func (i *ImageSegment) Select(_, _ fyne.Position) {
 	// no-op: this will be added when we progress to editor
 }
 
@@ -850,7 +850,7 @@ func (codeInlineLayout) Layout(o []fyne.CanvasObject, _ fyne.Size) {
 }
 
 // Select tells the segment that the user is selecting the content between the two positions.
-func (t *TextSegment) Select(begin, end fyne.Position) {
+func (t *TextSegment) Select(_, _ fyne.Position) {
 	// no-op: this will be added when we progress to editor
 }
 

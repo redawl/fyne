@@ -88,10 +88,10 @@ func TestDocTabs_Select(t *testing.T) {
 	assert.Equal(t, tab2, selectedTab)
 	assert.Equal(t, tab1, unselectedTab)
 
-	tabs.OnSelected = func(tab *container.TabItem) {
+	tabs.OnSelected = func(*container.TabItem) {
 		assert.Fail(t, "unexpected tab selected")
 	}
-	tabs.OnUnselected = func(tab *container.TabItem) {
+	tabs.OnUnselected = func(*container.TabItem) {
 		assert.Fail(t, "unexpected tab unselected")
 	}
 	tabs.Select(container.NewTabItem("Test3", widget.NewLabel("Test3")))

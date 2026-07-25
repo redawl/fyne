@@ -315,7 +315,7 @@ func TestButton_ChangeTheme(t *testing.T) {
 	})
 }
 
-func TestButtonCompatImportance(t *testing.T) {
+func TestButtonCompatImportance(*testing.T) {
 	// Test backward compatibility of widget.Importance
 	var imp any = widget.HighImportance
 	btn := widget.NewButton("test", func() {})

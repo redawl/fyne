@@ -21,11 +21,11 @@ func (m *mobileFileRepo) CanList(u fyne.URI) (bool, error) {
 	return canListURI(u), nil
 }
 
-func (m *mobileFileRepo) CanRead(u fyne.URI) (bool, error) {
+func (m *mobileFileRepo) CanRead(fyne.URI) (bool, error) {
 	return true, nil // TODO check a file can be read
 }
 
-func (m *mobileFileRepo) CanWrite(u fyne.URI) (bool, error) {
+func (m *mobileFileRepo) CanWrite(fyne.URI) (bool, error) {
 	return true, nil // TODO check a file can be written
 }
 

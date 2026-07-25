@@ -87,10 +87,10 @@ func TestAppTabs_Select(t *testing.T) {
 	assert.Equal(t, tab2, selectedTab)
 	assert.Equal(t, tab1, unselectedTab)
 
-	tabs.OnSelected = func(tab *TabItem) {
+	tabs.OnSelected = func(*TabItem) {
 		assert.Fail(t, "unexpected tab selected")
 	}
-	tabs.OnUnselected = func(tab *TabItem) {
+	tabs.OnUnselected = func(*TabItem) {
 		assert.Fail(t, "unexpected tab unselected")
 	}
 	tabs.Select(NewTabItem("Test3", widget.NewLabel("Test3")))

@@ -93,7 +93,7 @@ func (c *Canvas) EnsureMinSize() bool {
 
 	var parentNeedingUpdate *RenderCacheNode
 
-	setup := func(node *RenderCacheNode, pos fyne.Position) {
+	setup := func(node *RenderCacheNode, _ fyne.Position) {
 		if !node.obj.Visible() {
 			return
 		}
@@ -101,7 +101,7 @@ func (c *Canvas) EnsureMinSize() bool {
 			theme.PushRenderingTheme(th.Theme)
 		}
 	}
-	ensureMinSize := func(node *RenderCacheNode, pos fyne.Position) {
+	ensureMinSize := func(node *RenderCacheNode, _ fyne.Position) {
 		obj := node.obj
 		cache.SetCanvasForObject(obj, c.impl, func() {
 			if img, ok := obj.(*canvas.Image); ok {
@@ -449,7 +449,7 @@ func (c *Canvas) walkTree(
 		node = parent.firstChild
 		return false
 	}
-	ac := func(obj fyne.CanvasObject, pos fyne.Position, _ fyne.CanvasObject) {
+	ac := func(_ fyne.CanvasObject, pos fyne.Position, _ fyne.CanvasObject) {
 		node = parent
 		parent = node.parent
 		if prev != nil && prev.parent != parent {

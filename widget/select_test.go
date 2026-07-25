@@ -109,7 +109,7 @@ func TestSelect_Binding(t *testing.T) {
 func TestSelect_ChangeTheme(t *testing.T) {
 	test.NewTempApp(t)
 
-	combo := widget.NewSelect([]string{"1", "2"}, func(s string) {})
+	combo := widget.NewSelect([]string{"1", "2"}, func(string) {})
 	w := test.NewWindow(combo)
 	defer w.Close()
 	w.Resize(fyne.NewSize(220, 220))
@@ -462,7 +462,7 @@ func TestSelect_SetSelectedIndex(t *testing.T) {
 
 func TestSelect_SetSelectedIndex_Invalid(t *testing.T) {
 	var triggered bool
-	combo := widget.NewSelect([]string{"1", "2"}, func(s string) {
+	combo := widget.NewSelect([]string{"1", "2"}, func(string) {
 		triggered = true
 	})
 	combo.SetSelectedIndex(-1)
@@ -476,7 +476,7 @@ func TestSelect_SetSelectedIndex_Invalid(t *testing.T) {
 func TestSelect_Tapped(t *testing.T) {
 	test.NewTempApp(t)
 
-	combo := widget.NewSelect([]string{"1", "2"}, func(s string) {})
+	combo := widget.NewSelect([]string{"1", "2"}, func(string) {})
 	w := test.NewWindow(combo)
 	defer w.Close()
 	w.Resize(fyne.NewSize(200, 150))
@@ -491,7 +491,7 @@ func TestSelect_Tapped(t *testing.T) {
 func TestSelect_Tapped_Constrained(t *testing.T) {
 	test.NewTempApp(t)
 
-	combo := widget.NewSelect([]string{"1", "2"}, func(s string) {})
+	combo := widget.NewSelect([]string{"1", "2"}, func(string) {})
 	w := test.NewWindow(combo)
 	defer w.Close()
 	w.Resize(fyne.NewSize(200, 150))

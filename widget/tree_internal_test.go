@@ -55,7 +55,7 @@ func TestTree(t *testing.T) {
 	t.Run("Initializer_Empty", func(t *testing.T) {
 		tree := &Tree{}
 		var nodes []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, _ bool, _ int) {
 			nodes = append(nodes, uid)
 		})
 		assert.Empty(t, nodes)
@@ -74,17 +74,17 @@ func TestTree(t *testing.T) {
 			IsBranch: func(uid string) bool {
 				return uid == "" || uid == "c"
 			},
-			CreateNode: func(branch bool) fyne.CanvasObject {
+			CreateNode: func(bool) fyne.CanvasObject {
 				return &Label{}
 			},
-			UpdateNode: func(uid string, branch bool, node fyne.CanvasObject) {
+			UpdateNode: func(uid string, _ bool, node fyne.CanvasObject) {
 				node.(*Label).SetText(uid)
 			},
 		}
 		tree.OpenBranch("c")
 		var branches []string
 		var leaves []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, branch bool, _ int) {
 			if branch {
 				branches = append(branches, uid)
 			} else {
@@ -115,17 +115,17 @@ func TestTree(t *testing.T) {
 			func(uid string) bool {
 				return uid == "" || uid == "c"
 			},
-			func(branch bool) fyne.CanvasObject {
+			func(bool) fyne.CanvasObject {
 				return &Label{}
 			},
-			func(uid string, branch bool, node fyne.CanvasObject) {
+			func(uid string, _ bool, node fyne.CanvasObject) {
 				node.(*Label).SetText(uid)
 			},
 		)
 		tree.OpenBranch("c")
 		var branches []string
 		var leaves []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, branch bool, _ int) {
 			if branch {
 				branches = append(branches, uid)
 			} else {
@@ -149,7 +149,7 @@ func TestTree(t *testing.T) {
 		tree.OpenBranch("foo")
 		var branches []string
 		var leaves []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, branch bool, _ int) {
 			if branch {
 				branches = append(branches, uid)
 			} else {
@@ -729,7 +729,7 @@ func TestTree_Tap(t *testing.T) {
 		tree.Refresh() // Force layout
 
 		selected := false
-		tree.OnSelected = func(uid string) {
+		tree.OnSelected = func(string) {
 			selected = true
 		}
 
@@ -745,7 +745,7 @@ func TestTree_Tap(t *testing.T) {
 		tree.Refresh() // Force layout
 
 		tapped := false
-		tree.OnBranchOpened = func(uid TreeNodeID) {
+		tree.OnBranchOpened = func(TreeNodeID) {
 			tapped = true
 		}
 		test.Tap(getBranch(t, tree, "A").icon.(*branchIcon))
@@ -759,7 +759,7 @@ func TestTree_Tap(t *testing.T) {
 		tree.Refresh() // Force layout
 
 		selected := false
-		tree.OnSelected = func(uid TreeNodeID) {
+		tree.OnSelected = func(TreeNodeID) {
 			selected = true
 		}
 		test.Tap(getLeaf(t, tree, "A"))
@@ -798,7 +798,7 @@ func TestTree_Walk(t *testing.T) {
 		tree.OpenBranch("E")
 		var branches []string
 		var leaves []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, branch bool, _ int) {
 			if branch {
 				branches = append(branches, uid)
 			} else {
@@ -825,7 +825,7 @@ func TestTree_Walk(t *testing.T) {
 		tree := NewTreeWithStrings(data)
 		var branches []string
 		var leaves []string
-		tree.walkAll(func(uid, _ string, branch bool, depth int) {
+		tree.walkAll(func(uid, _ string, branch bool, _ int) {
 			if branch {
 				branches = append(branches, uid)
 			} else {

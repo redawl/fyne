@@ -144,7 +144,7 @@ func (d *driver) RenderedTextSize(text string, textSize float32, style fyne.Text
 	return painter.RenderedTextSize(text, textSize, style, source)
 }
 
-func (d *driver) CanvasForObject(obj fyne.CanvasObject) fyne.Canvas {
+func (d *driver) CanvasForObject(fyne.CanvasObject) fyne.Canvas {
 	if len(d.windows) == 0 {
 		return nil
 	}

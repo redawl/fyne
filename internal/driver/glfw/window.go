@@ -404,7 +404,7 @@ func (w *window) processMouseMoved(xpos float64, ypos float64) {
 		} else if mouseOver != nil {
 			isChild := false
 			driver.WalkCompleteObjectTree(mouseOver.(fyne.CanvasObject),
-				func(co fyne.CanvasObject, p1, p2 fyne.Position, s fyne.Size) bool {
+				func(co fyne.CanvasObject, _, _ fyne.Position, _ fyne.Size) bool {
 					if co == obj {
 						isChild = true
 						return true

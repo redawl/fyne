@@ -387,7 +387,7 @@ func (ctx *context) GetShaderSource(s Shader) string {
 	return goString(buf)
 }
 
-func (ctx *context) GetTexParameteriv(dst []int32, target, pname Enum) {
+func (ctx *context) GetTexParameteriv(_ []int32, target, pname Enum) {
 	ctx.enqueue(call{
 		args: fnargs{
 			fn: glfnGetTexParameteriv,

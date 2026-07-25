@@ -216,7 +216,7 @@ func (r *dummyWidgetRenderer) Destroy() {
 	}
 }
 
-func (r *dummyWidgetRenderer) Layout(size fyne.Size) {
+func (r *dummyWidgetRenderer) Layout(fyne.Size) {
 }
 
 func (r *dummyWidgetRenderer) MinSize() fyne.Size {

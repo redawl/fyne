@@ -421,7 +421,7 @@ func (e *Entry) MouseDown(m *desktop.MouseEvent) {
 // MouseUp called on mouse release
 // If a mouse drag event has completed then check to see if it has resulted in an empty selection,
 // if so, and if a text select key isn't held, then disable selecting
-func (e *Entry) MouseUp(m *desktop.MouseEvent) {
+func (e *Entry) MouseUp(*desktop.MouseEvent) {
 	e.syncSelectable()
 	start, _ := e.sel.selection()
 	if start == -1 && e.sel.selecting && !e.selectKeyDown {
@@ -1067,10 +1067,10 @@ func (e *Entry) placeholderProvider() *RichText {
 }
 
 func (e *Entry) registerShortcut() {
-	e.shortcut.AddShortcut(&fyne.ShortcutUndo{}, func(se fyne.Shortcut) {
+	e.shortcut.AddShortcut(&fyne.ShortcutUndo{}, func(fyne.Shortcut) {
 		e.Undo()
 	})
-	e.shortcut.AddShortcut(&fyne.ShortcutRedo{}, func(se fyne.Shortcut) {
+	e.shortcut.AddShortcut(&fyne.ShortcutRedo{}, func(fyne.Shortcut) {
 		e.Redo()
 	})
 	e.shortcut.AddShortcut(&fyne.ShortcutCut{}, func(se fyne.Shortcut) {
@@ -1085,7 +1085,7 @@ func (e *Entry) registerShortcut() {
 		paste := se.(*fyne.ShortcutPaste)
 		e.pasteFromClipboard(paste.Clipboard)
 	})
-	e.shortcut.AddShortcut(&fyne.ShortcutSelectAll{}, func(se fyne.Shortcut) {
+	e.shortcut.AddShortcut(&fyne.ShortcutSelectAll{}, func(fyne.Shortcut) {
 		e.selectAll()
 	})
 

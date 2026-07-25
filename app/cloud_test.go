@@ -121,7 +121,7 @@ func (c *mockCloud) Setup(_ fyne.App) error {
 
 type mockCloudStorage struct{}
 
-func (s *mockCloudStorage) Create(name string) (fyne.URIWriteCloser, error) {
+func (s *mockCloudStorage) Create(string) (fyne.URIWriteCloser, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -129,11 +129,11 @@ func (s *mockCloudStorage) List() []string {
 	return []string{}
 }
 
-func (s *mockCloudStorage) Open(name string) (fyne.URIReadCloser, error) {
+func (s *mockCloudStorage) Open(string) (fyne.URIReadCloser, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (s *mockCloudStorage) Remove(name string) error {
+func (s *mockCloudStorage) Remove(string) error {
 	return errors.New("not implemented")
 }
 
@@ -142,6 +142,6 @@ func (s *mockCloudStorage) RootURI() fyne.URI {
 	return u
 }
 
-func (s *mockCloudStorage) Save(name string) (fyne.URIWriteCloser, error) {
+func (s *mockCloudStorage) Save(string) (fyne.URIWriteCloser, error) {
 	return nil, errors.New("not implemented")
 }

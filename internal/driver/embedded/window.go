@@ -69,15 +69,15 @@ func (w *noosWindow) MainMenu() *fyne.MainMenu {
 	return nil
 }
 
-func (w *noosWindow) SetMainMenu(menu *fyne.MainMenu) {
+func (w *noosWindow) SetMainMenu(*fyne.MainMenu) {
 	// TODO implement me
 }
 
-func (w *noosWindow) SetOnClosed(f func()) {
+func (w *noosWindow) SetOnClosed(func()) {
 	// TODO implement me
 }
 
-func (w *noosWindow) SetCloseIntercept(f func()) {
+func (w *noosWindow) SetCloseIntercept(func()) {
 	// TODO implement me
 }
 

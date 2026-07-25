@@ -99,7 +99,7 @@ func (w *window) SetCloseIntercept(callback func()) {
 	w.onCloseIntercepted = callback
 }
 
-func (w *window) SetOnDropped(dropped func(fyne.Position, []fyne.URI)) {
+func (w *window) SetOnDropped(func(fyne.Position, []fyne.URI)) {
 	// not implemented yet
 }
 

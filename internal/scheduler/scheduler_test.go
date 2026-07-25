@@ -23,7 +23,7 @@ func TestScheduler_Schedule_FiresAtDeliveryTime(t *testing.T) {
 	cache := newMemCache()
 	var fired atomic.Int32
 	done := make(chan struct{}, 1)
-	s := New(cache, func(n *fyne.Notification) {
+	s := New(cache, func(*fyne.Notification) {
 		fired.Add(1)
 		done <- struct{}{}
 	})

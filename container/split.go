@@ -325,12 +325,12 @@ func (d *divider) Dragged(e *fyne.DragEvent) {
 	d.split.SetOffset(offset)
 }
 
-func (d *divider) MouseIn(event *desktop.MouseEvent) {
+func (d *divider) MouseIn(*desktop.MouseEvent) {
 	d.hovered = true
 	d.Refresh()
 }
 
-func (d *divider) MouseMoved(event *desktop.MouseEvent) {}
+func (d *divider) MouseMoved(*desktop.MouseEvent) {}
 
 func (d *divider) MouseOut() {
 	d.hovered = false

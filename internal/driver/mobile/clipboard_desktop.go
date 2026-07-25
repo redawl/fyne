@@ -11,6 +11,6 @@ func (c mobileClipboard) Content() string {
 }
 
 // SetContent sets the clipboard content for mobile simulator runs
-func (c mobileClipboard) SetContent(content string) {
+func (c mobileClipboard) SetContent(string) {
 	fyne.LogError("Clipboard is not supported in mobile simulation", nil)
 }

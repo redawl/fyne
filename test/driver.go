@@ -121,7 +121,7 @@ func (d *driver) StartAnimation(a *fyne.Animation) {
 	}
 }
 
-func (d *driver) StopAnimation(a *fyne.Animation) {
+func (d *driver) StopAnimation(*fyne.Animation) {
 	// currently no animations in test app, do nothing
 }
 

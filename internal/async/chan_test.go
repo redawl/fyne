@@ -37,7 +37,7 @@ func TestUnboundedChann(t *testing.T) {
 				c.Close()
 			})
 
-			t.Run("recv", func(t *testing.T) {
+			t.Run("recv", func(*testing.T) {
 				// Ensure that receive op from unbounded chan can happen on
 				// the same goroutine of send op.
 				c := async.NewUnboundedChan[any]()

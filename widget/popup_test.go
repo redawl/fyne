@@ -205,7 +205,7 @@ func TestPopUp_Move_Constrained(t *testing.T) {
 	//	"content Y position is adjusted to keep the content inside the window")
 }
 
-func TestPopUp_Move_ConstrainedWindowToSmall(t *testing.T) {
+func TestPopUp_Move_ConstrainedWindowToSmall(*testing.T) {
 	label := NewLabel("Hi")
 	win := test.NewWindow(NewLabel("OK"))
 	defer win.Close()

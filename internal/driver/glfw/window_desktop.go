@@ -168,7 +168,7 @@ func (w *window) CenterOnScreen() {
 
 func (w *window) SetOnDropped(dropped func(pos fyne.Position, items []fyne.URI)) {
 	w.runOnMainWhenCreated(func() {
-		w.viewport.SetDropCallback(func(win *glfw.Window, names []string) {
+		w.viewport.SetDropCallback(func(_ *glfw.Window, names []string) {
 			if dropped == nil {
 				return
 			}
@@ -384,7 +384,7 @@ func (w *window) resized(_ *glfw.Window, width, height int) {
 	w.processResized(width, height)
 }
 
-func (w *window) scaled(_ *glfw.Window, x float32, y float32) {
+func (w *window) scaled(_ *glfw.Window, x, _ float32) {
 	if !build.IsWayland { // other platforms handle this using older APIs
 		return
 	}
@@ -737,7 +737,7 @@ func glfwKeyToModifier(key glfw.Key) glfw.ModifierKey {
 // Unicode character is input.
 //
 // Characters do not map 1:1 to physical keys, as a key may produce zero, one or more characters.
-func (w *window) charInput(viewport *glfw.Window, char rune) {
+func (w *window) charInput(_ *glfw.Window, char rune) {
 	w.processCharInput(char)
 }
 
