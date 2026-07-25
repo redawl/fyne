@@ -624,8 +624,7 @@ func runeToPrintable(r rune) rune {
 
 func (d *driver) typeDownCanvas(canvas *canvas, r rune, code key.Code, mod key.Modifiers) {
 	keyName := keyToName(code)
-	switch keyName {
-	case fyne.KeyTab:
+	if keyName == fyne.KeyTab {
 		capture := false
 		if ent, ok := canvas.Focused().(fyne.Tabbable); ok {
 			capture = ent.AcceptsTab()

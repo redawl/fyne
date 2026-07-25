@@ -421,11 +421,8 @@ type buttonTheme struct {
 }
 
 func (b *buttonTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
-	switch n {
-	case theme.ColorNameHover:
-		if b.mode == modeClose {
-			n = theme.ColorNameError
-		}
+	if n == theme.ColorNameHover && b.mode == modeClose {
+		n = theme.ColorNameError
 	}
 	return b.Theme.Color(n, v)
 }

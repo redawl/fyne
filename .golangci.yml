@@ -93,8 +93,6 @@ linters:
           disabled: true # TODO
         - name: unhandled-error
           disabled: true # we rely on errcheck
-        - name: unnecessary-stmt
-          disabled: true # TODO
         - name: unused-parameter
           disabled: true # TODO
         - name: unused-receiver

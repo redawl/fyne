@@ -172,8 +172,7 @@ func (s *selectable) TouchUp(*mobile.TouchEvent) {
 }
 
 func (s *selectable) TypedShortcut(sh fyne.Shortcut) {
-	switch sh.(type) {
-	case *fyne.ShortcutCopy:
+	if _, ok := sh.(*fyne.ShortcutCopy); ok {
 		fyne.CurrentApp().Clipboard().SetContent(s.SelectedText())
 	}
 }
