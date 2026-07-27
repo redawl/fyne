@@ -83,9 +83,9 @@ func lookupRuneFont(r rune, family string, aspect font.Aspect) *font.Face {
 	return fm.ResolveFace(r)
 }
 
-func lookupFaces(theme, fallback fyne.Resource, additional []fyne.Resource, family string, style fyne.TextStyle) (faces *dynamicFontMap) {
-	f1 := loadMeasureFont(theme)
-	if theme == fallback {
+func lookupFaces(t, fallback fyne.Resource, additional []fyne.Resource, family string, style fyne.TextStyle) (faces *dynamicFontMap) {
+	f1 := loadMeasureFont(t)
+	if t == fallback {
 		faces = &dynamicFontMap{family: family, faces: []*font.Face{f1}}
 	} else {
 		f2 := loadMeasureFont(fallback)
@@ -190,16 +190,16 @@ func ClearFontCache() {
 }
 
 // DrawString draws a string into an image.
-func DrawString(dst draw.Image, s string, color color.Color, f shaping.Fontmap, fontSize, scale float32, style fyne.TextStyle) {
-	DrawStringOffset(dst, s, color, f, fontSize, scale, style, 0)
+func DrawString(dst draw.Image, s string, c color.Color, f shaping.Fontmap, fontSize, scale float32, style fyne.TextStyle) {
+	DrawStringOffset(dst, s, c, f, fontSize, scale, style, 0)
 }
 
 // DrawStringOffset draws a string shifted left by the specified pixel offset.
-func DrawStringOffset(dst draw.Image, s string, color color.Color, f shaping.Fontmap, fontSize, scale float32, style fyne.TextStyle, offset int) {
+func DrawStringOffset(dst draw.Image, s string, c color.Color, f shaping.Fontmap, fontSize, scale float32, style fyne.TextStyle, offset int) {
 	r := render.Renderer{
 		FontSize: fontSize,
 		PixScale: scale,
-		Color:    color,
+		Color:    c,
 	}
 
 	advance := float32(0)
@@ -369,7 +369,7 @@ var (
 
 type noopLogger struct{}
 
-func (n noopLogger) Printf(string, ...any) {}
+func (noopLogger) Printf(string, ...any) {}
 
 type dynamicFontMap struct {
 	faces  []*font.Face

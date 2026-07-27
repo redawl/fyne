@@ -36,7 +36,7 @@ type Label struct {
 	// If set to true, Selectable indicates that this label should support select interaction
 	// to allow the text to be copied.
 	//
-	//Since: 2.6
+	// Since: 2.6
 	Selectable bool
 
 	provider  *RichText
@@ -81,7 +81,7 @@ func (l *Label) AccessibilityLabel() string {
 // AccessibilityRole for a label is fyne.AccessibleRoleText.
 //
 // Since: 2.8
-func (l *Label) AccessibilityRole() fyne.AccessibleRole {
+func (*Label) AccessibilityRole() fyne.AccessibleRole {
 	return fyne.AccessibleRoleText
 }
 
@@ -176,8 +176,6 @@ func (l *Label) syncSegments() {
 	switch l.Importance {
 	case LowImportance:
 		color = theme.ColorNameDisabled
-	case MediumImportance:
-		color = theme.ColorNameForeground
 	case HighImportance:
 		color = theme.ColorNamePrimary
 	case DangerImportance:
@@ -226,7 +224,7 @@ type labelRenderer struct {
 	l *Label
 }
 
-func (r *labelRenderer) Destroy() {
+func (*labelRenderer) Destroy() {
 }
 
 func (r *labelRenderer) Layout(s fyne.Size) {
@@ -265,17 +263,17 @@ type focusSelectable struct {
 }
 
 func (f *focusSelectable) FocusGained() {
-	f.focussed = true
+	f.focused = true
 	f.Refresh()
 }
 
 func (f *focusSelectable) FocusLost() {
-	f.focussed = false
+	f.focused = false
 	f.Refresh()
 }
 
-func (f *focusSelectable) TypedKey(*fyne.KeyEvent) {
+func (*focusSelectable) TypedKey(*fyne.KeyEvent) {
 }
 
-func (f *focusSelectable) TypedRune(rune) {
+func (*focusSelectable) TypedRune(rune) {
 }

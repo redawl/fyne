@@ -122,7 +122,7 @@ func (f *fileDialog) makeUI() fyne.CanvasObject {
 			}
 		}
 		saveName.SetPlaceHolder(lang.L("Enter filename"))
-		saveName.OnSubmitted = func(s string) {
+		saveName.OnSubmitted = func(string) {
 			f.open.OnTapped()
 		}
 		f.fileName = saveName
@@ -641,8 +641,6 @@ func (f *FileDialog) effectiveStartingDir() fyne.ListableURI {
 			// the starting directory is set explicitly
 			if _, err := os.Stat(path); err != nil {
 				fyne.LogError("Error with StartingLocation", err)
-			} else {
-				return f.startingLocation
 			}
 		}
 		return f.startingLocation
@@ -976,12 +974,12 @@ func storageURI(a fyne.App) fyne.URI {
 // NOTE: It assumes that the slice only contains one item.
 type iconPaddingLayout struct{}
 
-func (i *iconPaddingLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
+func (*iconPaddingLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	padding := theme.Padding() * 2
 	objects[0].Move(fyne.NewPos(padding, 0))
 	objects[0].Resize(size.SubtractWidthHeight(padding, 0))
 }
 
-func (i *iconPaddingLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
+func (*iconPaddingLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return objects[0].MinSize().AddWidthHeight(theme.Padding()*2, 0)
 }

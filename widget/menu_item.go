@@ -101,7 +101,7 @@ func (i *menuItem) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved does nothing.
-func (i *menuItem) MouseMoved(*desktop.MouseEvent) {
+func (*menuItem) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut deactivates the item unless it has an open submenu.
@@ -117,13 +117,8 @@ func (i *menuItem) Tapped(*fyne.PointEvent) {
 	if i.Item.Disabled {
 		return
 	}
-	if i.Item.Action == nil {
-		if fyne.CurrentDevice().IsMobile() {
-			i.activate()
-		}
 
-		return
-	} else if i.Item.ChildMenu != nil {
+	if i.Item.Action == nil || i.Item.ChildMenu != nil {
 		if fyne.CurrentDevice().IsMobile() {
 			i.activate()
 		}
@@ -289,13 +284,11 @@ func (r *menuItemRenderer) updateVisuals() {
 	th := r.i.parent.Theme()
 	v := fyne.CurrentApp().Settings().ThemeVariant()
 	r.background.CornerRadius = th.Size(theme.SizeNameMenuRadius)
-	if fyne.CurrentDevice().IsMobile() {
+	if fyne.CurrentDevice().IsMobile() || !r.i.isActive() {
 		r.background.Hide()
-	} else if r.i.isActive() {
+	} else {
 		r.background.FillColor = th.Color(theme.ColorNameFocus, v)
 		r.background.Show()
-	} else {
-		r.background.Hide()
 	}
 	r.background.Refresh()
 	r.text.Alignment = r.i.alignment

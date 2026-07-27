@@ -344,7 +344,7 @@ func (l *GridWrap) TypedKey(event *fyne.KeyEvent) {
 }
 
 // TypedRune is called if a text event happens while this GridWrap is focused.
-func (l *GridWrap) TypedRune(_ rune) {
+func (*GridWrap) TypedRune(_ rune) {
 	// intentionally left blank
 }
 
@@ -442,7 +442,7 @@ func (l *gridWrapRenderer) Refresh() {
 	canvas.Refresh(l.list)
 }
 
-func (l *gridWrapRenderer) Destroy() {
+func (*gridWrapRenderer) Destroy() {
 }
 
 func (l *gridWrapRenderer) Objects() []fyne.CanvasObject {
@@ -507,7 +507,7 @@ func (gw *gridWrapItem) MouseIn(*desktop.MouseEvent) {
 }
 
 // MouseMoved is called when a desktop pointer hovers over the widget.
-func (gw *gridWrapItem) MouseMoved(*desktop.MouseEvent) {
+func (*gridWrapItem) MouseMoved(*desktop.MouseEvent) {
 }
 
 // MouseOut is called when a desktop pointer exits the widget.
@@ -752,7 +752,7 @@ func (l *gridWrapLayout) updateGrid(newOnly bool) {
 }
 
 // invariant: visible is in ascending order of IDs
-func (l *gridWrapLayout) searchVisible(visible []gridItemAndID, id GridWrapItemID) (*gridWrapItem, bool) {
+func (*gridWrapLayout) searchVisible(visible []gridItemAndID, id GridWrapItemID) (*gridWrapItem, bool) {
 	ln := len(visible)
 	idx := sort.Search(ln, func(i int) bool { return visible[i].id >= id })
 	if idx < ln && visible[idx].id == id {
@@ -761,10 +761,10 @@ func (l *gridWrapLayout) searchVisible(visible []gridItemAndID, id GridWrapItemI
 	return nil, false
 }
 
-func (l *gridWrapLayout) nilOldSliceData(objs []fyne.CanvasObject, len, oldLen int) {
-	if oldLen > len {
-		objs = objs[:oldLen] // gain view into old data
-		for i := len; i < oldLen; i++ {
+func (*gridWrapLayout) nilOldSliceData(objs []fyne.CanvasObject, length, oldLength int) {
+	if oldLength > length {
+		objs = objs[:oldLength] // gain view into old data
+		for i := length; i < oldLength; i++ {
 			objs[i] = nil
 		}
 	}

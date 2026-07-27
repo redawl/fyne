@@ -174,7 +174,7 @@ func (w *window) CenterOnScreen() {
 
 func (w *window) SetOnDropped(dropped func(pos fyne.Position, items []fyne.URI)) {
 	w.runOnMainWhenCreated(func() {
-		w.viewport.SetDropCallback(func(win *glfw.Window, names []string) {
+		w.viewport.SetDropCallback(func(_ *glfw.Window, names []string) {
 			if dropped == nil {
 				return
 			}
@@ -310,10 +310,10 @@ func getMonitorScale(monitor *glfw.Monitor) float32 {
 // getScaledMonitorSize returns the monitor dimensions adjusted for scaling
 func getScaledMonitorSize(monitor *glfw.Monitor) fyne.Size {
 	videoMode := monitor.GetVideoMode()
-	scale := getMonitorScale(monitor)
+	s := getMonitorScale(monitor)
 
-	scaledWidth := float32(videoMode.Width) / scale
-	scaledHeight := float32(videoMode.Height) / scale
+	scaledWidth := float32(videoMode.Width) / s
+	scaledHeight := float32(videoMode.Height) / s
 	return fyne.NewSize(scaledWidth, scaledHeight)
 }
 
@@ -390,7 +390,7 @@ func (w *window) resized(_ *glfw.Window, width, height int) {
 	w.processResized(width, height)
 }
 
-func (w *window) scaled(_ *glfw.Window, x float32, y float32) {
+func (w *window) scaled(_ *glfw.Window, x, _ float32) {
 	if !build.IsWayland { // other platforms handle this using older APIs
 		return
 	}
@@ -743,7 +743,7 @@ func glfwKeyToModifier(key glfw.Key) glfw.ModifierKey {
 // Unicode character is input.
 //
 // Characters do not map 1:1 to physical keys, as a key may produce zero, one or more characters.
-func (w *window) charInput(viewport *glfw.Window, char rune) {
+func (w *window) charInput(_ *glfw.Window, char rune) {
 	w.processCharInput(char)
 }
 
@@ -751,7 +751,7 @@ func (w *window) focused(_ *glfw.Window, focused bool) {
 	w.processFocused(focused)
 }
 
-func (w *window) DetachCurrentContext() {
+func (*window) DetachCurrentContext() {
 	glfw.DetachCurrentContext()
 }
 

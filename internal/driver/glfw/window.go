@@ -45,13 +45,13 @@ func (w *window) FullScreen() bool {
 }
 
 // minSizeOnScreen gets the padded minimum size of a window content in screen pixels
-func (w *window) minSizeOnScreen() (int, int) {
+func (w *window) minSizeOnScreen() (width, height int) {
 	// get minimum size of content inside the window
 	return w.screenSize(w.canvas.MinSize())
 }
 
 // screenSize computes the actual output size of the given content size in screen pixels
-func (w *window) screenSize(canvasSize fyne.Size) (int, int) {
+func (w *window) screenSize(canvasSize fyne.Size) (width, height int) {
 	return scale.ToScreenCoordinate(w.canvas, canvasSize.Width), scale.ToScreenCoordinate(w.canvas, canvasSize.Height)
 }
 
@@ -229,7 +229,7 @@ func (w *window) ShowAndRun() {
 }
 
 // Clipboard returns the system clipboard
-func (w *window) Clipboard() fyne.Clipboard {
+func (*window) Clipboard() fyne.Clipboard {
 	return NewClipboard()
 }
 
@@ -333,8 +333,8 @@ func (w *window) processRefresh() {
 	refreshWindow(w)
 }
 
-func (w *window) findObjectAtPositionMatching(canvas *glCanvas, mouse fyne.Position, matches func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position, int) {
-	return driver.FindObjectAtPositionMatching(mouse, matches, canvas.Overlays().Top(), canvas.menu, canvas.Content())
+func (*window) findObjectAtPositionMatching(c *glCanvas, mouse fyne.Position, matches func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position, int) {
+	return driver.FindObjectAtPositionMatching(mouse, matches, c.Overlays().Top(), c.menu, c.Content())
 }
 
 func (w *window) processMouseMoved(xpos float64, ypos float64) {
@@ -405,7 +405,7 @@ func (w *window) processMouseMoved(xpos float64, ypos float64) {
 		} else if mouseOver != nil {
 			isChild := false
 			driver.WalkCompleteObjectTree(mouseOver.(fyne.CanvasObject),
-				func(co fyne.CanvasObject, p1, p2 fyne.Position, s fyne.Size) bool {
+				func(co fyne.CanvasObject, _, _ fyne.Position, _ fyne.Size) bool {
 					if co == obj {
 						isChild = true
 						return true
@@ -649,8 +649,7 @@ func (w *window) processMouseScrolled(xoff float64, yoff float64) {
 		_, ok := object.(fyne.Scrollable)
 		return ok
 	})
-	switch wid := co.(type) {
-	case fyne.Scrollable:
+	if wid, ok := co.(fyne.Scrollable); ok {
 		if math.Abs(xoff) >= scrollAccelerateCutoff {
 			xoff *= scrollAccelerateRate
 		}
@@ -926,7 +925,7 @@ func (w *window) RunWithContext(f func()) {
 	w.DetachCurrentContext()
 }
 
-func (w *window) Context() any {
+func (*window) Context() any {
 	return nil
 }
 

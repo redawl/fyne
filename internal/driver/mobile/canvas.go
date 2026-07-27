@@ -110,7 +110,7 @@ func (c *canvas) OnTypedRune() func(rune) {
 	return c.onTypedRune
 }
 
-func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (int, int) {
+func (c *canvas) PixelCoordinateForPosition(pos fyne.Position) (x, y int) {
 	return int(pos.X * c.scale), int(pos.Y * c.scale)
 }
 
@@ -304,15 +304,16 @@ func (c *canvas) tapMove(pos fyne.Position, tapID int,
 	}
 
 	if c.dragging == nil {
-		if drag, ok := co.(fyne.Draggable); ok {
-			c.dragging = drag
-			c.dragOffset = previousPos.Subtract(objPos)
-			c.dragStart = co.Position()
-			if scrollOtherDirection != nil {
-				c.draggingOuter = scrollOtherDirection.(fyne.Draggable)
-			}
-		} else {
+		drag, ok := co.(fyne.Draggable)
+		if !ok {
 			return
+		}
+
+		c.dragging = drag
+		c.dragOffset = previousPos.Subtract(objPos)
+		c.dragStart = co.Position()
+		if scrollOtherDirection != nil {
+			c.draggingOuter = scrollOtherDirection.(fyne.Draggable)
 		}
 	}
 

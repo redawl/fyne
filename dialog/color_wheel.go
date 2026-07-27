@@ -58,7 +58,7 @@ func newColorWheel(onChange func(int, int, int, uint8)) *colorWheel {
 }
 
 // Cursor returns the cursor type of this widget.
-func (a *colorWheel) Cursor() desktop.Cursor {
+func (*colorWheel) Cursor() desktop.Cursor {
 	return desktop.CrosshairCursor
 }
 
@@ -109,7 +109,7 @@ func (a *colorWheel) Dragged(event *fyne.DragEvent) {
 }
 
 // DragEnd is called when a pointer drag ends
-func (a *colorWheel) DragEnd() {
+func (*colorWheel) DragEnd() {
 }
 
 func (a *colorWheel) colorAt(x, y, w, h int) color.Color {
@@ -143,7 +143,7 @@ func (a *colorWheel) locationForPosition(pos fyne.Position) (x, y int) {
 	return x, y
 }
 
-func (a *colorWheel) selection(width, height float32) (float32, float32) {
+func (a *colorWheel) selection(width, height float32) (x, y float32) {
 	w, h := float64(width), float64(height)
 	radius := float64(a.Saturation) / 100 * math.Min(w, h) / 2
 	degrees := float64(a.Hue)

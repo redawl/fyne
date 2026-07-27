@@ -149,28 +149,26 @@ func New() fyne.App {
 }
 
 func makeStoreDocs(id string, s *store) *internal.Docs {
-	if id == "" {
+	storageRoot := s.a.storageRoot()
+	if id == "" || storageRoot == "" {
 		return &internal.Docs{} // an empty impl to avoid crashes
 	}
-	if root := s.a.storageRoot(); root != "" {
-		uri, err := storage.ParseURI(root)
+
+	uri, err := storage.ParseURI(storageRoot)
+	if err != nil {
+		uri = storage.NewFileURI(storageRoot)
+	}
+
+	exists, err := storage.Exists(uri)
+	if !exists || err != nil {
+		err = storage.CreateListable(uri)
 		if err != nil {
-			uri = storage.NewFileURI(root)
+			fyne.LogError("Failed to create app storage space", err)
 		}
-
-		exists, err := storage.Exists(uri)
-		if !exists || err != nil {
-			err = storage.CreateListable(uri)
-			if err != nil {
-				fyne.LogError("Failed to create app storage space", err)
-			}
-		}
-
-		root, _ := s.docRootURI()
-		return &internal.Docs{RootDocURI: root}
-	} else {
-		return &internal.Docs{} // an empty impl to avoid crashes
 	}
+
+	docRoot, _ := s.docRootURI()
+	return &internal.Docs{RootDocURI: docRoot}
 }
 
 func newAppWithDriver(d fyne.Driver, clipboard fyne.Clipboard, id string) fyne.App {
