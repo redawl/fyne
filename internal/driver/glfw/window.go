@@ -681,7 +681,7 @@ func (w *window) capturesTab(modifier fyne.KeyModifier) bool {
 }
 
 func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, scancode int, action action, keyDesktopModifier fyne.KeyModifier) {
-	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}}
+	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}, Repeat: action == repeat}
 
 	pendingMenuToggle := w.menuTogglePending
 	w.menuTogglePending = desktop.KeyNone
@@ -700,9 +700,9 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 			}
 		}
 
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyUp(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyUp(keyEvent)
 			}
 		} else if w.canvas.onKeyUp != nil {
 			w.canvas.onKeyUp(keyEvent)
@@ -718,15 +718,22 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 		case fyne.KeyEscape:
 			w.menuDeactivationPending = keyName
 		}
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyDown(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
 			}
 		} else if w.canvas.onKeyDown != nil {
 			w.canvas.onKeyDown(keyEvent)
 		}
 	default:
-		// key repeat will fall through to TypedKey and TypedShortcut
+		// key repeat triggers KeyDown and falls through to TypedKey and TypedShortcut
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
+			}
+		} else if w.canvas.onKeyDown != nil {
+			w.canvas.onKeyDown(keyEvent)
+		}
 	}
 
 	modifierOtherThanShift := (keyDesktopModifier & fyne.KeyModifierControl) |
@@ -738,8 +745,7 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 	}
 
 	// No shortcut detected, pass down to TypedKey
-	focused := w.canvas.Focused()
-	if focused != nil {
+	if focused := w.canvas.Focused(); focused != nil {
 		focused.TypedKey(keyEvent)
 	} else if w.canvas.onTypedKey != nil {
 		w.canvas.onTypedKey(keyEvent)

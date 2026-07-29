@@ -1862,6 +1862,54 @@ func TestWindow_ClipboardCopy_DisabledEntry(t *testing.T) {
 	assert.Equal(t, "Testing", NewClipboard().Content())
 }
 
+func TestWindow_KeyDownOnRepeat(t *testing.T) {
+	w := createWindow("Test")
+	content := &keyableFocusable{}
+	content.SetMinSize(fyne.NewSize(10, 10))
+	w.SetContent(content)
+	repaintWindow(w)
+
+	w.Canvas().Focus(content)
+
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Press, 0)
+	require.Len(t, content.keyDownEvents, 1)
+	assert.Equal(t, fyne.KeyDown, content.keyDownEvents[0].Name)
+	assert.False(t, content.keyDownEvents[0].Repeat)
+
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Repeat, 0)
+	require.Len(t, content.keyDownEvents, 2)
+	assert.Equal(t, fyne.KeyDown, content.keyDownEvents[1].Name)
+	assert.True(t, content.keyDownEvents[1].Repeat)
+
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Repeat, 0)
+	require.Len(t, content.keyDownEvents, 3)
+	assert.True(t, content.keyDownEvents[2].Repeat)
+
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Release, 0)
+	require.Len(t, content.keyDownEvents, 3) // release does not trigger KeyDown
+}
+
+func TestWindow_KeyDownOnRepeat_NoFocused(t *testing.T) {
+	w := createWindow("Test")
+	w.SetContent(canvas.NewRectangle(color.Black))
+	repaintWindow(w)
+
+	var lastEvent *fyne.KeyEvent
+	w.canvas.onKeyDown = func(ev *fyne.KeyEvent) {
+		lastEvent = ev
+	}
+
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Press, 0)
+	require.NotNil(t, lastEvent)
+	assert.False(t, lastEvent.Repeat)
+
+	lastEvent = nil
+	w.keyPressed(nil, glfw.KeyDown, 0, glfw.Repeat, 0)
+	require.NotNil(t, lastEvent)
+	assert.True(t, lastEvent.Repeat)
+	assert.Equal(t, fyne.KeyDown, lastEvent.Name)
+}
+
 func TestWindow_CloseInterception(t *testing.T) {
 	// Note: The #Close() is run asynchronously when the window is notified about the viewport close.
 	// Therefore, we have to wait some time before checking its state via the onClosed callback.
@@ -2205,6 +2253,22 @@ var (
 	_ fyne.Focusable   = (*focusable)(nil)
 	_ fyne.Disableable = (*focusable)(nil)
 )
+
+var _ desktop.Keyable = (*keyableFocusable)(nil)
+
+type keyableFocusable struct {
+	focusable
+	keyDownEvents []*fyne.KeyEvent
+	keyUpEvents   []*fyne.KeyEvent
+}
+
+func (k *keyableFocusable) KeyDown(ev *fyne.KeyEvent) {
+	k.keyDownEvents = append(k.keyDownEvents, ev)
+}
+
+func (k *keyableFocusable) KeyUp(ev *fyne.KeyEvent) {
+	k.keyUpEvents = append(k.keyUpEvents, ev)
+}
 
 type focusable struct {
 	canvas.Rectangle
