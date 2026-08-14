@@ -39,8 +39,8 @@ type UntypedMap interface {
 // NewUntypedMap creates a new, empty map binding of string to any.
 //
 // Since: 2.0
-func NewUntypedMap() ExternalUntypedMap {
-	return &mapBase{items: make(map[string]reflectUntyped), val: &map[string]any{}}
+func NewUntypedMap() UntypedMap {
+	return newExternalUntypedMap()
 }
 
 // BindUntypedMap creates a new map binding of string to any based on the data passed.
@@ -49,7 +49,7 @@ func NewUntypedMap() ExternalUntypedMap {
 // Since: 2.0
 func BindUntypedMap(d *map[string]any) ExternalUntypedMap {
 	if d == nil {
-		return NewUntypedMap()
+		return newExternalUntypedMap()
 	}
 	m := &mapBase{items: make(map[string]reflectUntyped), val: d, updateExternal: true}
 
@@ -77,13 +77,13 @@ type Struct interface {
 // Since: 2.0
 func BindStruct(i any) Struct {
 	if i == nil {
-		return NewUntypedMap()
+		return newExternalUntypedMap()
 	}
 	t := reflect.TypeOf(i)
 	if t.Kind() != reflect.Pointer ||
 		(reflect.TypeOf(reflect.ValueOf(i).Elem()).Kind() != reflect.Struct) {
 		fyne.LogError("Invalid type passed to BindStruct, must be pointer to struct", nil)
-		return NewUntypedMap()
+		return newExternalUntypedMap()
 	}
 
 	s := &boundStruct{orig: i}
@@ -105,6 +105,10 @@ func BindStruct(i any) Struct {
 	}
 
 	return s
+}
+
+func newExternalUntypedMap() ExternalUntypedMap {
+	return &mapBase{items: make(map[string]reflectUntyped), val: &map[string]any{}}
 }
 
 type reflectUntyped interface {
