@@ -996,13 +996,10 @@ func ellipsisPriorBound(bounds []rowBoundary, trunc fyne.TextTruncation, width f
 	}
 
 	prior := bounds[len(bounds)-1]
-	// TODO:
-	// To ignore the assertion failure here seems dangerous, therefore I added an explicit panic.
-	// However, I was not able to force a failure.
-	// Someone with insight to the whole rich-text stuff should analyze this.
 	seg, ok := prior.segments[0].(*TextSegment)
 	if !ok {
-		panic(fmt.Sprintf("unexpected rich text segment: %#v", prior.segments[0]))
+		fyne.LogError(fmt.Sprintf("unexpected rich text segment: %#v", prior.segments[0]), nil)
+		return bounds
 	}
 
 	ellipsisSize := fyne.MeasureText("…", seg.size(), seg.Style.TextStyle) //revive:disable-line:add-constant
