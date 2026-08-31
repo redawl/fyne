@@ -13,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/internal"
 	"fyne.io/fyne/v2/internal/app"
 	"fyne.io/fyne/v2/internal/async"
 	"fyne.io/fyne/v2/internal/build"
@@ -58,7 +59,7 @@ func (w *window) screenSize(canvasSize fyne.Size) (width, height int) {
 func (w *window) Resize(size fyne.Size) {
 	w.canvas.Resize(size)
 	// we cannot perform this until window is prepared as we don't know its scale!
-	bigEnough := size.Max(w.canvas.canvasSize(w.canvas.Content().MinSize()))
+	bigEnough := internal.MaxSizes(size, w.canvas.canvasSize(w.canvas.Content().MinSize()))
 	w.runOnMainWhenCreated(func() {
 		width, height := scale.ToScreenCoordinate(w.canvas, bigEnough.Width), scale.ToScreenCoordinate(w.canvas, bigEnough.Height)
 		if w.fixedSize || !w.visible { // fixed size ignores future `resized` and if not visible we may not get the event
@@ -462,6 +463,8 @@ func (w *window) mouseOut() {
 }
 
 func (w *window) processMouseClicked(button desktop.MouseButton, action action, modifiers fyne.KeyModifier) {
+	w.ensurePositionProcessed()
+
 	w.mouseDragPos = w.mousePos
 	mousePos := w.mousePos
 	mouseDragStarted := w.mouseDragStarted
@@ -568,6 +571,13 @@ func (w *window) processMouseClicked(button desktop.MouseButton, action action, 
 	// Check for double click/tap on left mouse button
 	if action == release && button == desktop.MouseButtonPrimary && !mouseDragStarted {
 		w.mouseClickedHandleTapDoubleTap(co, ev)
+	}
+}
+
+func (w *window) ensurePositionProcessed() {
+	if !w.mousePosUpdateProcessed {
+		w.processMouseMoved(w.newMousePosX, w.newMousePosY)
+		w.mousePosUpdateProcessed = true
 	}
 }
 
@@ -681,7 +691,7 @@ func (w *window) capturesTab(modifier fyne.KeyModifier) bool {
 }
 
 func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, scancode int, action action, keyDesktopModifier fyne.KeyModifier) {
-	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}}
+	keyEvent := &fyne.KeyEvent{Name: keyName, Physical: fyne.HardwareKey{ScanCode: scancode}, Repeat: action == repeat}
 
 	pendingMenuToggle := w.menuTogglePending
 	w.menuTogglePending = desktop.KeyNone
@@ -700,9 +710,9 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 			}
 		}
 
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyUp(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyUp(keyEvent)
 			}
 		} else if w.canvas.onKeyUp != nil {
 			w.canvas.onKeyUp(keyEvent)
@@ -718,15 +728,22 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 		case fyne.KeyEscape:
 			w.menuDeactivationPending = keyName
 		}
-		if w.canvas.Focused() != nil {
-			if focused, ok := w.canvas.Focused().(desktop.Keyable); ok {
-				focused.KeyDown(keyEvent)
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
 			}
 		} else if w.canvas.onKeyDown != nil {
 			w.canvas.onKeyDown(keyEvent)
 		}
 	default:
-		// key repeat will fall through to TypedKey and TypedShortcut
+		// key repeat triggers KeyDown and falls through to TypedKey and TypedShortcut
+		if focused := w.canvas.Focused(); focused != nil {
+			if keyable, ok := focused.(desktop.Keyable); ok {
+				keyable.KeyDown(keyEvent)
+			}
+		} else if w.canvas.onKeyDown != nil {
+			w.canvas.onKeyDown(keyEvent)
+		}
 	}
 
 	modifierOtherThanShift := (keyDesktopModifier & fyne.KeyModifierControl) |
@@ -738,8 +755,7 @@ func (w *window) processKeyPressed(keyName fyne.KeyName, keyASCII fyne.KeyName, 
 	}
 
 	// No shortcut detected, pass down to TypedKey
-	focused := w.canvas.Focused()
-	if focused != nil {
+	if focused := w.canvas.Focused(); focused != nil {
 		focused.TypedKey(keyEvent)
 	} else if w.canvas.onTypedKey != nil {
 		w.canvas.onTypedKey(keyEvent)
@@ -767,6 +783,10 @@ func (w *window) processFocused(focus bool) {
 		}
 		curWindow = w
 		w.canvas.FocusGained()
+
+		if build.HasNativeMenu {
+			setupNativeMenu(w, w.mainmenu)
+		}
 
 		if build.IsWayland {
 			w.frame.markReady()
@@ -982,7 +1002,9 @@ func (d *gLDriver) createWindow(title string, decorate bool) fyne.Window {
 
 	d.init()
 
-	ret = &window{title: title, decorate: decorate, driver: d}
+	// A window starts with no mouse move outstanding: the zero value would read
+	// as one pending at (0,0), which the first click would then apply.
+	ret = &window{title: title, decorate: decorate, driver: d, mousePosUpdateProcessed: true}
 	ret.frame = newPresentGate(ret)
 	ret.canvas = newCanvas()
 	ret.canvas.context = ret

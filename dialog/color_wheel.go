@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/internal"
 	"fyne.io/fyne/v2/internal/painter/geom"
 	internalwidget "fyne.io/fyne/v2/internal/widget"
 	"fyne.io/fyne/v2/theme"
@@ -46,9 +47,7 @@ func newColorWheel(onChange func(int, int, int, uint8)) *colorWheel {
 		}
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
-				if c := a.colorAt(x, y, w, h); c != nil {
-					a.cache.Set(x, y, c)
-				}
+				a.cache.Set(x, y, a.colorAt(x, y, w, h))
 			}
 		}
 		return a.cache
@@ -193,7 +192,7 @@ func (r *colorWheelRenderer) Layout(size fyne.Size) {
 }
 
 func (r *colorWheelRenderer) MinSize() fyne.Size {
-	return r.raster.MinSize().Max(fyne.NewSize(128, 128)) //revive:disable-line:add-constant
+	return internal.MaxSizes(r.raster.MinSize(), fyne.NewSize(128, 128)) //revive:disable-line:add-constant
 }
 
 func (r *colorWheelRenderer) Refresh() {

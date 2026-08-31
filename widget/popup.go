@@ -3,6 +3,7 @@ package widget
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/internal"
 	"fyne.io/fyne/v2/internal/widget"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
@@ -19,6 +20,12 @@ type PopUp struct {
 	Content fyne.CanvasObject
 	Canvas  fyne.Canvas
 
+	// OnDismiss is a callback invoked when the PopUp is dismissed,
+	// either by tapping outside of it if non-modal, or by calling Hide().
+	//
+	// Since: 2.9
+	OnDismiss func() `json:"-"`
+
 	overlay       *widget.OverlayContainer
 	modal, manual bool
 }
@@ -32,6 +39,10 @@ func (p *PopUp) Hide() {
 
 	p.BaseWidget.Hide()
 	p.Move(fyne.Position{}) // reset so that Show or ShowAtPosition next time is respected
+
+	if p.OnDismiss != nil {
+		p.OnDismiss()
+	}
 }
 
 // Refresh the background for a modal popup and the content of this popup.
@@ -186,11 +197,11 @@ type popUpRenderer struct {
 }
 
 func (r *popUpRenderer) Layout(s fyne.Size) {
-	size := s.Max(r.popUp.Content.MinSize())
+	size := internal.MaxSizes(s, r.popUp.Content.MinSize())
 	if r.popUp.Canvas != nil {
 		canvasSize := r.popUp.Canvas.Size()
 		if !canvasSize.IsZero() {
-			size = size.Min(r.popUp.Canvas.Size())
+			size = internal.MinSizes(size, r.popUp.Canvas.Size())
 		}
 	}
 	r.popUp.Content.Resize(size)
@@ -211,7 +222,7 @@ func (r *popUpRenderer) Refresh() {
 	r.background.FillColor = th.Color(theme.ColorNameOverlayBackground, v)
 	r.background.Shadow.Color = th.Color(theme.ColorNameShadow, v)
 	r.background.CornerRadius = th.Size(theme.SizeNamePopupRadius)
-	expectedContentSize := innerSize.Max(r.popUp.MinSize()).Subtract(r.padding())
+	expectedContentSize := internal.MaxSizes(innerSize, r.popUp.MinSize()).Subtract(r.padding())
 	shouldRelayout := r.popUp.Content.Size() != expectedContentSize
 
 	if r.background.Size() != innerSize || r.background.Position() != innerPos || shouldRelayout {
